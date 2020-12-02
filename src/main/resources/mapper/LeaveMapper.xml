@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.LeaveMapper">
+
+    <resultMap type="com.chards.committee.domain.Leave" id="LeaveMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="stuNum" column="stu_num" jdbcType="VARCHAR"/>
+        <result property="startDate" column="start_date" jdbcType="TIMESTAMP"/>
+        <result property="endDate" column="end_date" jdbcType="TIMESTAMP"/>
+        <result property="reason" column="reason" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="tel" column="tel" jdbcType="VARCHAR"/>
+        <result property="emergencyCaller" column="emergency_caller" jdbcType="VARCHAR"/>
+        <result property="emergencyTel" column="emergency_tel" jdbcType="VARCHAR"/>
+        <result property="movement" column="movement" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="reviewerId" column="reviewerId" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="adminSelectLeaveBase">
+        select t_leave.*, stu_info.name, stu_info.department, stu_info.classes
+        from t_leave
+        inner join
+        stu_info
+        on t_leave.stu_num = stu_info.id
+        <if test="param.status != null ">
+            and t_leave.status = #{param.status,jdbcType=INTEGER}
+        </if>
+    </sql>
+    <sql id="adminSelectLeaveBaseOrder">
+        order by create_time desc
+    </sql>
+    <select id="adminSelectLeave" resultType="com.chards.committee.vo.LeaveInfoVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="adminSelectLeaveBase"></include>
+            <include refid="adminSelectLeaveBaseOrder"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity !=1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="adminSelectLeaveBase"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+           <include refid="adminSelectLeaveBaseOrder"></include>
+        </if>
+    </select>
+
+
+
+    <select id="getAdminManagementStudentLeaveSchoolByDateArea"
+            resultType="com.chards.committee.vo.LeaveSchoolGetAllVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="getAll"></include>
+            <include refid="dateArea"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity !=1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="getAll"></include>
+                <include refid="dateArea"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+    </select>
+
+
+    <sql id="getAll">
+        select t_leave.*,
+        stu_info.name,
+        stu_info.gender,
+        stu_info.classes ,
+        stu_info.id_card ,
+        stu_info.dormitory,
+        stu_info.department,
+        stu_info.address as address1,
+        stu_info.grade,
+        stu_info.phone,
+        stu_info.gender,
+        stu_info.education_background,
+        stu_info.political_status,
+        stu_info.id_card
+        from t_leave
+        inner join stu_info on t_leave.stu_num = stu_info.id
+        <if test="param.status !=null ">
+            and t_leave.status = #{param.status,jdbcType=INTEGER}
+        </if>
+    </sql>
+
+    <sql id="dateArea">
+        and unix_timestamp(t_leave.start_date)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
+        and unix_timestamp(t_leave.start_date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
+
+    </sql>
+
+
+    <sql id="getByIdOrNameSql">
+        SELECT stu_info.`name`,t_leave.* FROM `t_leave`LEFT JOIN stu_info ON stu_info.id=t_leave.stu_num
+        where t_leave.stu_num = #{param.param} OR stu_info.`name`= #{param.param}
+
+    </sql>
+
+    <select id="getByIdOrName" resultType="com.chards.committee.vo.LeaveInfoVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="getByIdOrNameSql"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity !=1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="getByIdOrNameSql"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+        order by create_time desc
+    </select>
+
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.LoginIpMapper">
+    <select id="getCountAboutoday" resultType="int">
+        select COUNT(*) from `login_ip`  where to_days(create_time) = to_days(date_add(now(), interval 8 hour));
+    </select>
+    <select id="getCountAboutoday1" resultType="int">
+        select COUNT(*) from `login_ip`  where to_days(date_add(now(), interval 8 hour))-to_days(create_time) =1 ;
+    </select>
+    <select id="getCountAboutoday2" resultType="int">
+        select COUNT(*) from `login_ip`  where to_days(date_add(now(), interval 8 hour))-to_days(create_time) =2 ;
+    </select>
+    <select id="getCountAboutoday3" resultType="int">
+        select COUNT(*) from `login_ip`  where to_days(date_add(now(), interval 8 hour))-to_days(create_time) =3 ;
+    </select>
+    <select id="getCountAboutoday4" resultType="int">
+        select COUNT(*) from `login_ip`  where to_days(date_add(now(), interval 8 hour))-to_days(create_time) =4 ;
+    </select>
+</mapper>

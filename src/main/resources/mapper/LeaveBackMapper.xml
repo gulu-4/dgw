@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.LeaveBackMapper">
+
+    <sql id="getAll">
+        select leave_back.*,
+        stu_info.name,
+        stu_info.gender,
+        stu_info.classes ,
+        stu_info.id_card ,
+        stu_info.dormitory,
+        stu_info.department,
+        stu_info.address as address1,
+        stu_info.grade,
+        stu_info.phone,
+        stu_info.education_background,
+        stu_info.political_status,
+        stu_info.emergency_phone as phone1,
+        stu_info.emergency_contact
+        from leave_back
+        inner join stu_info on leave_back.stu_num = stu_info.id
+        <if test="param.pass !=null ">
+            and leave_back.pass = #{param.pass,jdbcType=INTEGER}
+        </if>
+    </sql>
+
+
+    <resultMap type="com.chards.committee.domain.LeaveBack" id="LeaveBackMap">
+        <result property="stuNum" column="stu_num" jdbcType="VARCHAR"/>
+        <result property="reason" column="reason" jdbcType="VARCHAR"/>
+        <result property="date" column="date" jdbcType="VARCHAR"/>
+        <result property="note" column="note" jdbcType="VARCHAR"/>
+        <result property="loc" column="loc" jdbcType="VARCHAR"/>
+        <result property="pass" column="pass" jdbcType="INTEGER"/>
+        <result property="q1" column="q1" jdbcType="INTEGER"/>
+        <result property="q2" column="q2" jdbcType="INTEGER"/>
+        <result property="q3" column="q3" jdbcType="INTEGER"/>
+        <result property="q4" column="q4" jdbcType="INTEGER"/>
+        <result property="reviewedBy" column="reviewed_by" jdbcType="VARCHAR"/>
+        <result property="pickupLoc" column="pickup_loc" jdbcType="VARCHAR"/>
+        <result property="guardian" column="guardian" jdbcType="VARCHAR"/>
+        <result property="hour" column="hour" jdbcType="INTEGER"/>
+        <result property="emergencyCallee" column="emergency_callee" jdbcType="VARCHAR"/>
+        <result property="emergencyPhone" column="emergency_phone" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="departure" column="departure" jdbcType="VARCHAR"/>
+        <result property="destination" column="destination" jdbcType="VARCHAR"/>
+        <result property="transport" column="transport" jdbcType="VARCHAR"/>
+        <result property="seat" column="seat" jdbcType="VARCHAR"/>
+        <result property="company" column="company" jdbcType="VARCHAR"/>
+        <result property="car" column="car" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="getAdminManagementStudentBackSchool" resultType="com.chards.committee.vo.LeaveBackGetAllVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="getAll"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity !=1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="getAll"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+    </select>
+    <sql id="updateAllSelectIdList">
+        select leave_back.stu_num
+        from leave_back
+                 inner join stu_info on leave_back.pass = 0
+            and leave_back.stu_num = stu_info.id
+    </sql>
+
+    <update id="updateAdminManagementStudentBackSchoolPass">
+        update leave_back set pass = #{param.pass,jdbcType=INTEGER} where stu_num in (
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="updateAllSelectIdList"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity !=1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="updateAllSelectIdList"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+        )
+
+    </update>
+
+
+    <sql id="dateArea">
+        and unix_timestamp(leave_back.date)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
+        and unix_timestamp(leave_back.date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
+
+    </sql>
+
+    <select id="getAdminManagementStudentBackSchoolByDateArea"
+            resultType="com.chards.committee.vo.LeaveBackGetAllVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="getAll"></include>
+            <include refid="dateArea"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity !=1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="getAll"></include>
+                <include refid="dateArea"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+    </select>
+
+
+</mapper>

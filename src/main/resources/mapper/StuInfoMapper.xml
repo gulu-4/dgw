@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.StuInfoMapper">
+    <sql id="likePage">
+       SELECT
+        stu_info.id ,stu_info.`name`,stu_info.department,stu_info.grade,stu_info.classes
+        FROM
+        stu_info
+        LEFT JOIN  parents_info ON stu_info.id = parents_info.stu_num
+        WHERE
+        stu_info.id LIKE #{param.param,jdbcType=VARCHAR}
+        OR stu_info.`name` LIKE #{param.param,jdbcType=VARCHAR}
+        OR stu_info.phone LIKE #{param.param,jdbcType=VARCHAR}
+        OR stu_info.pinyin LIKE #{param.param,jdbcType=VARCHAR}
+        OR stu_info.id_card LIKE #{param.param,jdbcType=VARCHAR}
+        <if test="param.address  == 1">
+            OR stu_info.address LIKE #{param.param,jdbcType=VARCHAR}
+        </if>
+        <if test="param.emergencyContact  == 1">
+            OR stu_info.emergency_contact LIKE #{param.param,jdbcType=VARCHAR}
+        </if>
+        <if test="param.emergencyPhone  == 1">
+            OR stu_info.emergency_phone LIKE #{param.param,jdbcType=VARCHAR}
+        </if>
+        <if test="param.parentsName  == 1">
+            OR parents_info.name1 LIKE #{param.param,jdbcType=VARCHAR}
+            OR parents_info.name2 LIKE #{param.param,jdbcType=VARCHAR}
+        </if>
+        <if test="param.parentsPhone  == 1">
+            OR parents_info.tel1 LIKE #{param.param,jdbcType=VARCHAR}
+            OR parents_info.tel2 LIKE #{param.param,jdbcType=VARCHAR}
+        </if>
+
+    </sql>
+
+    <select id="getLike" resultType="com.chards.committee.vo.StuInfoPageVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="likePage"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity != 1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="likePage"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+    </select>
+
+
+    <sql id="seniorSearch">
+        SELECT
+        id ,`name`,department,grade,classes
+        FROM
+        stu_info
+        where 1 = 1
+        <if test="param.department != ''">
+            and department = #{param.department,jdbcType=VARCHAR}
+        </if>
+        <if test="param.grade != ''">
+            and grade = #{param.grade,jdbcType=VARCHAR}
+        </if>
+        <if test="param.counsellorNum != ''">
+            and counsellor_num = #{param.counsellorNum,jdbcType=VARCHAR}
+        </if>
+        <if test="param.educationBackground != '研究生' and param.educationBackground != ''">
+<!--            <if test="param.classes !=''">-->
+<!--                and classes like #{param.classes}-->
+<!--            </if>-->
+            <if test="param.dormitory != ''">
+                and dormitory like #{param.dormitory,jdbcType=VARCHAR}
+            </if>
+        </if>
+        <if test="param.national !=''">
+            and national = #{param.national,jdbcType=VARCHAR}
+        </if>
+        <if test="param.educationBackground != ''">
+            and education_background = #{param.educationBackground,jdbcType=VARCHAR}
+        </if>
+    </sql>
+
+
+    <select id="getSeniorSearch" resultType="com.chards.committee.vo.StuInfoPageVO">
+        <if test="param.adminWorkDTO.identity == 1  ">
+            <include refid="seniorSearch"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity == 2  ">
+            <include refid="seniorSearch"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity != 1 and  param.adminWorkDTO.identity != 2">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="seniorSearch"></include>
+                <if test="item == '研究生'">
+                    and education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and education_background='本科'
+                    and grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+
+    </select>
+
+
+    <select id="getLikeList" resultType="com.chards.committee.vo.StuInfoPageVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="likePage"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity != 1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="likePage"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+
+    </select>
+
+
+    <select id="getSeniorSearchList" resultType="com.chards.committee.vo.StuInfoPageVO">
+
+        <if test="param.adminWorkDTO.identity == 1  ">
+            <include refid="seniorSearch"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity == 2  ">
+            <include refid="seniorSearch"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity != 1 and  param.adminWorkDTO.identity != 2">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="seniorSearch"></include>
+                <if test="item == '研究生'">
+                    and education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and education_background='本科'
+                    and grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+
+
+
+    </select>
+</mapper>

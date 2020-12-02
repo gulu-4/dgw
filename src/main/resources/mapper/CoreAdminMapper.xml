@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.CoreAdminMapper">
+    <select id="getLike" resultType="com.chards.committee.dto.CoreAdminDTO">
+        <include refid="get"></include>
+    </select>
+    <select id="getLikeList" resultType="com.chards.committee.dto.CoreAdminDTO">
+        <include refid="get"></include>
+    </select>
+
+
+    <sql id="get">
+        SELECT
+        core_admin.* ,tb_role.`name` as 'role'
+        FROM
+        `core_admin`
+        LEFT JOIN tb_admin_role on tb_admin_role.admin_id=core_admin.id
+        LEFT JOIN tb_role on tb_admin_role.role_id=tb_role.id
+        WHERE
+        core_admin.`name` LIKE  #{param,jdbcType=VARCHAR}
+        OR  core_admin.id LIKE #{param,jdbcType=VARCHAR}
+        OR  core_admin.phone LIKE #{param,jdbcType=VARCHAR}
+        OR  core_admin.tel LIKE #{param,jdbcType=VARCHAR}
+    </sql>
+
+    <select id="getDepList" resultType="com.chards.committee.dto.CoreAdminDTO">
+        SELECT
+        core_admin.* ,tb_role.`name` as 'role'
+        FROM
+        `core_admin`
+        LEFT JOIN tb_admin_role on tb_admin_role.admin_id=core_admin.id
+        LEFT JOIN tb_role on tb_admin_role.role_id=tb_role.id
+        WHERE
+        core_admin.department LIKE  #{department,jdbcType=VARCHAR}
+    </select>
+
+
+</mapper>

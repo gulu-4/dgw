@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mysql://49.233.32.252:3306/new-committee?serverTimezone=Asia/Shanghai
+    username: root
+    password: gaoyuan
+  redis:
+    host: 49.233.32.252
+    password: gaoyuan
+filepath: /photos
+defaultPhoto: default.jpg
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

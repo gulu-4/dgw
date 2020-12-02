@@ -1,0 +1,29 @@
+package com.chards.committee.mapper;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chards.committee.domain.StuInfo;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chards.committee.dto.StuInfoSeniorDTO;
+import com.chards.committee.vo.StuInfoPageVO;
+import com.chards.committee.dto.StuInfoPageDTO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * <p>
+ * Mapper 接口
+ * </p>
+ *
+ * @author GY
+ * @since 2020-07-22
+ */
+public interface StuInfoMapper extends BaseMapper<StuInfo> {
+    Page<StuInfoPageVO> getLike(@Param("page") Page<StuInfoPageVO> page, @Param("param") StuInfoPageDTO param);
+
+    List<StuInfoPageVO> getLikeList( @Param("param") StuInfoPageDTO param);
+
+    Page<StuInfoPageVO> getSeniorSearch(@Param("page") Page<StuInfoPageVO> page, @Param("param") StuInfoSeniorDTO stuInfoSeniorDTO);
+
+    List<StuInfoPageVO> getSeniorSearchList( @Param("param") StuInfoSeniorDTO stuInfoSeniorDTO);
+}
