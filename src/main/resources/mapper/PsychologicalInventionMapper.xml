@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.PsychologicalInventionMapper">
+
+    <resultMap type="com.chards.committee.domain.PsychologicalInvention" id="BaseResultMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="stuNum" column="stu_num" jdbcType="VARCHAR"/>
+        <result property="invention" column="invention" jdbcType="VARCHAR"/>
+        <result property="inventionTime" column="invention_time" jdbcType="TIMESTAMP"/>
+        <result property="recorder" column="recorder" jdbcType="VARCHAR"/>
+        <result property="recordedTime" column="recorded_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="getInventionsByStuNum" resultMap="BaseResultMap">
+        select *
+        from psychological_invention
+        where stu_num = #{stuNum}
+    </select>
+
+</mapper>

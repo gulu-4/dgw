@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.PsychologicalCounsellingCaseMapper">
+
+
+    <resultMap type="com.chards.committee.domain.PsychologicalCounsellingCase" id="BaseResultMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="stuNum" column="stu_num" jdbcType="VARCHAR"/>
+        <result property="counsellingTime" column="counselling_time" jdbcType="TIMESTAMP"/>
+        <result property="basicJudgment" column="basic_judgment" jdbcType="VARCHAR"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+        <result property="referral" column="referral" jdbcType="VARCHAR"/>
+        <result property="has_diagnosis" column="hasDiagnosis" jdbcType="BOOLEAN"/>
+        <result property="diagnosisAndAdvice" column="diagnosis_and_advice" jdbcType="VARCHAR"/>
+        <result property="counselor" column="counselor" jdbcType="VARCHAR"/>
+        <result property="attentionLevel" column="attention_level" jdbcType="VARCHAR"/>
+        <result property="isFirstTime" column="is_first_time" jdbcType="BOOLEAN"/>
+        <result property="isFinished" column="is_finished" jdbcType="BOOLEAN"/>
+        <result property="result" column="result" jdbcType="VARCHAR"/>
+        <result property="recorder" column="recorder" jdbcType="VARCHAR"/>
+        <result property="recordedTime" column="recorded_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="getAllByStuNum" resultMap="BaseResultMap">
+        select *
+        from psychological_counselling_case
+        where stu_num = #{stuNum}
+    </select>
+</mapper>

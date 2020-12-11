@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.PsychologicalLevelMapper">
+
+    <resultMap type="com.chards.committee.domain.PsychologicalLevel" id="BaseResultMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="stuNum" column="stu_num" jdbcType="VARCHAR"/>
+        <result property="learningProblem" column="learning_problem" jdbcType="VARCHAR"/>
+        <result property="economicProblem" column="economic_problem" jdbcType="VARCHAR"/>
+        <result property="result" column="abnormal_behavior_problem" jdbcType="VARCHAR"/>
+        <result property="abnormalBehaviorProblem" column="life_event_problem" jdbcType="VARCHAR"/>
+        <result property="personalityProblem" column="personality_problem" jdbcType="VARCHAR"/>
+        <result property="epidemicPsychologicalProblem" column="epidemic_psychological_problem" jdbcType="VARCHAR"/>
+        <result property="level" column="level" jdbcType="VARCHAR"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="basis" column="basis" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="recorder" column="recorder" jdbcType="VARCHAR"/>
+        <result property="recordedTime" column="recorded_time" jdbcType="TIMESTAMP"/>
+        <result property="checkStatus" column="check_status" jdbcType="INTEGER"/>
+        <result property="reviewer" column="reviewer" jdbcType="VARCHAR"/>
+        <result property="instruction" column="instruction" jdbcType="VARCHAR"/>
+        <result property="checkTime" column="check_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <update id="checkStatus">
+        update psychological_level
+        set check_status = #{checkStatus}, reviewer = #{reviewer},
+            instruction = #{instruction}, check_time = #{checkTime}
+        where id = #{id}
+    </update>
+
+    <update id="updatePsyLevelById" parameterType="com.chards.committee.vo.PsychologicalLevelUpdateVO">
+        update psychological_level
+        <set>
+            <if test="learningProblem != null">
+                learning_problem = #{learningProblem},
+            </if>
+            <if test="economicProblem != null">
+                economic_problem = #{economicProblem},
+            </if>
+            <if test="abnormalBehaviorProblem != null">
+                abnormal_behavior_problem = #{abnormalBehaviorProblem},
+            </if>
+            <if test="lifeEventProblem != null">
+                life_event_problem = #{lifeEventProblem},
+            </if>
+            <if test="personality_problem != null">
+                personality_problem = #{personalityProblem},
+            </if>
+            <if test="epidemicPsychologicalProblem != null">
+                epidemic_psychological_problem = #{epidemicPsychologicalProblem},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+            <if test="basis != null">
+                basis = #{basis},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
+            <if test="recordedTime != null">
+                recorded_time = #{recordedTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getPsychologicalLevelPage" resultType="com.chards.committee.domain.PsychologicalLevel">
+        select * from psychological_level
+        where
+        <if test = "recorder != ''">
+            recorder = #{recorder} and
+        </if>
+            check_status = #{checkStatus}
+        order by
+        recorded_time desc
+    </select>
+
+</mapper>
