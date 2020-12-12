@@ -106,6 +106,23 @@ public class PsychologicalLevelController {
     @PreAuthorize("hasAuthority('student_update')")
     @PutMapping("/updatePsyLevel")
     public R updatePsyLevelById(@RequestBody @Valid PsychologicalLevelUpdateVO psychologicalLevelUpdateVO){
+        /**
+         * 进行审核状态的判断，如果是审核通过则不可以在更新
+         * 还要进行recorder 和 登录人 id的判断  一样才可以更新这里的问题
+         */
+        if (psychologicalLevelUpdateVO.getId() == null){
+            return R.failure(Code.PARAM_NOT_COMPLETE);
+        }
+        PsychologicalLevel psychologicalLevel = psychologicalLevelService.getById(psychologicalLevelUpdateVO.getId());
+        if (psychologicalLevel == null) {
+            return R.failure("定级记录不存在");
+        }
+        if (psychologicalLevel.getCheckStatus() == 1){
+            return R.failure("当前记录已审核通过，不可以再更新");
+        }
+        if (!psychologicalLevel.getRecorder().equals(RequestUtil.getId())){
+            return R.failure(Code.PERMISSION_NO_ACCESS);
+        }
         psychologicalLevelUpdateVO.setRecordedTime(LocalDateTime.now());
         return R.success(psychologicalLevelService.updatePsyLevelById(psychologicalLevelUpdateVO));
     }

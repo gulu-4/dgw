@@ -33,38 +33,38 @@
     <update id="updatePsyLevelById" parameterType="com.chards.committee.vo.PsychologicalLevelUpdateVO">
         update psychological_level
         <set>
-            <if test="learningProblem != null">
-                learning_problem = #{learningProblem},
+            <if test="psychologicalLevelUpdateVO.learningProblem != null">
+                learning_problem = #{psychologicalLevelUpdateVO.learningProblem},
             </if>
-            <if test="economicProblem != null">
-                economic_problem = #{economicProblem},
+            <if test="psychologicalLevelUpdateVO.economicProblem != null">
+                economic_problem = #{psychologicalLevelUpdateVO.economicProblem},
             </if>
-            <if test="abnormalBehaviorProblem != null">
-                abnormal_behavior_problem = #{abnormalBehaviorProblem},
+            <if test="psychologicalLevelUpdateVO.abnormalBehaviorProblem != null">
+                abnormal_behavior_problem = #{psychologicalLevelUpdateVO.abnormalBehaviorProblem},
             </if>
-            <if test="lifeEventProblem != null">
-                life_event_problem = #{lifeEventProblem},
+            <if test="psychologicalLevelUpdateVO.lifeEventProblem != null">
+                life_event_problem = #{psychologicalLevelUpdateVO.lifeEventProblem},
             </if>
-            <if test="personality_problem != null">
-                personality_problem = #{personalityProblem},
+            <if test="psychologicalLevelUpdateVO.personalityProblem != null">
+                personality_problem = #{psychologicalLevelUpdateVO.personalityProblem},
             </if>
-            <if test="epidemicPsychologicalProblem != null">
-                epidemic_psychological_problem = #{epidemicPsychologicalProblem},
+            <if test="psychologicalLevelUpdateVO.epidemicPsychologicalProblem != null">
+                epidemic_psychological_problem = #{psychologicalLevelUpdateVO.epidemicPsychologicalProblem},
             </if>
-            <if test="level != null">
-                level = #{level},
+            <if test="psychologicalLevelUpdateVO.level != null">
+                level = #{psychologicalLevelUpdateVO.level},
             </if>
-            <if test="basis != null">
-                basis = #{basis},
+            <if test="psychologicalLevelUpdateVO.basis != null">
+                basis = #{psychologicalLevelUpdateVO.basis},
             </if>
-            <if test="remark != null">
-                remark = #{remark},
+            <if test="psychologicalLevelUpdateVO.remark != null">
+                remark = #{psychologicalLevelUpdateVO.remark},
             </if>
-            <if test="recordedTime != null">
-                recorded_time = #{recordedTime}
+            <if test="psychologicalLevelUpdateVO.recordedTime != null">
+                recorded_time = #{psychologicalLevelUpdateVO.recordedTime}
             </if>
         </set>
-        where id = #{id}
+        where id = #{psychologicalLevelUpdateVO.id}
     </update>
 
     <select id="getPsychologicalLevelPage" resultType="com.chards.committee.domain.PsychologicalLevel">

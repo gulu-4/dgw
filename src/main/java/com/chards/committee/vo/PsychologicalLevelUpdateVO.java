@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 
 /**
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class PsychologicalLevelUpdateVO {
-    @NotBlank(message = "id不能为空")
+
     private Long id;
     private String learningProblem;
 
