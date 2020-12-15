@@ -53,7 +53,7 @@ public class PsychologicalLevelController {
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getPsychologicalLevelPage")
-    public R getPsychologicalLevelTest(@RequestParam(value = "checkStatus",defaultValue = "0") Integer checkStatus,
+    public R getPsychologicalLevelTest(@RequestParam(value = "checkStatus",defaultValue = "") Integer checkStatus,
                                        @RequestParam(value = "stuNum", defaultValue = "") String stuNum,
                                        Page<PsychologicalLevel> page){
         if (!stuNum.equals("")) {

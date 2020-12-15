@@ -69,14 +69,17 @@
 
     <select id="getPsychologicalLevelPage" resultType="com.chards.committee.domain.PsychologicalLevel">
         select * from psychological_level
-        where
-        <if test = "recorder != ''">
-            recorder = #{recorder} and
-        </if>
-        <if test = "stuNum != ''">
-            stu_num = #{stuNum} and
-        </if>
-            check_status = #{checkStatus}
+        <where>
+            <if test = "recorder != ''">
+                recorder = #{recorder}
+            </if>
+            <if test = "stuNum != ''">
+                And stu_num = #{stuNum}
+            </if>
+            <if test="checkStatus != null">
+                And check_status = #{checkStatus}
+            </if>
+        </where>
         order by
         recorded_time desc
     </select>
