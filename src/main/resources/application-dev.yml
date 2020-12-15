@@ -5,11 +5,11 @@ spring:
     username: root
 #    password: gaoyuan
     password: CUMTdzsw2016
+#    password: 123456
   redis:
 #    host: 49.233.32.252
     host: 127.0.0.1
     port: 6379
-#    password: gaoyuan
 #    password: gaoyuan
 filepath: /photos
 defaultPhoto: default.jpg

@@ -8,6 +8,7 @@ import com.chards.committee.vo.PsychologicalLevelUpdateVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author LiuSu
@@ -24,5 +25,8 @@ public interface PsychologicalLevelMapper extends BaseMapper<PsychologicalLevel>
 
     Page<PsychologicalLevel> getPsychologicalLevelPage(@Param("page") Page<PsychologicalLevel> page,
                                                        @Param("checkStatus") Integer checkStatus,
-                                                       @Param("recorder") String recorder);
+                                                       @Param("recorder") String recorder,
+                                                       @Param("stuNum") String stuNum);
+
+    List<PsychologicalLevel> getPsychologicalLevelByStuNum(@Param("stuNum") String stuNum);
 }

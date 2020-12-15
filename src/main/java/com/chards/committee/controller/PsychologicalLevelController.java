@@ -6,10 +6,7 @@ import com.chards.committee.service.PsychologicalLevelService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.Code;
-import com.chards.committee.vo.PsychologicalLevelInsertVO;
-import com.chards.committee.vo.PsychologicalLevelUpdateVO;
-import com.chards.committee.vo.R;
+import com.chards.committee.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -57,18 +54,24 @@ public class PsychologicalLevelController {
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getPsychologicalLevelPage")
     public R getPsychologicalLevelTest(@RequestParam(value = "checkStatus",defaultValue = "0") Integer checkStatus,
+                                       @RequestParam(value = "stuNum", defaultValue = "") String stuNum,
                                        Page<PsychologicalLevel> page){
+        if (!stuNum.equals("")) {
+            if (!stuInfoService.isContainsReturnIsWork(stuNum)){
+                return R.failure(Code.PERMISSION_NO_ACCESS);
+            }
+        }
         // 获取登录账号的id
         String recorder = RequestUtil.getLoginUser().getId();
         // 首先判断是否是学工处账号
         List<String> roles = RequestUtil.getRoles();
-        for (String role : roles){
-            if (role.equals("XUEGONG")){
+        for (String role : roles) {
+            if (role.equals("XUEGONG")) {
                 recorder = "";
                 break;
             }
         }
-        return R.success(psychologicalLevelService.getPsychologicalLevelPage(page,checkStatus,recorder));
+        return R.success(psychologicalLevelService.getPsychologicalLevelPage(page, checkStatus, recorder, stuNum));
     }
 
     /**
@@ -86,17 +89,30 @@ public class PsychologicalLevelController {
     /**
      * 通过学生学号获取定级记录
      */
+    @PreAuthorize("hasAuthority('student_select')")
+    @GetMapping("/getPsychologicalLevelGetByStuNumVO")
+    public R getPsyLevelById(@RequestParam String stuNum) {
+        if (stuInfoService.isContainsReturnIsWork(stuNum)) {
+            return R.success(psychologicalLevelService.getPsychologicalLevelGetByStuNumVO(stuNum));
+        }
+        return R.failure(Code.PERMISSION_NO_ACCESS);
+    }
 
     /**
      * 心理中心对定级表的审核，通过记录id
      */
     @PreAuthorize("hasRole('XUEGONG')")
     @PutMapping("/chekStatus")
-    public R checkStatus(@RequestParam Long id,
-                         @RequestParam Integer checkStatus,
-                         @RequestParam(required = false) String instruction){
+    public R checkStatus(@RequestBody PsychologicalLevelCheckStatusVO psychologicalLevelCheckStatusVO){
+        if (psychologicalLevelCheckStatusVO.getId() == null){
+            return R.failure(Code.PARAM_NOT_COMPLETE);
+        }
+        PsychologicalLevel psychologicalLevel = psychologicalLevelService.getById(psychologicalLevelCheckStatusVO.getId());
+        if (psychologicalLevel == null) {
+            return R.failure("定级记录不存在");
+        }
         String reviewer = RequestUtil.getLoginUser().getId();
-        return R.success(psychologicalLevelService.checkStatus(id,checkStatus,reviewer,instruction));
+        return R.success(psychologicalLevelService.checkStatus(psychologicalLevelCheckStatusVO,reviewer));
     }
 
     /**

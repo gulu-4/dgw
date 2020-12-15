@@ -7,8 +7,8 @@
         <result property="stuNum" column="stu_num" jdbcType="VARCHAR"/>
         <result property="learningProblem" column="learning_problem" jdbcType="VARCHAR"/>
         <result property="economicProblem" column="economic_problem" jdbcType="VARCHAR"/>
-        <result property="result" column="abnormal_behavior_problem" jdbcType="VARCHAR"/>
-        <result property="abnormalBehaviorProblem" column="life_event_problem" jdbcType="VARCHAR"/>
+        <result property="abnormalBehaviorProblem" column="abnormal_behavior_problem" jdbcType="VARCHAR"/>
+        <result property="lifeEventProblem" column="life_event_problem" jdbcType="VARCHAR"/>
         <result property="personalityProblem" column="personality_problem" jdbcType="VARCHAR"/>
         <result property="epidemicPsychologicalProblem" column="epidemic_psychological_problem" jdbcType="VARCHAR"/>
         <result property="level" column="level" jdbcType="VARCHAR"/>
@@ -73,9 +73,19 @@
         <if test = "recorder != ''">
             recorder = #{recorder} and
         </if>
+        <if test = "stuNum != ''">
+            stu_num = #{stuNum} and
+        </if>
             check_status = #{checkStatus}
         order by
         recorded_time desc
+    </select>
+
+    <select id="getPsychologicalLevelByStuNum" resultMap="BaseResultMap">
+        select *
+        from psychological_level
+        where stu_num = #{stuNum}
+        order by update_time asc
     </select>
 
 </mapper>
