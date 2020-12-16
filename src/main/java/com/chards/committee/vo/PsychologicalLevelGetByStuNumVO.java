@@ -41,9 +41,17 @@ public class PsychologicalLevelGetByStuNumVO {
 
     private Date updateTime;   // 当前级别时间
 
+    private CoreAdminBasicVO recorder; // 当前级别定级老师工号和姓名
+
+    private CoreAdminBasicVO reviewer; // 当前级别审核老师工号和姓名
+
     private Date initTime;   // 初定级别时间
 
     private String initLevel;  // 初定级别
+
+    private CoreAdminBasicVO initRecorder; //初定级别定级老师工号和姓名
+
+    private CoreAdminBasicVO initReviewer; //初定级别审核老师工号和姓名
 
     private String basis;  // 分级依据
 
