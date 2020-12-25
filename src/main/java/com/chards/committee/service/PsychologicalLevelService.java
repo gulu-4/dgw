@@ -7,10 +7,7 @@ import com.chards.committee.domain.PsychologicalInvention;
 import com.chards.committee.domain.PsychologicalLevel;
 import com.chards.committee.domain.StuInfo;
 import com.chards.committee.mapper.PsychologicalLevelMapper;
-import com.chards.committee.vo.CoreAdminBasicVO;
-import com.chards.committee.vo.PsychologicalLevelCheckStatusVO;
-import com.chards.committee.vo.PsychologicalLevelGetByStuNumVO;
-import com.chards.committee.vo.PsychologicalLevelUpdateVO;
+import com.chards.committee.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,9 +54,22 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
 
     /**
      * 根据审核状态分页获取数据
+     * v2 添加字段判断学生是否是第一次进行关爱
      */
-    public Page<PsychologicalLevel> getPsychologicalLevelPage(Page<PsychologicalLevel> page,Integer checkStatus,String recorder,String stuNum) {
-        return baseMapper.getPsychologicalLevelPage(page,checkStatus,recorder,stuNum);
+    public Page<PsychologicalLevelCheckSelectVO> getPsychologicalLevelPage(Page<PsychologicalLevelCheckSelectVO> page, Integer checkStatus, String recorder, String stuNum) {
+        // 判断是否是第一次进行关爱
+        Page<PsychologicalLevelCheckSelectVO> psychologicalLevelCheckSelectVOPage = baseMapper.getPsychologicalLevelPage(page,checkStatus,recorder,stuNum);
+        List<PsychologicalLevelCheckSelectVO> pSList = psychologicalLevelCheckSelectVOPage.getRecords();
+        for (PsychologicalLevelCheckSelectVO psychologicalLevelCheckSelectVO : pSList){
+            List<PsychologicalLevel> levels = psychologicalLevelMapper.getPsychologicalLevelByStuNum(psychologicalLevelCheckSelectVO.getStuNum());
+            if (levels.size() > 1) {
+                // 大于1说明不是第一次进行关爱
+                psychologicalLevelCheckSelectVO.setIsFirstCare(false);
+            }else{
+                psychologicalLevelCheckSelectVO.setIsFirstCare(true);
+            }
+        }
+        return psychologicalLevelCheckSelectVOPage;
     }
 
     /**
@@ -68,20 +78,15 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
     public PsychologicalLevelGetByStuNumVO getPsychologicalLevelGetByStuNumVO(String stuNum){
         PsychologicalLevelGetByStuNumVO psychologicalLevelGetByStuNumVO = new PsychologicalLevelGetByStuNumVO();
         // 获取psychologicalLevels
-        List<PsychologicalLevel> psychologicalLevels = isCheckedTrue(psychologicalLevelMapper.getPsychologicalLevelByStuNum(stuNum));
         // 必须是已经审核通过了才能返回，否则不可以进行返回
+        List<PsychologicalLevel> psychologicalLevels = isCheckedTrue(psychologicalLevelMapper.getPsychologicalLevelByStuNum(stuNum));
         if (!psychologicalLevels.isEmpty()){
-            PsychologicalLevel initPL = psychologicalLevels.get(0);
-            PsychologicalLevel nowPL = psychologicalLevels.get(psychologicalLevels.size() - 1);
-            BeanUtils.copyProperties(nowPL,psychologicalLevelGetByStuNumVO);
-            // 通过初始recorder 和 reviewer 获取老师信息
-            psychologicalLevelGetByStuNumVO.setInitRecorder(getCoreAdminBasic(initPL.getRecorder()));
-            psychologicalLevelGetByStuNumVO.setInitReviewer(getCoreAdminBasic(initPL.getReviewer()));
-            psychologicalLevelGetByStuNumVO.setInitLevel(initPL.getLevel());
-            psychologicalLevelGetByStuNumVO.setInitTime(initPL.getUpdateTime());
+            PsychologicalLevel psychologicalLevel = psychologicalLevels.get(0);
+            BeanUtils.copyProperties(psychologicalLevel,psychologicalLevelGetByStuNumVO);
+
             // 通过当前recorder 和 reviewer 获取老师信息
-            psychologicalLevelGetByStuNumVO.setRecorder(getCoreAdminBasic(nowPL.getRecorder()));
-            psychologicalLevelGetByStuNumVO.setReviewer(getCoreAdminBasic(nowPL.getReviewer()));
+            psychologicalLevelGetByStuNumVO.setRecorder(getCoreAdminBasic(psychologicalLevel.getRecorder()));
+            psychologicalLevelGetByStuNumVO.setReviewer(getCoreAdminBasic(psychologicalLevel.getReviewer()));
             // 获取学生信息
             StuInfo stuInfo = stuInfoService.getById(stuNum);
             psychologicalLevelGetByStuNumVO.setDepartment(stuInfo.getDepartment());

@@ -3,6 +3,7 @@ package com.chards.committee.vo;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -29,7 +30,11 @@ public class PsychologicalLevelInsertVO {
     @NotBlank(message = "当前级别不能为空")
     private String level;
 
-    private Date updateTime;
+    @NotBlank(message = "初定级别不能为空")
+    private String initLevel;
+
+    @NotNull(message = "初定时间不能为空")
+    private Date initTime;
 
     @NotBlank(message = "分级依据不能为空")
     private String basis;

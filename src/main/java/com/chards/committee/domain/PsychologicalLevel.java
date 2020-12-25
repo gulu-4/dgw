@@ -50,8 +50,11 @@ public class PsychologicalLevel extends Model<PsychologicalLevel> {
     @TableField("level")
     private String level;
 
-    @TableField("update_time")
-    private Date updateTime;
+    @TableField("initLevel")
+    private String initLevel;
+
+    @TableField("initTime")
+    private Date initTime;
 
     @TableField("basis")
     private String basis;
@@ -63,7 +66,7 @@ public class PsychologicalLevel extends Model<PsychologicalLevel> {
     private String recorder;
 
     @TableField("recorded_time")
-    private LocalDateTime recordedTime;
+    private Date recordedTime;
 
     @TableField("check_status")
     private Integer checkStatus;  // 0 -1 1

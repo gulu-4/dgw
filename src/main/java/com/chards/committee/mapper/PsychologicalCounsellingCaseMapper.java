@@ -11,5 +11,7 @@ import java.util.List;
  * @create 2020/12/11 16:56
  */
 public interface PsychologicalCounsellingCaseMapper extends BaseMapper<PsychologicalCounsellingCase> {
-    List<PsychologicalCounsellingCase> getAllByStuNum(@Param("stuNum") String stuNum);
+    List<PsychologicalCounsellingCase> getAllByStuNum(@Param("stuNum") String stuNum,
+                                                      @Param("startTime") String startTime,
+                                                      @Param("endTime") String endTime);
 }

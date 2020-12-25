@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.PsychologicalLevel;
 import com.chards.committee.dto.AdminWorkDTO;
+import com.chards.committee.vo.PsychologicalLevelCheckSelectVO;
 import com.chards.committee.vo.PsychologicalLevelUpdateVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,7 +24,7 @@ public interface PsychologicalLevelMapper extends BaseMapper<PsychologicalLevel>
 
     int updatePsyLevelById(@Param("psychologicalLevelUpdateVO")PsychologicalLevelUpdateVO psychologicalLevelUpdateVO);
 
-    Page<PsychologicalLevel> getPsychologicalLevelPage(@Param("page") Page<PsychologicalLevel> page,
+    Page<PsychologicalLevelCheckSelectVO> getPsychologicalLevelPage(@Param("page") Page<PsychologicalLevelCheckSelectVO> page,
                                                        @Param("checkStatus") Integer checkStatus,
                                                        @Param("recorder") String recorder,
                                                        @Param("stuNum") String stuNum);

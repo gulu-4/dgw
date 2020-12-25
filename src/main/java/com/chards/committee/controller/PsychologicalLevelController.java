@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,7 +42,7 @@ public class PsychologicalLevelController {
             PsychologicalLevel psychologicalLevel = new PsychologicalLevel();
             BeanUtils.copyProperties(psychologicalLevelInsertVO,psychologicalLevel);
             // 填写者和填写时间都是后台获取
-            psychologicalLevel.setRecordedTime(LocalDateTime.now());
+            psychologicalLevel.setRecordedTime(new Date());
             psychologicalLevel.setRecorder(RequestUtil.getLoginUser().getId());
             return R.success(psychologicalLevelService.save(psychologicalLevel));
         }
@@ -50,12 +51,13 @@ public class PsychologicalLevelController {
 
     /**
      * 辅导员及学工处获取定级记录
+     * v2 这里需要返回一个字段判断该某个学生是不是第一次添加关爱情况
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getPsychologicalLevelPage")
     public R getPsychologicalLevelTest(@RequestParam(value = "checkStatus",defaultValue = "") Integer checkStatus,
                                        @RequestParam(value = "stuNum", defaultValue = "") String stuNum,
-                                       Page<PsychologicalLevel> page){
+                                       Page<PsychologicalLevelCheckSelectVO> page){
         if (!stuNum.equals("")) {
             if (!stuInfoService.isContainsReturnIsWork(stuNum)){
                 return R.failure(Code.PERMISSION_NO_ACCESS);
@@ -75,7 +77,7 @@ public class PsychologicalLevelController {
     }
 
     /**
-     * 通过id获取顶级记录
+     * 通过id获取定级记录
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getPsyLevelById/{id}")
@@ -141,6 +143,21 @@ public class PsychologicalLevelController {
         }
         psychologicalLevelUpdateVO.setRecordedTime(LocalDateTime.now());
         return R.success(psychologicalLevelService.updatePsyLevelById(psychologicalLevelUpdateVO));
+    }
+
+    /**
+     * 通过删选条件获取心理定级记录
+     * a. 筛选标准
+     *  ⅰ. 学院
+     *  ⅱ. 年级
+     *  ⅲ. 类别   与线索
+     *  ⅳ. 级别
+     * 在查询界面，每个学生只显示一条等级信息（后台直接取最新的一条即可））
+     */
+    @PreAuthorize("hasAuthority('student_select')")
+    @GetMapping("getPsychologicalLevelByParams")
+    public R getPsychologicalLevelByParams() {
+        return null;
     }
 
 }

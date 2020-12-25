@@ -1,5 +1,4 @@
-/application-dev.yml
-/applicaiton.yml
+*.yml
 /target
 /.idea
 newCommittee.iml

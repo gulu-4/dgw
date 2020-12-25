@@ -6,6 +6,7 @@ import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.PsychologicalCounsellingCaseInsertVO;
+import com.chards.committee.vo.PsychologicalCounsellingCaseSelectVO;
 import com.chards.committee.vo.R;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,14 +54,13 @@ public class PsychologicalCounsellingCaseController {
 
     /**
      * 通过学生学号获取所有该学生咨询记录和测试记录
-     * @param stuNum 学生学号
      * @return
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getAll")
-    public R getAll(@RequestParam String stuNum){
-        if (stuInfoService.isContainsReturnIsWork(stuNum)){
-            return R.success(psychologicalCounsellingCaseService.getAll(stuNum));
+    public R getAll(@RequestBody PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO){
+        if (stuInfoService.isContainsReturnIsWork(psychologicalCounsellingCaseSelectVO.getStuNum())){
+            return R.success(psychologicalCounsellingCaseService.getAll(psychologicalCounsellingCaseSelectVO));
         }
         return R.failure(Code.PERMISSION_NO_ACCESS);
     }
