@@ -24,6 +24,12 @@
         <result property="checkTime" column="check_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <sql id="dateArea">
+        and unix_timestamp(psychological_level.recorded_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.startTime,jdbcType=VARCHAR})
+        and unix_timestamp(psychological_level.recorded_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.endTime,jdbcType=VARCHAR})
+
+    </sql>
+
     <update id="checkStatus">
         update psychological_level
         set check_status = #{checkStatus}, reviewer = #{reviewer},
@@ -90,6 +96,58 @@
         from psychological_level
         where stu_num = #{stuNum}
         order by recorded_time desc
+    </select>
+
+    <select id="getPsychologicalLevelByParams" resultType="com.chards.committee.vo.PsychologicalLevelGetByStuNumVO">
+        select p1.*,
+        s.name,
+        s.gender,
+        s.classes ,
+        s.department
+        from psychological_level as p1
+        inner join stu_info as s on p1.stu_num = s.id
+        inner join (SELECT *,max(recorded_time) as max_time
+        FROM psychological_level  group by stu_num) p2 on p1.recorded_time = p2.max_time and p1.stu_num=p2.stu_num
+        <where>
+            <if test="psychologicalLQNPVO.department != null">
+                And s.department = #{psychologicalLQNPVO.department}
+            </if>
+            <if test="psychologicalLQNPVO.grade != null">
+                And s.grade = #{psychologicalLQNPVO.grade}
+            </if>
+            <if test="psychologicalLQNPVO.learningProblem != null">
+                And p1.learning_problem != "" And p1.learning_problem is not null
+            </if>
+            <if test="psychologicalLQNPVO.economicProblem != null">
+                And p1.economicProblem != "" And p1.economicProblem is not null
+            </if>
+            <if test="psychologicalLQNPVO.abnormalBehaviorProblem != null">
+                And p1.abnormalBehaviorProblem != "" And p1.abnormalBehaviorProblem is not null
+            </if>
+            <if test="psychologicalLQNPVO.lifeEventProblem != null">
+                And p1.lifeEventProblem != "" And p1.lifeEventProblem is not null
+            </if>
+            <if test="psychologicalLQNPVO.personalityProblem != null">
+                And p1.personalityProblem != "" And p1.personalityProblem is not null
+            </if>
+            <if test="psychologicalLQNPVO.epidemicPsychologicalProblem != null">
+                And p1.epidemicPsychologicalProblem != "" And p1.epidemicPsychologicalProblem is not null
+            </if>
+            <if test="psychologicalLQNPVO.clues != null">
+                And
+                <foreach item="item" collection="psychologicalLQNPVO.clues" open="(" close=")" separator="Or" index="index">
+                    (p1.learning_problem REGEXP #{item}
+                    Or p1.economic_problem REGEXP #{item}
+                    Or p1.abnormal_behavior_problem REGEXP #{item}
+                    Or p1.life_event_problem REGEXP #{item}
+                    Or p1.personality_problem REGEXP #{item}
+                    Or p1.epidemic_psychological_problem REGEXP #{item})
+                </foreach>
+            </if>
+            <if test="psychologicalLQNPVO.level != null">
+                And p1.level = #{level}
+            </if>
+        </where>
     </select>
 
 </mapper>

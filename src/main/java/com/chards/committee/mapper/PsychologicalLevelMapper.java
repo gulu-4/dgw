@@ -3,8 +3,9 @@ package com.chards.committee.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.PsychologicalLevel;
-import com.chards.committee.dto.AdminWorkDTO;
 import com.chards.committee.vo.PsychologicalLevelCheckSelectVO;
+import com.chards.committee.vo.PsychologicalLevelGetByStuNumVO;
+import com.chards.committee.vo.PsychologicalLevelQueryNewParamVO;
 import com.chards.committee.vo.PsychologicalLevelUpdateVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -30,4 +31,7 @@ public interface PsychologicalLevelMapper extends BaseMapper<PsychologicalLevel>
                                                        @Param("stuNum") String stuNum);
 
     List<PsychologicalLevel> getPsychologicalLevelByStuNum(@Param("stuNum") String stuNum);
+
+    Page<PsychologicalLevelGetByStuNumVO> getPsychologicalLevelByParams(@Param("page") Page<PsychologicalLevelGetByStuNumVO> page,
+                                                                        @Param("psychologicalLQNPVO") PsychologicalLevelQueryNewParamVO psychologicalLQNPVO);
 }

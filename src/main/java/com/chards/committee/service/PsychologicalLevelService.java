@@ -85,8 +85,8 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
             BeanUtils.copyProperties(psychologicalLevel,psychologicalLevelGetByStuNumVO);
 
             // 通过当前recorder 和 reviewer 获取老师信息
-            psychologicalLevelGetByStuNumVO.setRecorder(getCoreAdminBasic(psychologicalLevel.getRecorder()));
-            psychologicalLevelGetByStuNumVO.setReviewer(getCoreAdminBasic(psychologicalLevel.getReviewer()));
+            psychologicalLevelGetByStuNumVO.setRecorders(getCoreAdminBasic(psychologicalLevel.getRecorder()));
+            psychologicalLevelGetByStuNumVO.setReviewers(getCoreAdminBasic(psychologicalLevel.getReviewer()));
             // 获取学生信息
             StuInfo stuInfo = stuInfoService.getById(stuNum);
             psychologicalLevelGetByStuNumVO.setDepartment(stuInfo.getDepartment());
@@ -100,6 +100,30 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
         }else{
             return null;
         }
+    }
+
+    /**
+     * 根据筛选条件查询定级记录
+     */
+    public Page<PsychologicalLevelGetByStuNumVO> getPsychologicalLevelByParams(Page<PsychologicalLevelGetByStuNumVO> page,
+                                                                               PsychologicalLevelQueryNewParamVO psychologicalLQNPVO){
+        // 封装参数，对线索进行正则匹配
+        if (psychologicalLQNPVO.getClues()!=null){
+            for (int i = 0;i < psychologicalLQNPVO.getClues().size(); i++){
+                String clue = psychologicalLQNPVO.getClues().get(i);
+                psychologicalLQNPVO.getClues().set(i,"(^|[^0-9])"+ clue +"[^0-9]");
+            }
+        }
+
+        // 需要对返回的数据进行记录者的处理
+        Page<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOPage = baseMapper.getPsychologicalLevelByParams(page,psychologicalLQNPVO);
+        List<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOList = psychologicalLevelGetByStuNumVOPage.getRecords();
+        for (PsychologicalLevelGetByStuNumVO psychologicalLevelGetByStuNumVO : psychologicalLevelGetByStuNumVOList){
+            // 通过当前recorder 和 reviewer 获取老师信息
+            psychologicalLevelGetByStuNumVO.setRecorders(getCoreAdminBasic(psychologicalLevelGetByStuNumVO.getRecorder()));
+            psychologicalLevelGetByStuNumVO.setReviewers(getCoreAdminBasic(psychologicalLevelGetByStuNumVO.getReviewer()));
+        }
+        return psychologicalLevelGetByStuNumVOPage;
     }
 
 

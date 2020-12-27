@@ -150,14 +150,15 @@ public class PsychologicalLevelController {
      * a. 筛选标准
      *  ⅰ. 学院
      *  ⅱ. 年级
-     *  ⅲ. 类别   与线索
+     *  ⅲ. 类别（设计一个type数组，可以存储多个问题类别）与线索（六个类别里只要有一个有就返回）
      *  ⅳ. 级别
-     * 在查询界面，每个学生只显示一条等级信息（后台直接取最新的一条即可））
+     * 在查询界面，每个学生只显示一条等级信息（后台直接取最新的一条即可）
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("getPsychologicalLevelByParams")
-    public R getPsychologicalLevelByParams() {
-        return null;
+    public R getPsychologicalLevelByParams(@RequestBody PsychologicalLevelQueryNewParamVO psychologicalLQNPVO,
+                                           Page<PsychologicalLevelGetByStuNumVO> page) {
+        return R.success(psychologicalLevelService.getPsychologicalLevelByParams(page,psychologicalLQNPVO));
     }
 
 }
