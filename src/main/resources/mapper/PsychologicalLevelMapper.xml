@@ -119,19 +119,19 @@
                 And p1.learning_problem != "" And p1.learning_problem is not null
             </if>
             <if test="psychologicalLQNPVO.economicProblem != null">
-                And p1.economicProblem != "" And p1.economicProblem is not null
+                And p1.economic_problem != "" And p1.economic_problem is not null
             </if>
             <if test="psychologicalLQNPVO.abnormalBehaviorProblem != null">
-                And p1.abnormalBehaviorProblem != "" And p1.abnormalBehaviorProblem is not null
+                And p1.abnormal_behavior_problem != "" And p1.abnormal_behavior_problem is not null
             </if>
             <if test="psychologicalLQNPVO.lifeEventProblem != null">
-                And p1.lifeEventProblem != "" And p1.lifeEventProblem is not null
+                And p1.life_event_problem != "" And p1.life_event_problem is not null
             </if>
             <if test="psychologicalLQNPVO.personalityProblem != null">
-                And p1.personalityProblem != "" And p1.personalityProblem is not null
+                And p1.personality_problem != "" And p1.personality_problem is not null
             </if>
             <if test="psychologicalLQNPVO.epidemicPsychologicalProblem != null">
-                And p1.epidemicPsychologicalProblem != "" And p1.epidemicPsychologicalProblem is not null
+                And p1.epidemic_psychological_problem != "" And p1.epidemic_psychological_problem is not null
             </if>
             <if test="psychologicalLQNPVO.clues != null">
                 And
@@ -145,7 +145,7 @@
                 </foreach>
             </if>
             <if test="psychologicalLQNPVO.level != null">
-                And p1.level = #{level}
+                And p1.level = #{psychologicalLQNPVO.level}
             </if>
         </where>
     </select>

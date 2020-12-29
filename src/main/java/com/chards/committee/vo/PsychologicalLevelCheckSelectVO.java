@@ -54,4 +54,17 @@ public class PsychologicalLevelCheckSelectVO {
 
     //新增字段判断是否是第一次进行关爱
     private Boolean isFirstCare;
+
+    /**
+     * 下面是学生的基本信息
+     */
+    private String department;  // 学院
+
+    private String classes;   // 班级
+
+    private String name;  // 姓名
+
+    private String gender;  // 性别
+
+    private String grade; //年级
 }

@@ -68,6 +68,13 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
             }else{
                 psychologicalLevelCheckSelectVO.setIsFirstCare(true);
             }
+            // 下面增加学生的基本信息
+            StuInfo stuInfo = stuInfoService.getById(psychologicalLevelCheckSelectVO.getStuNum());
+            psychologicalLevelCheckSelectVO.setDepartment(stuInfo.getDepartment());
+            psychologicalLevelCheckSelectVO.setClasses(stuInfo.getClasses());
+            psychologicalLevelCheckSelectVO.setName(stuInfo.getName());
+            psychologicalLevelCheckSelectVO.setGender(stuInfo.getGender());
+            psychologicalLevelCheckSelectVO.setGrade(stuInfo.getGrade());
         }
         return psychologicalLevelCheckSelectVOPage;
     }
@@ -122,6 +129,8 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
             // 通过当前recorder 和 reviewer 获取老师信息
             psychologicalLevelGetByStuNumVO.setRecorders(getCoreAdminBasic(psychologicalLevelGetByStuNumVO.getRecorder()));
             psychologicalLevelGetByStuNumVO.setReviewers(getCoreAdminBasic(psychologicalLevelGetByStuNumVO.getReviewer()));
+            // 为每个记录增加学生干预情况
+            psychologicalLevelGetByStuNumVO.setPsychologicalInventionList(psychologicalInventionService.getInventionsByStuNum(psychologicalLevelGetByStuNumVO.getStuNum()));
         }
         return psychologicalLevelGetByStuNumVOPage;
     }
