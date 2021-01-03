@@ -50,7 +50,8 @@ public class PsychologicalLevelController {
     }
 
     /**
-     * 辅导员及学工处获取定级记录
+     * 辅导员及学工处获取定级记录（即操作记录，包含所有提交过的信息）
+     * 修改一下：辅导员能获取到该年级的所有同学的定级记录，而不是只能获取到其自己提交的定级记录——21.1.1，poplar
      * v2 这里需要返回一个字段判断该某个学生是不是第一次添加关爱情况
      */
     @PreAuthorize("hasAuthority('student_select')")
@@ -63,17 +64,18 @@ public class PsychologicalLevelController {
                 return R.failure(Code.PERMISSION_NO_ACCESS);
             }
         }
-        // 获取登录账号的id
-        String recorder = RequestUtil.getLoginUser().getId();
-        // 首先判断是否是学工处账号
-        List<String> roles = RequestUtil.getRoles();
-        for (String role : roles) {
-            if (role.equals("XUEGONG")) {
-                recorder = "";
-                break;
-            }
-        }
-        return R.success(psychologicalLevelService.getPsychologicalLevelPage(page, checkStatus, recorder, stuNum));
+//        // 获取登录账号的id
+//        String recorder = RequestUtil.getLoginUser().getId();
+//        // 首先判断是否是学工处账号
+//        List<String> roles = RequestUtil.getRoles();
+//        for (String role : roles) {
+//            if (role.equals("XUEGONG")) {
+//                recorder = "";
+//                break;
+//            }
+//        }
+//        return R.success(psychologicalLevelService.getPsychologicalLevelPage(page, checkStatus, recorder, stuNum));
+          return R.success(psychologicalLevelService.getPsychologicalLevelPage(page, checkStatus, stuNum));
     }
 
     /**
@@ -146,7 +148,7 @@ public class PsychologicalLevelController {
     }
 
     /**
-     * 通过删选条件获取心理定级记录
+     * 通过筛选条件获取心理定级记录
      * a. 筛选标准
      *  ⅰ. 学院
      *  ⅱ. 年级
@@ -156,9 +158,8 @@ public class PsychologicalLevelController {
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("getPsychologicalLevelByParams")
-    public R getPsychologicalLevelByParams(@RequestBody PsychologicalLevelQueryNewParamVO psychologicalLQNPVO,
+    public R getPsychologicalLevelByParams(PsychologicalLevelQueryNewParamVO psychologicalLQNPVO,
                                            Page<PsychologicalLevelGetByStuNumVO> page) {
         return R.success(psychologicalLevelService.getPsychologicalLevelByParams(page,psychologicalLQNPVO));
     }
-
 }

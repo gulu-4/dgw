@@ -1,6 +1,8 @@
 package com.chards.committee.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,6 +36,8 @@ public class PsychologicalLevelInsertVO {
     private String initLevel;
 
     @NotNull(message = "初定时间不能为空")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date initTime;
 
     @NotBlank(message = "分级依据不能为空")

@@ -40,6 +40,7 @@
     <update id="updatePsyLevelById" parameterType="com.chards.committee.vo.PsychologicalLevelUpdateVO">
         update psychological_level
         <set>
+            check_status=0,
             <if test="psychologicalLevelUpdateVO.learningProblem != null">
                 learning_problem = #{psychologicalLevelUpdateVO.learningProblem},
             </if>
@@ -74,7 +75,8 @@
         where id = #{psychologicalLevelUpdateVO.id}
     </update>
 
-    <select id="getPsychologicalLevelPage" resultType="com.chards.committee.vo.PsychologicalLevelCheckSelectVO">
+<!--没加更新权限控制前的版本-->
+    <select id="getPsychologicalLevelPage_original" resultType="com.chards.committee.vo.PsychologicalLevelCheckSelectVO">
         select * from psychological_level
         <where>
             <if test = "recorder != ''">
@@ -91,6 +93,48 @@
         recorded_time desc
     </select>
 
+    <sql id="psychologicalLevelPage">
+        select * from psychological_level as p
+        inner join stu_info as s on s.id = p.stu_num
+        <where>
+            <if test = "param.stuNum != ''">
+                And p.stu_num = #{param.stuNum}
+            </if>
+            <if test="param.checkStatus != null">
+                And p.check_status = #{param.checkStatus}
+            </if>
+        </where>
+
+    </sql>
+    <select id="getPsychologicalLevelPage" resultType="com.chards.committee.vo.PsychologicalLevelCheckSelectVO">
+        <if test="param.adminWorkDTO.identity == 1  ">
+            <include refid="psychologicalLevelPage"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity == 2  ">
+            <include refid="psychologicalLevelPage"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity != 1 and  param.adminWorkDTO.identity != 2">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="psychologicalLevelPage"></include>
+                <if test="item == '研究生'">
+                    and s.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and s.education_background='本科'
+                    and s.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and s.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+        order by
+        recorded_time desc
+    </select>
+
     <select id="getPsychologicalLevelByStuNum" resultMap="BaseResultMap">
         select *
         from psychological_level
@@ -98,7 +142,10 @@
         order by recorded_time desc
     </select>
 
-    <select id="getPsychologicalLevelByParams" resultType="com.chards.committee.vo.PsychologicalLevelGetByStuNumVO">
+
+
+<!--此处为之前没有管理员权限控制的版本-->
+    <select id="getPsychologicalLevelByParams_original" resultType="com.chards.committee.vo.PsychologicalLevelGetByStuNumVO">
         select p1.*,
         s.name,
         s.gender,
@@ -107,8 +154,11 @@
         from psychological_level as p1
         inner join stu_info as s on p1.stu_num = s.id
         inner join (SELECT *,max(recorded_time) as max_time
-        FROM psychological_level  group by stu_num) p2 on p1.recorded_time = p2.max_time and p1.stu_num=p2.stu_num
+        FROM psychological_level WHERE check_status=1 group by stu_num) p2 on p1.recorded_time = p2.max_time and p1.stu_num=p2.stu_num
         <where>
+            <if test="psychologicalLQNPVO.stuNum != null">
+                And s.id = #{psychologicalLQNPVO.stuNum}
+            </if>
             <if test="psychologicalLQNPVO.department != null">
                 And s.department = #{psychologicalLQNPVO.department}
             </if>
@@ -150,4 +200,86 @@
         </where>
     </select>
 
+    <sql id="psychologicalLevelByParams">
+        select p1.*,
+        s.name,
+        s.gender,
+        s.classes ,
+        s.department
+        from psychological_level as p1
+        inner join stu_info as s on p1.stu_num = s.id
+        inner join (SELECT *,max(recorded_time) as max_time
+        FROM psychological_level WHERE check_status=1 group by stu_num) p2 on p1.recorded_time = p2.max_time and p1.stu_num=p2.stu_num
+        <where>
+            <if test="psychologicalLGD.stuNum != null">
+                And s.id = #{psychologicalLGD.stuNum}
+            </if>
+            <if test="psychologicalLGD.department != null">
+                And s.department = #{psychologicalLGD.department}
+            </if>
+            <if test="psychologicalLGD.grade != null">
+                And s.grade = #{psychologicalLGD.grade}
+            </if>
+            <if test="psychologicalLGD.learningProblem != null">
+                And p1.learning_problem != "" And p1.learning_problem is not null
+            </if>
+            <if test="psychologicalLGD.economicProblem != null">
+                And p1.economic_problem != "" And p1.economic_problem is not null
+            </if>
+            <if test="psychologicalLGD.abnormalBehaviorProblem != null">
+                And p1.abnormal_behavior_problem != "" And p1.abnormal_behavior_problem is not null
+            </if>
+            <if test="psychologicalLGD.lifeEventProblem != null">
+                And p1.life_event_problem != "" And p1.life_event_problem is not null
+            </if>
+            <if test="psychologicalLGD.personalityProblem != null">
+                And p1.personality_problem != "" And p1.personality_problem is not null
+            </if>
+            <if test="psychologicalLGD.epidemicPsychologicalProblem != null">
+                And p1.epidemic_psychological_problem != "" And p1.epidemic_psychological_problem is not null
+            </if>
+            <if test="psychologicalLGD.clues != null">
+                And
+                <foreach item="item" collection="psychologicalLGD.clues" open="(" close=")" separator="Or" index="index">
+                    (p1.learning_problem REGEXP #{item}
+                    Or p1.economic_problem REGEXP #{item}
+                    Or p1.abnormal_behavior_problem REGEXP #{item}
+                    Or p1.life_event_problem REGEXP #{item}
+                    Or p1.personality_problem REGEXP #{item}
+                    Or p1.epidemic_psychological_problem REGEXP #{item})
+                </foreach>
+            </if>
+            <if test="psychologicalLGD.level != null">
+                And p1.level = #{psychologicalLGD.level}
+            </if>
+        </where>
+    </sql>
+
+
+    <select id="getPsychologicalLevelByParams" resultType="com.chards.committee.vo.PsychologicalLevelGetByStuNumVO">
+        <if test="psychologicalLGD.adminWorkDTO.identity == 1">
+            <include refid="psychologicalLevelByParams"></include>
+        </if>
+        <if test="psychologicalLGD.adminWorkDTO.identity == 2">
+            <include refid="psychologicalLevelByParams"></include>
+        </if>
+        <if test="psychologicalLGD.adminWorkDTO.identity != 1 and psychologicalLGD.adminWorkDTO.identity != 2">
+            <foreach item="item" collection="psychologicalLGD.adminWorkDTO.works" index="index">
+                <include refid="psychologicalLevelByParams"></include>
+                <if test="item == '研究生'">
+                    and s.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and s.education_background='本科'
+                    and s.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="psychologicalLGD.adminWorkDTO.department != '学工处'">
+                    and s.department = #{psychologicalLGD.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != psychologicalLGD.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+    </select>
 </mapper>

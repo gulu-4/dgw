@@ -6,7 +6,10 @@ import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.PsychologicalInvention;
 import com.chards.committee.domain.PsychologicalLevel;
 import com.chards.committee.domain.StuInfo;
+import com.chards.committee.dto.PsychologicalLevelGetDTO;
+import com.chards.committee.dto.PsychologicalLevelRecordGetDTO;
 import com.chards.committee.mapper.PsychologicalLevelMapper;
+import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,10 +58,16 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
     /**
      * 根据审核状态分页获取数据
      * v2 添加字段判断学生是否是第一次进行关爱
+     * V3 更改权限控制策略为和学生信息模块相同
      */
-    public Page<PsychologicalLevelCheckSelectVO> getPsychologicalLevelPage(Page<PsychologicalLevelCheckSelectVO> page, Integer checkStatus, String recorder, String stuNum) {
+    public Page<PsychologicalLevelCheckSelectVO> getPsychologicalLevelPage(Page<PsychologicalLevelCheckSelectVO> page, Integer checkStatus, String stuNum) {
         // 判断是否是第一次进行关爱
-        Page<PsychologicalLevelCheckSelectVO> psychologicalLevelCheckSelectVOPage = baseMapper.getPsychologicalLevelPage(page,checkStatus,recorder,stuNum);
+        PsychologicalLevelRecordGetDTO psychologicalLevelRecordGetDTO = new PsychologicalLevelRecordGetDTO();
+        psychologicalLevelRecordGetDTO.setCheckStatus(checkStatus);
+        psychologicalLevelRecordGetDTO.setStuNum(stuNum);
+        psychologicalLevelRecordGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+
+        Page<PsychologicalLevelCheckSelectVO> psychologicalLevelCheckSelectVOPage = baseMapper.getPsychologicalLevelPage(page,psychologicalLevelRecordGetDTO);
         List<PsychologicalLevelCheckSelectVO> pSList = psychologicalLevelCheckSelectVOPage.getRecords();
         for (PsychologicalLevelCheckSelectVO psychologicalLevelCheckSelectVO : pSList){
             List<PsychologicalLevel> levels = psychologicalLevelMapper.getPsychologicalLevelByStuNum(psychologicalLevelCheckSelectVO.getStuNum());
@@ -75,6 +84,11 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
             psychologicalLevelCheckSelectVO.setName(stuInfo.getName());
             psychologicalLevelCheckSelectVO.setGender(stuInfo.getGender());
             psychologicalLevelCheckSelectVO.setGrade(stuInfo.getGrade());
+            psychologicalLevelCheckSelectVO.setRecorders(getCoreAdminBasic(psychologicalLevelCheckSelectVO.getRecorder()));
+//            判断审核人是否为空，若为空，则不获取其信息,21.1.3，poplar修复。
+            if (psychologicalLevelCheckSelectVO.getReviewer()!=null){
+                psychologicalLevelCheckSelectVO.setReviewers(getCoreAdminBasic(psychologicalLevelCheckSelectVO.getReviewer()));
+            }
         }
         return psychologicalLevelCheckSelectVOPage;
     }
@@ -108,9 +122,33 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
             return null;
         }
     }
-
     /**
-     * 根据筛选条件查询定级记录
+     * 根据筛选条件查询定级记录(原)
+     */
+//    public Page<PsychologicalLevelGetByStuNumVO> getPsychologicalLevelByParams(Page<PsychologicalLevelGetByStuNumVO> page,
+//                                                                               PsychologicalLevelQueryNewParamVO psychologicalLQNPVO){
+//        // 封装参数，对线索进行正则匹配
+//        if (psychologicalLQNPVO.getClues()!=null){
+//            for (int i = 0;i < psychologicalLQNPVO.getClues().size(); i++){
+//                String clue = psychologicalLQNPVO.getClues().get(i);
+//                psychologicalLQNPVO.getClues().set(i,"(^|[^0-9])"+ clue +"[^0-9]");
+//            }
+//        }
+//
+//        // 需要对返回的数据进行记录者的处理
+//        Page<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOPage = baseMapper.getPsychologicalLevelByParams(page,psychologicalLQNPVO);
+//        List<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOList = psychologicalLevelGetByStuNumVOPage.getRecords();
+//        for (PsychologicalLevelGetByStuNumVO psychologicalLevelGetByStuNumVO : psychologicalLevelGetByStuNumVOList){
+//            // 通过当前recorder 和 reviewer 获取老师信息
+//            psychologicalLevelGetByStuNumVO.setRecorders(getCoreAdminBasic(psychologicalLevelGetByStuNumVO.getRecorder()));
+//            psychologicalLevelGetByStuNumVO.setReviewers(getCoreAdminBasic(psychologicalLevelGetByStuNumVO.getReviewer()));
+//            // 为每个记录增加学生干预情况
+//            psychologicalLevelGetByStuNumVO.setPsychologicalInventionList(psychologicalInventionService.getInventionsByStuNum(psychologicalLevelGetByStuNumVO.getStuNum()));
+//        }
+//        return psychologicalLevelGetByStuNumVOPage;
+//    }
+    /**
+     * 根据筛选条件查询定级记录(新，改权限控制策略)
      */
     public Page<PsychologicalLevelGetByStuNumVO> getPsychologicalLevelByParams(Page<PsychologicalLevelGetByStuNumVO> page,
                                                                                PsychologicalLevelQueryNewParamVO psychologicalLQNPVO){
@@ -121,9 +159,11 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
                 psychologicalLQNPVO.getClues().set(i,"(^|[^0-9])"+ clue +"[^0-9]");
             }
         }
-
+        PsychologicalLevelGetDTO psychologicalLevelGetDTO = new PsychologicalLevelGetDTO();
+        BeanUtils.copyProperties(psychologicalLQNPVO,psychologicalLevelGetDTO);
+        psychologicalLevelGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         // 需要对返回的数据进行记录者的处理
-        Page<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOPage = baseMapper.getPsychologicalLevelByParams(page,psychologicalLQNPVO);
+        Page<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOPage = baseMapper.getPsychologicalLevelByParams(page,psychologicalLevelGetDTO);
         List<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOList = psychologicalLevelGetByStuNumVOPage.getRecords();
         for (PsychologicalLevelGetByStuNumVO psychologicalLevelGetByStuNumVO : psychologicalLevelGetByStuNumVOList){
             // 通过当前recorder 和 reviewer 获取老师信息
@@ -134,6 +174,7 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
         }
         return psychologicalLevelGetByStuNumVOPage;
     }
+
 
 
     /**

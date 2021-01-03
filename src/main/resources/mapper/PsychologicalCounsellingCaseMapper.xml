@@ -25,11 +25,20 @@
         select *
         from psychological_counselling_case
         where stu_num = #{stuNum}
-        <if test="startTime != null">
-            and unix_timestamp( counselling_time ) &gt;= unix_timestamp(#{startTime})
-        </if>
-        <if test="endTime != null">
-            and unix_timestamp( counselling_time ) &lt;= unix_timestamp(#{endTime})
-        </if>
+    </select>
+    <select id="getAllCounselingCaseByParams" resultType="com.chards.committee.vo.PsychologicalCounselingCaseDetailVO">
+        select *
+        from psychological_counselling_case
+        <where>
+            <if test="stuNum != null and stuNum != ''">
+                and stu_num = #{stuNum}
+            </if>
+            <if test="startTime != null">
+                and unix_timestamp( counselling_time ) &gt;= unix_timestamp(#{startTime})
+            </if>
+            <if test="endTime != null">
+                and unix_timestamp( counselling_time ) &lt;= unix_timestamp(#{endTime})
+            </if>
+        </where>
     </select>
 </mapper>

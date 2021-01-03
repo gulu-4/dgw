@@ -42,11 +42,15 @@ public class PsychologicalLevelCheckSelectVO {
 
     private String recorder;
 
+    private CoreAdminBasicVO recorders;
+
     private LocalDateTime recordedTime;
 
     private Integer checkStatus;  // 0 -1 1
 
     private String reviewer;
+
+    private CoreAdminBasicVO reviewers;
 
     private String instruction;
 

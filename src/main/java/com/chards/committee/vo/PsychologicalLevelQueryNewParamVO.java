@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 /**
+ * 通过学院，年级，线索，等级，类别，以及学号筛选关爱信息
  * @author LiuSu
  * @create 2020/12/26 10:25
  * 学院
@@ -15,6 +16,9 @@ import java.util.ArrayList;
  */
 @Data
 public class PsychologicalLevelQueryNewParamVO {
+
+//    21.1.1，新增按学号筛选——poplar
+    private String stuNum; //学号
 
     private String department;  // 学院
 
