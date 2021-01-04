@@ -94,7 +94,7 @@
     </select>
 
     <sql id="psychologicalLevelPage">
-        select * from psychological_level as p
+        select p.*  from psychological_level as p
         inner join stu_info as s on s.id = p.stu_num
         <where>
             <if test = "param.stuNum != ''">
