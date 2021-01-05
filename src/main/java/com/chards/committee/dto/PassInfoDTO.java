@@ -22,10 +22,10 @@ public class PassInfoDTO implements Serializable {
 	//返校日期
 	private  String date;
 
-  //抵徐地点
+	//抵徐地点
 	private String loc;
 
-  //审核人
+	//审核人
 	private String reviewedBy;
 
 	//家长

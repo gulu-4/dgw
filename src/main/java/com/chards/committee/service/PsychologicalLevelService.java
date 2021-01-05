@@ -154,9 +154,13 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
                                                                                PsychologicalLevelQueryNewParamVO psychologicalLQNPVO){
         // 封装参数，对线索进行正则匹配
         if (psychologicalLQNPVO.getClues()!=null){
-            for (int i = 0;i < psychologicalLQNPVO.getClues().size(); i++){
-                String clue = psychologicalLQNPVO.getClues().get(i);
-                psychologicalLQNPVO.getClues().set(i,"(^|[^0-9])"+ clue +"[^0-9]");
+            if (psychologicalLQNPVO.getClues().size() > 0){
+                for (int i = 0;i < psychologicalLQNPVO.getClues().size(); i++){
+                    String clue = psychologicalLQNPVO.getClues().get(i);
+                    psychologicalLQNPVO.getClues().set(i,"(^|[^0-9])"+ clue +"[^0-9]");
+                }
+            }else{
+                psychologicalLQNPVO.setClues(null);
             }
         }
         PsychologicalLevelGetDTO psychologicalLevelGetDTO = new PsychologicalLevelGetDTO();
