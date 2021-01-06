@@ -26,7 +26,7 @@ public class LeaveSchoolTztzAutumnService extends ServiceImpl<LeaveSchoolTztzAut
     public boolean updateAdminManagementStudentLeaveSchoolPass(LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO) {
         return baseMapper.updateAdminManagementStudentLeaveSchoolPass(leaveSchoolTztzAutumnAdminGetAndUpdateDTO);
     }
-//
+
 //    public List<BackSchoolGetAllVO> getAdminManagementStudentBackSchoolByDateArea(BackSchoolDateAreaDTO backSchoolDateAreaDTO) {
 //        return baseMapper.getAdminManagementStudentBackSchoolByDateArea(backSchoolDateAreaDTO);
 //    }

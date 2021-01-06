@@ -2,8 +2,12 @@ package com.chards.committee.controller;
 
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chards.committee.config.BusinessException;
+import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.LeaveSchoolTztzAutumn;
+import com.chards.committee.domain.StuInfo;
 import com.chards.committee.dto.LeaveSchoolTztzAutumnAdminGetAndUpdateDTO;
+import com.chards.committee.dto.PassInfoDTO;
 import com.chards.committee.dto.UserInfo;
 import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.LeaveSchoolTztzAutumnService;
@@ -26,7 +30,7 @@ import javax.validation.Valid;
  * @create 2021/1/4 16:13
  */
 @RestController
-@RequestMapping("/backSchools")
+@RequestMapping("/leaveSchoolTzrzAutumn")
 public class LeaveSchoolTztzAutumnController {
     /**
      * 服务对象
@@ -129,7 +133,7 @@ public class LeaveSchoolTztzAutumnController {
         LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO = new LeaveSchoolTztzAutumnAdminGetAndUpdateDTO();
         leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setPass(pass == null ? 2 : pass == 2 ? 2 : 1);
-        return R.success(backSchoolService.updateAdminManagementStudentBackSchoolPass(backSchoolAdminGetAndUpdateDTO));
+        return R.success(leaveSchoolTztzAutumnService.updateAdminManagementStudentLeaveSchoolPass(leaveSchoolTztzAutumnAdminGetAndUpdateDTO));
     }
 
 
@@ -138,64 +142,64 @@ public class LeaveSchoolTztzAutumnController {
      *
      * @return 删除结果
      */
-//    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
-//    @PostMapping("/delete")
-//    public R deleteStu() {
-//        UserInfo userInfo = RequestUtil.getLoginUser();
-//        return R.success(backSchoolService.removeById(userInfo.getId()));
-//    }
+    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
+    @PostMapping("/delete")
+    public R deleteStu() {
+        UserInfo userInfo = RequestUtil.getLoginUser();
+        return R.success(leaveSchoolTztzAutumnService.removeById(userInfo.getId()));
+    }
 
     /**
      * 辅导员删除自己管理学生返校数据
      *
      * @return 删除结果
      */
-//	@PreAuthorize("hasRole('STUDENT')")
-//	@PostMapping("/deleteStu/{id}")
-//	public R deleteStuBackInfo(@PathVariable String id) {
-//      if (backSchoolService.getById(id)==null){
-//          BusinessException.error(Code.RESULT_DATA_NONE);
-//      }
-//      return R.success(backSchoolService.removeById(id));
-//	}
+	@PreAuthorize("hasRole('STUDENT')")
+	@PostMapping("/deleteStu/{id}")
+	public R deleteStuLeaveInfo(@PathVariable String id) {
+      if (leaveSchoolTztzAutumnService.getById(id)==null){
+          BusinessException.error(Code.RESULT_DATA_NONE);
+      }
+      return R.success(leaveSchoolTztzAutumnService.removeById(id));
+	}
 
     /**
      * 获取审核步骤信息
      *
      * @return
      */
-//    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
-//    @GetMapping("/passInfo")
-//    public R getPassInfo() {
-//        UserInfo userInfo = RequestUtil.getLoginUser();
-//        BackSchool bs = backSchoolService.getById(userInfo.getId());
-//        return bs != null ? R.success(passInfo(bs.getPass())) : R.success("未填写");
-//    }
+    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
+    @GetMapping("/passInfo")
+    public R getPassInfo() {
+        UserInfo userInfo = RequestUtil.getLoginUser();
+        LeaveSchoolTztzAutumn lSTA = leaveSchoolTztzAutumnService.getById(userInfo.getId());
+        return lSTA != null ? R.success(passInfo(lSTA.getPass())) : R.success("未填写");
+    }
 
     /**
      * 返回具体的返校详情信息用于pdf生成
      *
      * @return
      */
-//    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
-//    @GetMapping("/passInfoPdf")
-//    public R getPassInfoPdf() {
-//        UserInfo userInfo = RequestUtil.getLoginUser();
-//        BackSchool bs = backSchoolService.getById(userInfo.getId());
-//        StuInfo stuInfo = stuInfoService.getById(userInfo.getId());
-//        CoreAdmin coreAdmin = coreAdminService.getById(bs.getReviewedBy());
-//        return  R.success(getPassInfoDTO(bs,stuInfo,coreAdmin));
-//    }
+    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
+    @GetMapping("/passInfoPdf")
+    public R getPassInfoPdf() {
+        UserInfo userInfo = RequestUtil.getLoginUser();
+        LeaveSchoolTztzAutumn lSTA = leaveSchoolTztzAutumnService.getById(userInfo.getId());
+        StuInfo stuInfo = stuInfoService.getById(userInfo.getId());
+        CoreAdmin coreAdmin = coreAdminService.getById(lSTA.getReviewedBy());
+        return  R.success(getPassInfoDTO(lSTA,stuInfo,coreAdmin));
+    }
 
-    /**
-     * 微信小程序 -报道
-     * @return
-     */
+//    /**
+//     * 微信小程序 -报道
+//     * @return
+//     */
 //    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
 //    @PostMapping("/reports")
 //    public R setReports(){
-//        BackSchool backSchool = backSchoolService.getById(RequestUtil.getId());
-//        backSchool.setPass(3); //3 是已报道
+//        LeaveSchoolTztzAutumn lSTA = leaveSchoolTztzAutumnService.getById(userInfo.getId());
+//        lSTA.setPass(3); //3 是已报道
 //        return R.success( backSchoolService.updateById(backSchool));
 //    }
 
@@ -214,17 +218,25 @@ public class LeaveSchoolTztzAutumnController {
             return "已报到";
     }
 
-//    private PassInfoDTO getPassInfoDTO(BackSchool bs ,StuInfo stuInfo, CoreAdmin coreAdmin){
-//        PassInfoDTO passInfoDTO=new PassInfoDTO();
-//        passInfoDTO.setStuId(stuInfo.getId());
-//        passInfoDTO.setName(stuInfo.getName());
-//        passInfoDTO.setDate(bs.getDate());
-//        passInfoDTO.setLoc(bs.getPickupLoc());
-//        passInfoDTO.setReviewedBy(coreAdmin.getName());
-//        passInfoDTO.setEmergencyCallee(bs.getEmergencyCallee());
-//        passInfoDTO.setDepartment(stuInfo.getDepartment());
-//       return passInfoDTO;
-//    }
+
+    /**
+     * 这里先使用原返校相关内容，之后再确定需要信息进行更新
+     * @param lSTA
+     * @param stuInfo
+     * @param coreAdmin
+     * @return
+     */
+    private PassInfoDTO getPassInfoDTO(LeaveSchoolTztzAutumn lSTA , StuInfo stuInfo, CoreAdmin coreAdmin){
+        PassInfoDTO passInfoDTO=new PassInfoDTO();
+        passInfoDTO.setStuId(stuInfo.getId());
+        passInfoDTO.setName(stuInfo.getName());
+        passInfoDTO.setDate(lSTA.getDate());
+        passInfoDTO.setLoc(lSTA.getPickupLoc());
+        passInfoDTO.setReviewedBy(coreAdmin.getName());
+        passInfoDTO.setEmergencyCallee(lSTA.getEmergencyCallee());
+        passInfoDTO.setDepartment(stuInfo.getDepartment());
+       return passInfoDTO;
+    }
 
 
 }

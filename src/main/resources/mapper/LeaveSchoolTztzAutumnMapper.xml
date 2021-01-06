@@ -35,7 +35,7 @@
                  inner join stu_info on leave_school_tztz_autumn.pass = 0
             and leave_school_tztz_autumn.stu_num = stu_info.id
     </sql>
-    <select id="getAdminManagementStudentBackSchool" resultType="com.chards.committee.vo.BackSchoolGetAllVO">
+    <select id="getAdminManagementStudentLeaveSchoolTztzAutumn" resultType="com.chards.committee.vo.LeaveSchoolTztzAutumnGetALLVO">
         <if test="param.adminWorkDTO.identity == 1">
             <include refid="getAll"></include>
         </if>
@@ -83,31 +83,31 @@
         </if>
         )
     </update>
-<!--    <select id="getAdminManagementStudentBackSchoolByDateArea"-->
-<!--            resultType="com.chards.committee.vo.BackSchoolGetAllVO">-->
-<!--        <if test="param.adminWorkDTO.identity == 1">-->
-<!--            <include refid="getAll"></include>-->
-<!--            <include refid="dateArea"></include>-->
-<!--        </if>-->
-<!--        <if test="param.adminWorkDTO.identity !=1">-->
-<!--            <foreach item="item" collection="param.adminWorkDTO.works" index="index">-->
-<!--                <include refid="getAll"></include>-->
-<!--                <include refid="dateArea"></include>-->
-<!--                <if test="item == '研究生'">-->
-<!--                    and stu_info.education_background='研究生'-->
-<!--                </if>-->
-<!--                <if test="item != '全部年级' and item != '研究生'">-->
-<!--                    and stu_info.education_background='本科'-->
-<!--                    and stu_info.grade = #{item,jdbcType=VARCHAR}-->
-<!--                </if>-->
-<!--                <if test="param.adminWorkDTO.department != '学工处'">-->
-<!--                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}-->
-<!--                </if>-->
-<!--                <if test="index != param.adminWorkDTO.works.size()-1">-->
-<!--                    union-->
-<!--                </if>-->
-<!--            </foreach>-->
+    <select id="getAdminManagementStudentLeaveSchoolByDateArea"
+            resultType="com.chards.committee.vo.LeaveSchoolTztzAutumnGetALLVO">
+        <if test="param.adminWorkDTO.identity == 1">
+            <include refid="getAll"></include>
+            <include refid="dateArea"></include>
+        </if>
+        <if test="param.adminWorkDTO.identity !=1">
+            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                <include refid="getAll"></include>
+                <include refid="dateArea"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.adminWorkDTO.department != '学工处'">
+                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
 
-<!--        </if>-->
-<!--    </select>-->
+        </if>
+    </select>
 </mapper>
