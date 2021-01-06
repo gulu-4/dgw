@@ -60,27 +60,30 @@
     </select>
     <update id="updateAdminManagementStudentLeaveSchoolPass">
         update leave_school_tztz_autumn set pass = #{param.pass,jdbcType=INTEGER} where stu_num in (
-        <if test="param.adminWorkDTO.identity == 1">
-            <include refid="updateAllSelectIdList"></include>
-        </if>
-        <if test="param.adminWorkDTO.identity !=1">
-            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+        SELECT stu_num_list.stu_num from
+        (
+            <if test="param.adminWorkDTO.identity == 1">
                 <include refid="updateAllSelectIdList"></include>
-                <if test="item == '研究生'">
-                    and stu_info.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and stu_info.education_background='本科'
-                    and stu_info.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="param.adminWorkDTO.department != '学工处'">
-                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
-                </if>
-                <if test="index != param.adminWorkDTO.works.size()-1">
-                    union
-                </if>
-            </foreach>
-        </if>
+            </if>
+            <if test="param.adminWorkDTO.identity !=1">
+                <foreach item="item" collection="param.adminWorkDTO.works" index="index">
+                    <include refid="updateAllSelectIdList"></include>
+                    <if test="item == '研究生'">
+                        and stu_info.education_background='研究生'
+                    </if>
+                    <if test="item != '全部年级' and item != '研究生'">
+                        and stu_info.education_background='本科'
+                        and stu_info.grade = #{item,jdbcType=VARCHAR}
+                    </if>
+                    <if test="param.adminWorkDTO.department != '学工处'">
+                        and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
+                    </if>
+                    <if test="index != param.adminWorkDTO.works.size()-1">
+                        union
+                    </if>
+                </foreach>
+            </if>
+            ) as stu_num_list
         )
     </update>
     <select id="getAdminManagementStudentLeaveSchoolByDateArea"

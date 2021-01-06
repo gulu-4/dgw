@@ -40,7 +40,7 @@ public class LeaveSchoolTztzAutumn extends Model<LeaveSchoolTztzAutumn> {
     private String note;
     //居住地
     @TableField("loc")
-    @ExcelProperty("出发地")
+    @ExcelProperty("目的地")
     private String loc;
     //是否批准  （0就是没批 1批准 2拒绝）
     @TableField("pass")

@@ -3,11 +3,13 @@ package com.chards.committee.vo;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
 
 /**
  * @author LiuSu
  * @create 2021/1/4 17:32
  */
+@Data
 public class LeaveSchoolTztzAutumnGetALLVO {
 
     @TableId(value = "stu_num")

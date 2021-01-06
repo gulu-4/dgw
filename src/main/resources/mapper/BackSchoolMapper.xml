@@ -60,6 +60,8 @@
     </select>
     <update id="updateAdminManagementStudentBackSchoolPass">
         update back_school set pass = #{param.pass,jdbcType=INTEGER} where stu_num in (
+        SELECT stu_num_list.stu_num from
+        (
         <if test="param.adminWorkDTO.identity == 1">
             <include refid="updateAllSelectIdList"></include>
         </if>
@@ -81,6 +83,7 @@
                 </if>
             </foreach>
         </if>
+        ) as stu_num_list
         )
     </update>
     <select id="getAdminManagementStudentBackSchoolByDateArea"

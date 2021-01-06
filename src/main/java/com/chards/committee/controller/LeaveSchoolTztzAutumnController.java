@@ -30,7 +30,7 @@ import javax.validation.Valid;
  * @create 2021/1/4 16:13
  */
 @RestController
-@RequestMapping("/leaveSchoolTzrzAutumn")
+@RequestMapping("/leaveSchoolTztzAutumn")
 public class LeaveSchoolTztzAutumnController {
     /**
      * 服务对象
@@ -88,10 +88,10 @@ public class LeaveSchoolTztzAutumnController {
 
 
     /**
-     * 新增数据
+     * 学生重新提交数据
      *
      * @param leaveSchoolTztzAutumn 实体对象
-     * @return 新增结果
+     * @return 重新提交（要先删除申请数据才能请求成功）
      */
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/resubmitPass")
@@ -104,9 +104,9 @@ public class LeaveSchoolTztzAutumnController {
 
 
     /**
-     * 修改一条数据
+     * 修改一条数据（审核）
      *
-     * @param leaveSchoolPassVO 实体对象
+     * @param leaveSchoolPassVO 实体对象，含学号和pass
      * @return 修改结果
      */
     @PreAuthorize("hasAuthority('student_update')")
