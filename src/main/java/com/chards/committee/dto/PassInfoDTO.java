@@ -3,6 +3,7 @@ package com.chards.committee.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author 远 chards_
@@ -27,6 +28,9 @@ public class PassInfoDTO implements Serializable {
 
 	//审核人
 	private String reviewedBy;
+
+//	审核时间
+	private LocalDateTime reviewedTime;
 
 	//家长
 	private String emergencyCallee;

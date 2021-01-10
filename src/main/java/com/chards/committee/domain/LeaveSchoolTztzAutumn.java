@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author LiuSu
@@ -38,35 +39,46 @@ public class LeaveSchoolTztzAutumn extends Model<LeaveSchoolTztzAutumn> {
     @TableField("note")
     @ExcelProperty("个人行程")
     private String note;
-    //居住地
+
+    //居住地（需要显示在通知书上）
     @TableField("loc")
     @ExcelProperty("目的地")
     private String loc;
+
     //是否批准  （0就是没批 1批准 2拒绝）
     @TableField("pass")
     @ExcelProperty("是否批准")
     private Integer pass;
-    //呼吸道感染
+    //呼吸道感染（未使用）
     @TableField("q1")
     @ExcelProperty("呼吸道感染")
     private Integer q1;
-    //境外旅居史
+    //境外旅居史（未使用）
     @TableField("q2")
     @ExcelProperty("境外旅居史")
     private Integer q2;
-    //接触境外归国人员
+    //接触境外归国人员（未使用）
     @TableField("q3")
     @ExcelProperty("接触境外归国人员")
     private Integer q3;
-    //发热、干咳、乏力等症状
+    //发热、干咳、乏力等症状（未使用）
     @TableField("q4")
     @ExcelProperty("发热、干咳、乏力等症状")
     private Integer q4;
+
+
     //审核人
     @TableField("reviewed_by")
     @ExcelProperty("审核人")
     private String reviewedBy;
-    //离徐地点
+
+    //审核时间（通知书落款要用）
+    @TableField("reviewed_time")
+    @ExcelProperty("审核时间")
+    private LocalDateTime reviewedTime;
+
+
+    //离徐地点（此次没用）
     @TableField("pickup_loc")
     @ExcelProperty("离徐地点")
     private String pickupLoc;

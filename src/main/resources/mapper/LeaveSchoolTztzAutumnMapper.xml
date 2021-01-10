@@ -59,7 +59,8 @@
         </if>
     </select>
     <update id="updateAdminManagementStudentLeaveSchoolPass">
-        update leave_school_tztz_autumn set pass = #{param.pass,jdbcType=INTEGER} where stu_num in (
+        update leave_school_tztz_autumn set pass = #{param.pass,jdbcType=INTEGER}, reviewed_time = #{param.reviewedTime},
+        reviewed_by = #{param.reviewedBy} where stu_num in (
         SELECT stu_num_list.stu_num from
         (
             <if test="param.adminWorkDTO.identity == 1">

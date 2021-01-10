@@ -162,4 +162,9 @@ public class LeaveSchoolTztzAutumnGetALLVO {
     @ExcelProperty("审核人")
     private String reviewedBy;
 
+    //审核时间
+    @TableField("reviewed_time")
+    @ExcelProperty("审核时间")
+    private String reviewedTime;
+
 }

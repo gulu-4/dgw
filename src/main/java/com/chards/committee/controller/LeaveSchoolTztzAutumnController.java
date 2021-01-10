@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 /**
  * (LeaveSchoolTztzAutumnMapper) 表控制层
@@ -117,6 +118,7 @@ public class LeaveSchoolTztzAutumnController {
             leaveSchoolTztzAutumn.setStuNum(leaveSchoolPassVO.getStuNum());
             leaveSchoolTztzAutumn.setPass(leaveSchoolPassVO.getPass());
             leaveSchoolTztzAutumn.setReviewedBy(RequestUtil.getId());
+            leaveSchoolTztzAutumn.setReviewedTime(LocalDateTime.now());
             return R.success(leaveSchoolTztzAutumnService.updateById(leaveSchoolTztzAutumn));
         }
         return R.failure(Code.PERMISSION_NO_ACCESS);
@@ -133,6 +135,8 @@ public class LeaveSchoolTztzAutumnController {
         LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO = new LeaveSchoolTztzAutumnAdminGetAndUpdateDTO();
         leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setPass(pass == null ? 2 : pass == 2 ? 2 : 1);
+        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setReviewedTime(LocalDateTime.now());
+        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setReviewedBy(RequestUtil.getId());
         return R.success(leaveSchoolTztzAutumnService.updateAdminManagementStudentLeaveSchoolPass(leaveSchoolTztzAutumnAdminGetAndUpdateDTO));
     }
 
@@ -231,8 +235,9 @@ public class LeaveSchoolTztzAutumnController {
         passInfoDTO.setStuId(stuInfo.getId());
         passInfoDTO.setName(stuInfo.getName());
         passInfoDTO.setDate(lSTA.getDate());
-        passInfoDTO.setLoc(lSTA.getPickupLoc());
+        passInfoDTO.setLoc(lSTA.getLoc());
         passInfoDTO.setReviewedBy(coreAdmin.getName());
+        passInfoDTO.setReviewedTime(lSTA.getReviewedTime());
         passInfoDTO.setEmergencyCallee(lSTA.getEmergencyCallee());
         passInfoDTO.setDepartment(stuInfo.getDepartment());
        return passInfoDTO;
