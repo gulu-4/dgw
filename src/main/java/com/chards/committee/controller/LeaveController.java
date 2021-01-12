@@ -116,7 +116,7 @@ public class LeaveController {
 	 */
 	@PreAuthorize("hasAuthority('student_select')")
 	@GetMapping("/stu")
-	public R adminSelectLeaveAll(Page<LeaveInfoVO> page, @RequestBody LeaveSchoolQueryParamVO leaveSchoolQueryParamVO) {
+	public R adminSelectLeaveAll(Page<LeaveInfoVO> page, LeaveSchoolQueryParamVO leaveSchoolQueryParamVO) {
 		leaveSchoolQueryParamVO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 		Page<LeaveInfoVO> leaveInfoVOPage = leaveService.adminSelectLeave(page, leaveSchoolQueryParamVO);
 		leaveInfoVOPage.getRecords().forEach(leaveInfoVO -> {
