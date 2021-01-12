@@ -10,24 +10,9 @@ import com.chards.committee.dto.LeaveBackDateAreaDTO;
 import com.chards.committee.dto.LeaveDateAreaDTO;
 import com.chards.committee.dto.StuInfoPageDTO;
 import com.chards.committee.dto.UserTokenDTO;
-import com.chards.committee.service.BackSchoolService;
-import com.chards.committee.service.CoreAdminService;
-import com.chards.committee.service.EasyExeclService;
-import com.chards.committee.service.LeaveBackService;
-import com.chards.committee.service.LeaveService;
-import com.chards.committee.service.RedisService;
-import com.chards.committee.service.StuInfoService;
-import com.chards.committee.service.StuPortraitService;
+import com.chards.committee.service.*;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.BackSchoolGetAllVO;
-import com.chards.committee.vo.BackSchoolGetAllVO1;
-import com.chards.committee.vo.LeaveBackGetAllVO;
-import com.chards.committee.vo.LeaveBackGetAllVO1;
-import com.chards.committee.vo.LeaveSchoolGetAllVO;
-import com.chards.committee.vo.LeaveSchoolGetAllVO1;
-import com.chards.committee.vo.PortraitVO;
-import com.chards.committee.vo.StuInfoPageVO;
-import com.chards.committee.vo.StuInfoSeniorVO;
+import com.chards.committee.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +56,9 @@ public class DocumentController {
 	LeaveService leaveService;
 	@Autowired
 	LeaveBackService leaveBackService;
+
+	@Autowired
+	LeaveSchoolTztzAutumnService leaveSchoolTztzAutumnService;
 
 	@Value("${filepath}")
 	String path;
@@ -268,6 +256,31 @@ public class DocumentController {
 	}
 
 	/**
+	 * 2020年秋季离校申请导出
+	 * @param token
+	 * @param backSchoolDateAreaDTO
+	 * @param response
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/execls/stuinfo/leaveSchoolTztzAutumnInfo")
+	public void getLeaveSchoolTztzAutumnInfoKeywordsExecl(String token, BackSchoolDateAreaDTO backSchoolDateAreaDTO, HttpServletResponse response) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+			List<LeaveSchoolTztzAutumnGetALLVO> dataList = leaveSchoolTztzAutumnService.getAdminManagementStudentLeaveSchoolByDateArea(backSchoolDateAreaDTO);
+			List<LeaveSchoolTztzAutumnGetALLVO1> leaveSchoolTztzAutumnGetALLVO1List = new ArrayList<>();
+			dataList.forEach(data -> {
+				LeaveSchoolTztzAutumnGetALLVO1 leaveSchoolTztzAutumnGetALLVO1 = setVO1ByVO(data);
+				leaveSchoolTztzAutumnGetALLVO1List.add(leaveSchoolTztzAutumnGetALLVO1);
+			});
+			easyExeclService.writeToResponse(response, "leaveSchoolTztzAutumn - " + System.currentTimeMillis(), leaveSchoolTztzAutumnGetALLVO1List, LeaveSchoolTztzAutumnGetALLVO1.class);
+			return;
+		}
+		response.getWriter().write("no permission");
+	}
+
+	/**
 	 *
 	 * @param backSchoolGetAllVO
 	 * @return
@@ -364,6 +377,31 @@ public class DocumentController {
 			backSchoolGetAllVO1.setReviewedBy(coreAdmin.getName());
 		}
     return backSchoolGetAllVO1;
+	}
+
+	/**
+	 *
+	 * @param leaveSchoolTztzAutumnGetALLVO
+	 * @return
+	 */
+	private LeaveSchoolTztzAutumnGetALLVO1 setVO1ByVO(LeaveSchoolTztzAutumnGetALLVO leaveSchoolTztzAutumnGetALLVO) {
+		LeaveSchoolTztzAutumnGetALLVO1 leaveSchoolTztzAutumnGetALLVO1 = new LeaveSchoolTztzAutumnGetALLVO1();
+		BeanUtils.copyProperties(leaveSchoolTztzAutumnGetALLVO, leaveSchoolTztzAutumnGetALLVO1);
+
+		if (leaveSchoolTztzAutumnGetALLVO.getPass() == 0){
+			leaveSchoolTztzAutumnGetALLVO1.setPass("未审核");
+		}
+		if (leaveSchoolTztzAutumnGetALLVO.getPass() == 2){
+			leaveSchoolTztzAutumnGetALLVO1.setPass("已批准");
+		}
+		if(leaveSchoolTztzAutumnGetALLVO.getPass()==1){
+			leaveSchoolTztzAutumnGetALLVO1.setPass("未通过");
+		}
+		if (!StringUtils.isBlank(leaveSchoolTztzAutumnGetALLVO.getReviewedBy())){
+			CoreAdmin coreAdmin = coreAdminService.getById(leaveSchoolTztzAutumnGetALLVO.getReviewedBy());
+			leaveSchoolTztzAutumnGetALLVO1.setReviewedBy(coreAdmin.getName());
+		}
+		return leaveSchoolTztzAutumnGetALLVO1;
 	}
 
 

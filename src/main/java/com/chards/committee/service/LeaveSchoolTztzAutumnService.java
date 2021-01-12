@@ -3,6 +3,7 @@ package com.chards.committee.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chards.committee.domain.LeaveSchoolTztzAutumn;
+import com.chards.committee.dto.BackSchoolDateAreaDTO;
 import com.chards.committee.dto.LeaveSchoolTztzAutumnAdminGetAndUpdateDTO;
 import com.chards.committee.mapper.LeaveSchoolTztzAutumnMapper;
 import com.chards.committee.vo.LeaveSchoolTztzAutumnGetALLVO;
@@ -27,7 +28,7 @@ public class LeaveSchoolTztzAutumnService extends ServiceImpl<LeaveSchoolTztzAut
         return baseMapper.updateAdminManagementStudentLeaveSchoolPass(leaveSchoolTztzAutumnAdminGetAndUpdateDTO);
     }
 
-//    public List<BackSchoolGetAllVO> getAdminManagementStudentBackSchoolByDateArea(BackSchoolDateAreaDTO backSchoolDateAreaDTO) {
-//        return baseMapper.getAdminManagementStudentBackSchoolByDateArea(backSchoolDateAreaDTO);
-//    }
+    public List<LeaveSchoolTztzAutumnGetALLVO> getAdminManagementStudentLeaveSchoolByDateArea(BackSchoolDateAreaDTO backSchoolDateAreaDTO) {
+        return baseMapper.getAdminManagementStudentLeaveSchoolByDateArea(backSchoolDateAreaDTO);
+    }
 }

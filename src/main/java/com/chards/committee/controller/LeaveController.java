@@ -14,11 +14,7 @@ import com.chards.committee.service.LeaveService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.Code;
-import com.chards.committee.vo.LeaceStatusUpdateVO;
-import com.chards.committee.vo.LeaveInfoVO;
-import com.chards.committee.vo.LeaveInsertVO;
-import com.chards.committee.vo.R;
+import com.chards.committee.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -120,11 +116,9 @@ public class LeaveController {
 	 */
 	@PreAuthorize("hasAuthority('student_select')")
 	@GetMapping("/stu")
-	public R adminSelectLeaveAll(Page<LeaveInfoVO> page, Integer status) {
-		LeaveInfoDTO leaveInfoDTO = new LeaveInfoDTO();
-		leaveInfoDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
-		leaveInfoDTO.setStatus(status);
-		Page<LeaveInfoVO> leaveInfoVOPage = leaveService.adminSelectLeave(page, leaveInfoDTO);
+	public R adminSelectLeaveAll(Page<LeaveInfoVO> page, @RequestBody LeaveSchoolQueryParamVO leaveSchoolQueryParamVO) {
+		leaveSchoolQueryParamVO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+		Page<LeaveInfoVO> leaveInfoVOPage = leaveService.adminSelectLeave(page, leaveSchoolQueryParamVO);
 		leaveInfoVOPage.getRecords().forEach(leaveInfoVO -> {
 			if (!StringUtils.isBlank(leaveInfoVO.getReviewerId())) {
 				CoreAdmin byId = coreAdminService.getById(leaveInfoVO.getReviewerId());

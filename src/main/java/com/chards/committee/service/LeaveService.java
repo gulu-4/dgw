@@ -11,6 +11,7 @@ import com.chards.committee.mapper.LeaveMapper;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.LeaveInfoVO;
 import com.chards.committee.vo.LeaveSchoolGetAllVO;
+import com.chards.committee.vo.LeaveSchoolQueryParamVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,8 @@ public class LeaveService extends ServiceImpl<LeaveMapper, Leave> {
 	}
 
 
-	public Page<LeaveInfoVO> adminSelectLeave(Page<LeaveInfoVO> page, LeaveInfoDTO leaveInfoDTO) {
-		return baseMapper.adminSelectLeave(page, leaveInfoDTO);
+	public Page<LeaveInfoVO> adminSelectLeave(Page<LeaveInfoVO> page, LeaveSchoolQueryParamVO leaveSchoolQueryParamVO) {
+		return baseMapper.adminSelectLeave(page, leaveSchoolQueryParamVO);
 	}
 
 

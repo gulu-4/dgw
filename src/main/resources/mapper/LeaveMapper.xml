@@ -25,6 +25,19 @@
         <if test="param.status != null ">
             and t_leave.status = #{param.status,jdbcType=INTEGER}
         </if>
+        <if test="param.stuNum != null">
+            and stu_info.id = #{param.stuNum,jdbcType = VARCHAR}
+        </if>
+        <if test="param.department != null">
+            and stu_info.department = #{param.department,jdbcType = VARCHAR}
+        </if>
+        <if test="param.grade != null">
+            and stu_info.grade = #{param.grade,jdbcType = VARCHAR}
+        </if>
+        <if test="param.beginDate != null and param.endDate != null">
+            and unix_timestamp(t_leave.start_date)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
+            and unix_timestamp(t_leave.start_date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
+        </if>
     </sql>
     <sql id="adminSelectLeaveBaseOrder">
         order by create_time desc

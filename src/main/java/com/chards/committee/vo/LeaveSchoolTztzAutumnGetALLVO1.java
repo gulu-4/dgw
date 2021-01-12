@@ -7,10 +7,10 @@ import lombok.Data;
 
 /**
  * @author LiuSu
- * @create 2021/1/4 17:32
+ * @create 2021/1/12 12:50
  */
 @Data
-public class LeaveSchoolTztzAutumnGetALLVO {
+public class LeaveSchoolTztzAutumnGetALLVO1 {
 
     @TableId(value = "stu_num")
     @ExcelProperty("学号")
@@ -135,26 +135,26 @@ public class LeaveSchoolTztzAutumnGetALLVO {
 //    //呼吸道感染
 //    @TableField("q1")
 //    @ExcelProperty("呼吸道感染")
-//    private Integer q1;
+//    private String q1;
 //    //境外旅居史
 //    @TableField("q2")
 //    @ExcelProperty("境外旅居史")
-//    private Integer q2;
+//    private String q2;
 //    //接触境外归国人员
 //    @TableField("q3")
 //    @ExcelProperty("接触境外归国人员")
-//    private Integer q3;
+//    private String q3;
 //    //发热、干咳、乏力等症状
 //    @TableField("q4")
 //    @ExcelProperty("发热、干咳、乏力等症状")
-//    private Integer q4;
+//    private String q4;
 
 
 
-    //是否批准  （0就是没批 1批准 2拒绝 3已报到）
+    //是否批准  （0就是没批 1批准 2拒绝）
     @TableField("pass")
     @ExcelProperty("是否批准")
-    private Integer pass;
+    private String pass;
 
 
     //审核人
