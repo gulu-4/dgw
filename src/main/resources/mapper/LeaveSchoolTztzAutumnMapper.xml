@@ -21,13 +21,28 @@
         <if test="param.pass !=null ">
             and leave_school_tztz_autumn.pass = #{param.pass,jdbcType=INTEGER}
         </if>
+        <if test="param.stuNum!=null">
+            and stu_info.id = #{param.stuNum, jdbcType=VARCHAR}
+        </if>
+        <if test="param.department != null">
+            and stu_info.department = #{param.department,jdbcType = VARCHAR}
+        </if>
+        <if test="param.grade != null">
+            and stu_info.grade = #{param.grade,jdbcType = VARCHAR}
+        </if>
+        <if test="param.beginDate != null">
+            and unix_timestamp(leave_school_tztz_autumn.date)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
+        </if>
+        <if test="param.endDate != null">
+            and unix_timestamp(leave_school_tztz_autumn.date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
+        </if>
     </sql>
 
-    <sql id="dateArea">
-        and unix_timestamp(leave_school_tztz_autumn.date)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
-        and unix_timestamp(leave_school_tztz_autumn.date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
-      
-    </sql>
+<!--    <sql id="dateArea">-->
+<!--        and unix_timestamp(leave_school_tztz_autumn.date)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})-->
+<!--        and unix_timestamp(leave_school_tztz_autumn.date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})-->
+<!--      -->
+<!--    </sql>-->
 
     <sql id="updateAllSelectIdList">
         select leave_school_tztz_autumn.stu_num
@@ -91,12 +106,12 @@
             resultType="com.chards.committee.vo.LeaveSchoolTztzAutumnGetALLVO">
         <if test="param.adminWorkDTO.identity == 1">
             <include refid="getAll"></include>
-            <include refid="dateArea"></include>
+<!--            <include refid="dateArea"></include>-->
         </if>
         <if test="param.adminWorkDTO.identity !=1">
             <foreach item="item" collection="param.adminWorkDTO.works" index="index">
                 <include refid="getAll"></include>
-                <include refid="dateArea"></include>
+<!--                <include refid="dateArea"></include>-->
                 <if test="item == '研究生'">
                     and stu_info.education_background='研究生'
                 </if>

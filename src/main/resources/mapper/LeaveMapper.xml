@@ -34,8 +34,10 @@
         <if test="param.grade != null">
             and stu_info.grade = #{param.grade,jdbcType = VARCHAR}
         </if>
-        <if test="param.beginDate != null and param.endDate != null">
+        <if test="param.beginDate != null">
             and unix_timestamp(t_leave.start_date)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
+        </if>
+        <if test="param.endDate != null">
             and unix_timestamp(t_leave.start_date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
         </if>
     </sql>

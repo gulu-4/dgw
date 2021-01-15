@@ -91,7 +91,7 @@ public class LeaveSchoolTztzAutumnGetALLVO1 {
 
     //出发地
     @TableField("loc")
-    @ExcelProperty("出发地")
+    @ExcelProperty("目的地")
     private String loc;
 
     //离徐地点

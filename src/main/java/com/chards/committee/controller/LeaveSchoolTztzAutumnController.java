@@ -13,10 +13,7 @@ import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.LeaveSchoolTztzAutumnService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.BackSchoolPassVO;
-import com.chards.committee.vo.Code;
-import com.chards.committee.vo.LeaveSchoolTztzAutumnGetALLVO;
-import com.chards.committee.vo.R;
+import com.chards.committee.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -53,11 +50,12 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping
-    public R selectAll(Page<LeaveSchoolTztzAutumnGetALLVO> page, Integer pass) {
-        LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO = new LeaveSchoolTztzAutumnAdminGetAndUpdateDTO();
-        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
-        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setPass(pass);
-        return R.success(leaveSchoolTztzAutumnService.getAdminManagementStudentLeaveSchoolTztzAutumn(page,leaveSchoolTztzAutumnAdminGetAndUpdateDTO));
+    public R selectAll(Page<LeaveSchoolTztzAutumnGetALLVO> page, LeaveSchoolTztzQueryParamVO leaveSchoolTztzQueryParamVO) {
+//        LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO = new LeaveSchoolTztzAutumnAdminGetAndUpdateDTO();
+//        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setPass(pass);
+        leaveSchoolTztzQueryParamVO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+        return R.success(leaveSchoolTztzAutumnService.getAdminManagementStudentLeaveSchoolTztzAutumn(page,leaveSchoolTztzQueryParamVO));
     }
 
     /**

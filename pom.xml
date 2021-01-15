@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hongcha</groupId>
     <artifactId>newCommittee</artifactId>
-    <version>10.2.2</version>
+    <version>10.2.4</version>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -109,12 +109,12 @@
                 <version>1.7.0</version>
                 <configuration>
                     <from>
-                        <image>registry.cn-hangzhou.aliyuncs.com/iampoplar/openjdk:8-alpine</image>
+                        <image>registry.cn-hangzhou.aliyuncs.com/iampoplar/java-with-font:8-jre-alpine</image>
                     </from>
                     <to>
                         <image>registry.cn-hangzhou.aliyuncs.com/iampoplar/kddgw</image>
                         <tags>
-                            <tag>10.2.2</tag>
+                            <tag>10.2.4</tag>
                         </tags>
                         <auth>
                             <username>加油吧敬杨</username>

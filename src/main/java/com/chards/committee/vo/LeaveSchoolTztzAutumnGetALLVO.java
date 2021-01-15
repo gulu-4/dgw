@@ -157,10 +157,12 @@ public class LeaveSchoolTztzAutumnGetALLVO {
     private Integer pass;
 
 
-    //审核人
+    //审核人工号
     @TableField("reviewed_by")
-    @ExcelProperty("审核人")
+    @ExcelProperty("审核人工号")
     private String reviewedBy;
+
+    private String reviewedByName;
 
     //审核时间
     @TableField("reviewed_time")
