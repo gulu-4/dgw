@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.JobObtainMapper">
+    <resultMap type="com.chards.committee.domain.JobObtain" id="BaseResultMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="stuNum" column="stu_num" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="VARCHAR"/>
+        <result property="intention" column="intention" jdbcType="VARCHAR"/>
+        <result property="progress" column="progress" jdbcType="VARCHAR"/>
+        <result property="helpType" column="help_type" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="recorder" column="recorder" jdbcType="VARCHAR"/>
+        <result property="recordedTime" column="recorded_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="getAll">
+        select job_obtain.*,
+        stu_info.name,
+        stu_info.gender,
+        stu_info.classes ,
+        stu_info.department,
+        stu_info.grade
+        from job_obtain
+        inner join stu_info on job_obtain.stu_num = stu_info.id
+    </sql>
+    <sql id="dateArea">
+        and unix_timestamp(job_obtain.recorded_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
+        and unix_timestamp(job_obtain.recorded_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
+
+    </sql>
+
+    <select id="getInfoByStuNum" resultType="com.chards.committee.vo.JobObtainGetInfoVO">
+        <include refid="getAll"></include>
+        where job_obtain.stu_num = #{stuNum}
+    </select>
+
+    <select id="getAdminManagementStudentJobObtain" resultType="com.chards.committee.vo.JobObtainGetInfoVO">
+        <if test="param.identity == 1">
+            <include refid="getAll"></include>
+        </if>
+        <if test="param.identity !=1">
+            <foreach item="item" collection="param.works" index="index">
+                <include refid="getAll"></include>
+                <if test="item == '研究生'">
+                    and stu_info.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and stu_info.education_background='本科'
+                    and stu_info.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="param.department != '学工处'">
+                    and stu_info.department = #{param.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != param.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+    </select>
+</mapper>
