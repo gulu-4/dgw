@@ -240,13 +240,13 @@
             </if>
             <if test="psychologicalLGD.clues != null">
                 And
-                <foreach item="item" collection="psychologicalLGD.clues" open="(" close=")" separator="Or" index="index">
-                    (p1.learning_problem REGEXP #{item}
-                    Or p1.economic_problem REGEXP #{item}
-                    Or p1.abnormal_behavior_problem REGEXP #{item}
-                    Or p1.life_event_problem REGEXP #{item}
-                    Or p1.personality_problem REGEXP #{item}
-                    Or p1.epidemic_psychological_problem REGEXP #{item})
+                <foreach item="clue" collection="psychologicalLGD.clues" open="(" close=")" separator="Or" index="clue_index">
+                    (p1.learning_problem REGEXP #{clue}
+                    Or p1.economic_problem REGEXP #{clue}
+                    Or p1.abnormal_behavior_problem REGEXP #{clue}
+                    Or p1.life_event_problem REGEXP #{clue}
+                    Or p1.personality_problem REGEXP #{clue}
+                    Or p1.epidemic_psychological_problem REGEXP #{clue})
                 </foreach>
             </if>
             <if test="psychologicalLGD.level != null">
@@ -264,6 +264,7 @@
             <include refid="psychologicalLevelByParams"></include>
         </if>
         <if test="psychologicalLGD.adminWorkDTO.identity != 1 and psychologicalLGD.adminWorkDTO.identity != 2">
+<!--            <include refid="psychologicalLevelByParams"></include>-->
             <foreach item="item" collection="psychologicalLGD.adminWorkDTO.works" index="index">
                 <include refid="psychologicalLevelByParams"></include>
                 <if test="item == '研究生'">

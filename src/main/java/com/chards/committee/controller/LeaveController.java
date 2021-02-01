@@ -94,7 +94,8 @@ public class LeaveController {
 		//防止前端提交
 		leave.setReviewerId(null);
 
-		leave = getAutoReview(leave);
+//		2021年1月29日，按学工处要求，在10.3.0版中取消自动审批
+//		leave = getAutoReview(leave);
 		return R.success(leaveService.save(leave));
 	}
 
