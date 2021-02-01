@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.PsychologicalCounsellingCase;
 import com.chards.committee.domain.PsychologicalLevel;
 import com.chards.committee.vo.PsychologicalCounselingCaseDetailVO;
+import com.chards.committee.vo.PsychologicalCounselingCaseExportVO;
 import com.chards.committee.vo.PsychologicalCounsellingCaseAndTestRecordGetAllVO;
 import com.chards.committee.vo.PsychologicalLevelCheckSelectVO;
 import org.apache.ibatis.annotations.Param;
@@ -33,6 +34,10 @@ public interface PsychologicalCounsellingCaseMapper extends BaseMapper<Psycholog
                                                                            @Param("stuNum") String stuNum,
                                                                            @Param("startTime") String startTime,
                                                                            @Param("endTime") String endTime);
+
+    List<PsychologicalCounselingCaseDetailVO> getAllCounselingCaseByParams1(@Param("stuNum") String stuNum,
+                                                                            @Param("startTime") String startTime,
+                                                                            @Param("endTime") String endTime);
 
     /**
      * 通过学号查询学生信息

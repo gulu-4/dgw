@@ -282,4 +282,30 @@
             </foreach>
         </if>
     </select>
+    <select id="getPsychologicalLevelByParams1" resultType="com.chards.committee.vo.PsychologicalLevelGetByStuNumVO1">
+        <if test="psychologicalLGD.adminWorkDTO.identity == 1">
+            <include refid="psychologicalLevelByParams"></include>
+        </if>
+        <if test="psychologicalLGD.adminWorkDTO.identity == 2">
+            <include refid="psychologicalLevelByParams"></include>
+        </if>
+        <if test="psychologicalLGD.adminWorkDTO.identity != 1 and psychologicalLGD.adminWorkDTO.identity != 2">
+            <foreach item="item" collection="psychologicalLGD.adminWorkDTO.works" index="index">
+                <include refid="psychologicalLevelByParams"></include>
+                <if test="item == '研究生'">
+                    and s.education_background='研究生'
+                </if>
+                <if test="item != '全部年级' and item != '研究生'">
+                    and s.education_background='本科'
+                    and s.grade = #{item,jdbcType=VARCHAR}
+                </if>
+                <if test="psychologicalLGD.adminWorkDTO.department != '学工处'">
+                    and s.department = #{psychologicalLGD.adminWorkDTO.department,jdbcType=VARCHAR}
+                </if>
+                <if test="index != psychologicalLGD.adminWorkDTO.works.size()-1">
+                    union
+                </if>
+            </foreach>
+        </if>
+    </select>
 </mapper>

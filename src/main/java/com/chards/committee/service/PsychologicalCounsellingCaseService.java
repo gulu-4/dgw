@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -64,6 +67,57 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
 
         psychologicalCounselingCaseDetailVOPage.setRecords(PsychologicalCounselingCaseDetailVOList);
         return psychologicalCounselingCaseDetailVOPage;
+    }
+
+    /**
+     * 筛选心理咨询记录，可通过学号、起止时间筛选
+     * 用于excel表格导出
+     */
+    public List<PsychologicalCounselingCaseExportVO> getAllCounselingCaseByParams(PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO){
+
+        String startTime = timeTransfer(psychologicalCounsellingCaseSelectVO.getStartTime());
+        String endTime = timeTransfer(psychologicalCounsellingCaseSelectVO.getEndTime());
+        //        需要返回的咨询记录详情Page VO
+        List<PsychologicalCounselingCaseDetailVO> psychologicalCounselingCaseDetailVOS = baseMapper.getAllCounselingCaseByParams1(psychologicalCounsellingCaseSelectVO.getStuNum(),startTime,endTime);
+        List<PsychologicalCounselingCaseExportVO> psychologicalCounselingCaseExportVOS = new ArrayList<>();
+
+        for (PsychologicalCounselingCaseDetailVO psychologicalCounselingCaseDetailVO:psychologicalCounselingCaseDetailVOS){
+//            System.out.println(psychologicalCounselingCaseDetailVO);
+            PsychologicalCounselingCaseExportVO psychologicalCounselingCaseExportVO = new PsychologicalCounselingCaseExportVO();
+            BeanUtils.copyProperties(psychologicalCounselingCaseDetailVO,psychologicalCounselingCaseExportVO);
+            String stuNum = psychologicalCounselingCaseDetailVO.getStuNum();
+            StuInfo stuInfo = stuInfoService.getById(stuNum);
+
+            ZoneId zone = ZoneId.systemDefault();
+            Instant instant = psychologicalCounselingCaseDetailVO.getRecordedTime().atZone(zone).toInstant();
+            psychologicalCounselingCaseExportVO.setRecordedTime(Date.from(instant));
+            psychologicalCounselingCaseExportVO.setClasses(stuInfo.getClasses());
+            psychologicalCounselingCaseExportVO.setDepartment(stuInfo.getDepartment());
+            psychologicalCounselingCaseExportVO.setGrade(stuInfo.getGrade());
+            psychologicalCounselingCaseExportVO.setGender(stuInfo.getGender());
+            psychologicalCounselingCaseExportVO.setName(stuInfo.getName());
+            psychologicalCounselingCaseExportVO.setPhone(stuInfo.getPhone());
+            psychologicalCounselingCaseExportVO.setRecorder(getCoreAdminBasic(psychologicalCounselingCaseExportVO.getRecorder()).getName());
+            // 将boolean转换为是否
+            if (psychologicalCounselingCaseDetailVO.getIsFinished()) {
+                psychologicalCounselingCaseExportVO.setIsFinished("是");
+            }else {
+                psychologicalCounselingCaseExportVO.setIsFinished("否");
+            }
+            if (psychologicalCounselingCaseDetailVO.getHasDiagnosis()) {
+                psychologicalCounselingCaseExportVO.setHasDiagnosis("是");
+            }else {
+                psychologicalCounselingCaseExportVO.setHasDiagnosis("否");
+            }
+            if (psychologicalCounselingCaseDetailVO.getIsFirstTime()) {
+                psychologicalCounselingCaseExportVO.setIsFirstTime("是");
+            }else {
+                psychologicalCounselingCaseExportVO.setIsFirstTime("否");
+            }
+            psychologicalCounselingCaseExportVOS.add(psychologicalCounselingCaseExportVO);
+        }
+//        System.out.println(PsychologicalCounselingCaseDetailVOList);
+        return psychologicalCounselingCaseExportVOS;
     }
 
     /**

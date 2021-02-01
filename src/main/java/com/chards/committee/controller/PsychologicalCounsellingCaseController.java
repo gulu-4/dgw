@@ -75,8 +75,8 @@ public class PsychologicalCounsellingCaseController {
     @GetMapping("/getAllCounselingCaseByParams")
     public R getAll(PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO,
                     Page<PsychologicalCounselingCaseDetailVO> page){
-        System.out.println(psychologicalCounsellingCaseSelectVO);
-        System.out.println(page);
+//        System.out.println(psychologicalCounsellingCaseSelectVO);
+//        System.out.println(page);
         return R.success(psychologicalCounsellingCaseService.getAllCounselingCaseByParams(page,psychologicalCounsellingCaseSelectVO));
     }
 }

@@ -1,6 +1,7 @@
 package com.chards.committee.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.constant.Constant;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.StuInfo;
@@ -59,6 +60,12 @@ public class DocumentController {
 
 	@Autowired
 	LeaveSchoolTztzAutumnService leaveSchoolTztzAutumnService;
+
+	@Autowired
+	PsychologicalLevelService psychologicalLevelService;
+
+	@Autowired
+	PsychologicalCounsellingCaseService psychologicalCounsellingCaseService;
 
 	@Value("${filepath}")
 	String path;
@@ -275,6 +282,38 @@ public class DocumentController {
 				leaveSchoolTztzAutumnGetALLVO1List.add(leaveSchoolTztzAutumnGetALLVO1);
 			});
 			easyExeclService.writeToResponse(response, "leaveSchoolTztzAutumn - " + System.currentTimeMillis(), leaveSchoolTztzAutumnGetALLVO1List, LeaveSchoolTztzAutumnGetALLVO1.class);
+			return;
+		}
+		response.getWriter().write("no permission");
+	}
+
+	/**
+	 * 关爱信息导出
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/execls/psychological_level")
+	public void getPsychologicalLevelByParams(String token, PsychologicalLevelQueryNewParamVO psychologicalLQNPVO,HttpServletResponse response) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<PsychologicalLevelGetByStuNumVO1> psychologicalLevelGetByStuNumVO1List = psychologicalLevelService.getPsychologicalLevelByParams1(psychologicalLQNPVO);
+			easyExeclService.writeToResponse(response, "psychologicalLevel - " + System.currentTimeMillis(), psychologicalLevelGetByStuNumVO1List, PsychologicalLevelGetByStuNumVO1.class);
+			return;
+		}
+		response.getWriter().write("no permission");
+	}
+
+	/**
+	 * 心理咨询记录导出
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/execls/psychological_counseling_case")
+	public void getPsychologicalLevelByParams(String token,PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO,HttpServletResponse response) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<PsychologicalCounselingCaseExportVO> psychologicalCounselingCaseExportVOS = psychologicalCounsellingCaseService.getAllCounselingCaseByParams(psychologicalCounsellingCaseSelectVO);
+			easyExeclService.writeToResponse(response, "psychologicalCounselingCase - " + System.currentTimeMillis(), psychologicalCounselingCaseExportVOS, PsychologicalCounselingCaseExportVO.class);
 			return;
 		}
 		response.getWriter().write("no permission");

@@ -153,16 +153,7 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
     public Page<PsychologicalLevelGetByStuNumVO> getPsychologicalLevelByParams(Page<PsychologicalLevelGetByStuNumVO> page,
                                                                                PsychologicalLevelQueryNewParamVO psychologicalLQNPVO){
         // 封装参数，对线索进行正则匹配
-        if (psychologicalLQNPVO.getClues()!=null){
-            if (psychologicalLQNPVO.getClues().size() > 0){
-                for (int i = 0;i < psychologicalLQNPVO.getClues().size(); i++){
-                    String clue = psychologicalLQNPVO.getClues().get(i);
-                    psychologicalLQNPVO.getClues().set(i,"(^|[^0-9])"+ clue +"[^0-9]");
-                }
-            }else{
-                psychologicalLQNPVO.setClues(null);
-            }
-        }
+        regularClues(psychologicalLQNPVO);
         PsychologicalLevelGetDTO psychologicalLevelGetDTO = new PsychologicalLevelGetDTO();
         BeanUtils.copyProperties(psychologicalLQNPVO,psychologicalLevelGetDTO);
         psychologicalLevelGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
@@ -179,6 +170,37 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
         return psychologicalLevelGetByStuNumVOPage;
     }
 
+    /**
+     * 根据筛选条件查询定级记录  用于excel表的导出
+     */
+    public List<PsychologicalLevelGetByStuNumVO1> getPsychologicalLevelByParams1(PsychologicalLevelQueryNewParamVO psychologicalLQNPVO){
+        regularClues(psychologicalLQNPVO);
+        PsychologicalLevelGetDTO psychologicalLevelGetDTO = new PsychologicalLevelGetDTO();
+        BeanUtils.copyProperties(psychologicalLQNPVO,psychologicalLevelGetDTO);
+        psychologicalLevelGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+        // 需要对返回的数据进行记录者的处理
+        List<PsychologicalLevelGetByStuNumVO1> psychologicalLevelGetByStuNumVO1List = baseMapper.getPsychologicalLevelByParams1(psychologicalLevelGetDTO);
+        for (PsychologicalLevelGetByStuNumVO1 psychologicalLevelGetByStuNumVO1 : psychologicalLevelGetByStuNumVO1List){
+            // 通过当前recorder 和 reviewer 获取老师信息
+            psychologicalLevelGetByStuNumVO1.setRecorder(getCoreAdminBasic(psychologicalLevelGetByStuNumVO1.getRecorder()).getName());
+            psychologicalLevelGetByStuNumVO1.setReviewer(getCoreAdminBasic(psychologicalLevelGetByStuNumVO1.getReviewer()).getName());
+        }
+        return psychologicalLevelGetByStuNumVO1List;
+    }
+
+    private void regularClues(PsychologicalLevelQueryNewParamVO psychologicalLQNPVO) {
+        // 封装参数，对线索进行正则匹配
+        if (psychologicalLQNPVO.getClues() != null) {
+            if (psychologicalLQNPVO.getClues().size() > 0) {
+                for (int i = 0; i < psychologicalLQNPVO.getClues().size(); i++) {
+                    String clue = psychologicalLQNPVO.getClues().get(i);
+                    psychologicalLQNPVO.getClues().set(i, "(^|[^0-9])" + clue + "[^0-9]");
+                }
+            } else {
+                psychologicalLQNPVO.setClues(null);
+            }
+        }
+    }
 
 
     /**

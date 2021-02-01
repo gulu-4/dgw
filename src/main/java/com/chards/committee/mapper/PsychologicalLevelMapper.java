@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.PsychologicalLevel;
 import com.chards.committee.dto.PsychologicalLevelGetDTO;
 import com.chards.committee.dto.PsychologicalLevelRecordGetDTO;
-import com.chards.committee.vo.PsychologicalLevelCheckSelectVO;
-import com.chards.committee.vo.PsychologicalLevelGetByStuNumVO;
-import com.chards.committee.vo.PsychologicalLevelQueryNewParamVO;
-import com.chards.committee.vo.PsychologicalLevelUpdateVO;
+import com.chards.committee.vo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
@@ -50,4 +47,11 @@ public interface PsychologicalLevelMapper extends BaseMapper<PsychologicalLevel>
      */
     Page<PsychologicalLevelGetByStuNumVO> getPsychologicalLevelByParams(@Param("page") Page<PsychologicalLevelGetByStuNumVO> page,
                                                                         @Param("psychologicalLGD") PsychologicalLevelGetDTO psychologicalLevelGetDTO);
+    /**
+     *
+     * @param psychologicalLevelGetDTO
+     * @return
+     */
+    List<PsychologicalLevelGetByStuNumVO1> getPsychologicalLevelByParams1(@Param("psychologicalLGD") PsychologicalLevelGetDTO psychologicalLevelGetDTO);
+
 }
