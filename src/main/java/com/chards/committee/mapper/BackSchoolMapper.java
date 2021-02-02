@@ -3,6 +3,7 @@ package com.chards.committee.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.BackSchool;
+import com.chards.committee.domain.StuInfo;
 import com.chards.committee.dto.BackSchoolAdminGetAndUpdateDTO;
 import com.chards.committee.dto.BackSchoolDateAreaDTO;
 import com.chards.committee.vo.BackSchoolGetAllVO;
@@ -29,4 +30,6 @@ public interface BackSchoolMapper extends BaseMapper<BackSchool> {
 	 * @return
 	 */
 	List<BackSchoolGetAllVO> getAdminManagementStudentBackSchoolByDateArea(@Param("param") BackSchoolDateAreaDTO backSchoolDateAreaDTO);
+
+	List<StuInfo> getDoNotApplyForBackSchoolByParams(@Param("param") BackSchoolDateAreaDTO backSchoolDateAreaDTO);
 }

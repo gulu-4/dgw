@@ -204,6 +204,14 @@ public class DocumentController {
 		response.getWriter().write("no permission");
 	}
 
+	/**
+	 * 导出返校申请信息，可以根据筛选条件进行导出，不传条件则导出所有申请信息
+	 * 学号，学院，年级，时间区间
+	 * @param token
+	 * @param backSchoolDateAreaDTO
+	 * @param response
+	 * @throws IOException
+	 */
 	@GetMapping(value = "/execls/stuinfo/backSchoolInfo")
 	public void getStuInfoAdvanceKeywordsExecl(String token, BackSchoolDateAreaDTO backSchoolDateAreaDTO, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
@@ -218,6 +226,24 @@ public class DocumentController {
 				backSchoolGetAllVO1List.add(backSchoolGetAllVO1);
 			});
 			easyExeclService.writeToResponse(response, "backSchool - " + System.currentTimeMillis(), backSchoolGetAllVO1List, BackSchoolGetAllVO1.class);
+			return;
+		}
+		response.getWriter().write("no permission");
+	}
+
+	/**
+	 * 导出尚未填写申请的学生信息
+	 * 可以使用学号，学院，年级进行筛选
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/execls/stuinfo/backSchoolNotApplyInfo")
+	public void getDoNotApplyForBackSchoolByParams(String token, BackSchoolDateAreaDTO backSchoolDateAreaDTO, HttpServletResponse response) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+			List<StuInfo> dataList = backSchoolService.getDoNotApplyForBackSchoolByParams(backSchoolDateAreaDTO);
+			easyExeclService.writeToResponse(response, "backSchoolNotApply - " + System.currentTimeMillis(), dataList, StuInfo.class);
 			return;
 		}
 		response.getWriter().write("no permission");
