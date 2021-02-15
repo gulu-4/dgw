@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hongcha</groupId>
     <artifactId>newCommittee</artifactId>
-    <version>10.2.4</version>
+    <version>10.4.0</version>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -87,6 +87,26 @@
             <artifactId>easyexcel</artifactId>
             <version>${easyexecl.verion}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.11</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -114,7 +134,7 @@
                     <to>
                         <image>registry.cn-hangzhou.aliyuncs.com/iampoplar/kddgw</image>
                         <tags>
-                            <tag>10.2.4</tag>
+                            <tag>10.4.0</tag>
                         </tags>
                         <auth>
                             <username>加油吧敬杨</username>

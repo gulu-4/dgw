@@ -1,5 +1,6 @@
 package com.chards.committee.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -9,12 +10,10 @@ import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.LoginIp;
 import com.chards.committee.domain.ParentsInfo;
 import com.chards.committee.domain.StuInfo;
-import com.chards.committee.dto.StuInfoPageDTO;
-import com.chards.committee.dto.StuInfoSeniorDTO;
-import com.chards.committee.dto.UserInfo;
-import com.chards.committee.dto.UserTokenDTO;
+import com.chards.committee.dto.*;
 import com.chards.committee.mapper.StuInfoMapper;
 import com.chards.committee.util.Assert;
+import com.chards.committee.util.DataScope;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.StuInfoPageVO;
@@ -29,10 +28,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionUsageException;
 import org.springframework.transaction.annotation.Transactional;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -60,6 +64,10 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
 
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    TbRoleService tbRoleService;
+    @Autowired
+    DataScopeService dataScopeService;
 
 
     public boolean updateStuPwd(String id, String oldpwd, String newpwd) {
@@ -93,6 +101,86 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         return updateById(stuInfo);
     }
 
+    public UserLoginRespVO getUserTokenLdap(String username, String password, String ip) {
+        JSONObject jsonObject = JSONUtil.createObj();
+        jsonObject.put("username", username);
+        jsonObject.put("password", password);
+        String result = HttpRequest
+                .post("https://xyt-wx.cumt.edu.cn/ldap/check")
+                .body(String.valueOf(jsonObject))
+                .execute()
+                .body();
+        String code = JSONUtil.parseObj(result).get("code").toString();
+        if (code.equals("10000")){
+            StuInfo stuInfo = getById(username);
+            Assert.notNull(stuInfo, Code.USER_LOGIN_ERROR);
+            UserTokenDTO userTokenDTO = new UserTokenDTO();
+            UserInfo userInfo = new UserInfo();
+            BeanUtils.copyProperties(stuInfo, userInfo);
+            List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(userInfo.getId());
+            userTokenDTO.setUserDataScopeList(userDataScopeList);
+
+            /*为了适配旧的权限控制策略，此处给位于学生表中的管理员配上department（只能是1个） 和 work（可以是由逗号分割的多个，此处不考虑特殊情况，只设置一个）*/
+            if (userDataScopeList.size()>0){
+                String department = "";
+                String work = "";
+                for (UserDataScope userDataScope:userDataScopeList){
+                    department = userDataScope.getDepartment();
+                    work = userDataScope.getGrade();
+                }
+                userInfo.setDepartment(department);
+                userInfo.setWork(work);
+            }
+            userTokenDTO.setUserInfo(userInfo);
+            List<AdminRoleDTO> adminRole = tbRoleService.getAdminRole(username);
+            List<String> roles = adminRole.stream().map(AdminRoleDTO::getEnname).collect(Collectors.toList());
+
+            roles.add(Constant.STUDENT);
+            if (roles.contains(Constant.XUEGONG)) {
+                userInfo.setDepartment("学工处");
+            }
+            userTokenDTO.setRoles(roles);
+            List<String> permisssions = new ArrayList<>();
+            System.out.println(adminRole);
+            System.out.println(adminRole.toArray().length>0);
+            System.out.println(adminRole.toArray().length);
+            if (adminRole.toArray().length>0){
+                permisssions = tbRoleService.getAdminPermission(
+                        adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())
+                ).stream().map(AdminPermissionDTO::getPermission).collect(Collectors.toList());
+            }
+
+            permisssions.add("OWN_INFO_CRUD");
+            userTokenDTO.setPermissionsList(permisssions);
+
+//        userTokenDTO.setRoles(Arrays.asList(Constant.STUDENT));
+//        userTokenDTO.setPermissionsList(Arrays.asList("OWN_INFO_CRUD"));
+            String token = UUID.randomUUID().toString();
+            redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
+            UserLoginRespVO resp = new UserLoginRespVO();
+            resp.setToken(token);
+            resp.setName(stuInfo.getName());
+            resp.setRoleList(roles);
+            resp.setUserDataScopeList(userDataScopeList);
+            LoginIp byLastIp = loginIpService.getByUserId(username);
+            resp.setOldIp(byLastIp != null ? byLastIp.getIp() : "空");
+            if (loginIpService.addLoginIp(username, ip)) {
+                resp.setNewIp(ip);
+            }
+            return resp;
+        }
+        else if (code.equals("10001")){
+            BusinessException.error(Code.USER_LOGIN_ERROR);
+        }
+        else if (code.equals("10002")){
+            BusinessException.error(Code.USER_LDAP_NOT_ACTIVATED);
+        }
+        else {
+            BusinessException.error(Code.ERROR);
+        }
+        UserLoginRespVO resp = null;
+        return resp;
+    }
     public UserLoginRespVO getUserToken(String username, String password, String ip) {
         StuInfo stuInfo = getById(username);
 //        System.out.println(stuInfo);
@@ -114,14 +202,46 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         UserTokenDTO userTokenDTO = new UserTokenDTO();
         UserInfo userInfo = new UserInfo();
         BeanUtils.copyProperties(stuInfo, userInfo);
+        List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(userInfo.getId());
+        userTokenDTO.setUserDataScopeList(userDataScopeList);
+
+        /*为了适配旧的权限控制策略，此处给位于学生表中的管理员配上department（只能是1个） 和 work（可以是由逗号分割的多个，此处不考虑特殊情况，只设置一个）*/
+        if (userDataScopeList.size()>0){
+            String department = "";
+            String work = "";
+            for (UserDataScope userDataScope:userDataScopeList){
+                department = userDataScope.getDepartment();
+                work = userDataScope.getGrade();
+            }
+            userInfo.setDepartment(department);
+            userInfo.setWork(work);
+        }
         userTokenDTO.setUserInfo(userInfo);
-        userTokenDTO.setRoles(Arrays.asList(Constant.STUDENT));
-        userTokenDTO.setPermissionsList(Arrays.asList("OWN_INFO_CRUD"));
+        List<AdminRoleDTO> adminRole = tbRoleService.getAdminRole(username);
+        List<String> roles = adminRole.stream().map(AdminRoleDTO::getEnname).collect(Collectors.toList());
+        roles.add(Constant.STUDENT);
+        if (roles.contains(Constant.XUEGONG)) {
+            userInfo.setDepartment("学工处");
+        }
+        userTokenDTO.setRoles(roles);
+        List<String> permisssions = new ArrayList<>();
+        if (adminRole.toArray().length>0){
+            permisssions = tbRoleService.getAdminPermission(
+                    adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())
+            ).stream().map(AdminPermissionDTO::getPermission).collect(Collectors.toList());
+        }
+        permisssions.add("OWN_INFO_CRUD");
+        userTokenDTO.setPermissionsList(permisssions);
+
+//        userTokenDTO.setRoles(Arrays.asList(Constant.STUDENT));
+//        userTokenDTO.setPermissionsList(Arrays.asList("OWN_INFO_CRUD"));
         String token = UUID.randomUUID().toString();
         redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
         UserLoginRespVO resp = new UserLoginRespVO();
         resp.setToken(token);
         resp.setName(stuInfo.getName());
+        resp.setRoleList(roles);
+        resp.setUserDataScopeList(userDataScopeList);
         LoginIp byLastIp = loginIpService.getByUserId(username);
         resp.setOldIp(byLastIp != null ? byLastIp.getIp() : "空");
         if (loginIpService.addLoginIp(username, ip)) {
@@ -146,7 +266,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         return parentsInfoService.getById(id);
     }
 
-
+    // 当前在用的版本，结果有分页
     public Page<StuInfoPageVO> getLike(Page<StuInfoPageVO> page, StuInfoPageDTO stuInfoPageDTO) {
         stuInfoPageDTO.setParam("%" + stuInfoPageDTO.getParam() + "%");
         return baseMapper.getLike(page, stuInfoPageDTO);
@@ -161,7 +281,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
     public Page<StuInfoPageVO> getSeniorSearch(Page<StuInfoPageVO> page, StuInfoSeniorVO stuInfoSeniorVO) {
         StuInfoSeniorDTO stuInfoSeniorDTO = new StuInfoSeniorDTO();
         BeanUtils.copyProperties(stuInfoSeniorVO, stuInfoSeniorDTO);
-        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 
         stuInfoSeniorDTO.setDormitory(stuInfoSeniorDTO.getDormitory() + "%");
         return baseMapper.getSeniorSearch(page, stuInfoSeniorDTO);
@@ -170,7 +290,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
     public List<StuInfoPageVO> getSeniorSearchList(StuInfoSeniorVO stuInfoSeniorVO) {
         StuInfoSeniorDTO stuInfoSeniorDTO = new StuInfoSeniorDTO();
         BeanUtils.copyProperties(stuInfoSeniorVO, stuInfoSeniorDTO);
-        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         stuInfoSeniorDTO.setDormitory(stuInfoSeniorDTO.getDormitory() + "%");
         return baseMapper.getSeniorSearchList(stuInfoSeniorDTO);
     }
@@ -204,6 +324,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
      * @param stuInfo 学生 （不能为空，为空自己负责）
      * @return
      */
+    @Deprecated
     public boolean isWork(StuInfo stuInfo) {
         //如果是超级管理员 直接放行
         if (RequestUtil.isRoot()) return true;
@@ -219,7 +340,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
      * @param stuid 学号id
      * @return
      */
-
+    @Deprecated
     public boolean isContainsReturnIsWork(String stuid) {
         StuInfo stuInfo = getById(stuid);
         Assert.notNull(stuInfo, "该学生不存在");
@@ -233,6 +354,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
      * @param stuInfo     学生信息
      * @param checkIsRoot 是否判断coreAdmin的角色是root
      */
+    @Deprecated
     public boolean isWork(@NonNull CoreAdmin coreAdmin, @NonNull StuInfo stuInfo, boolean checkIsRoot) {
         if (checkIsRoot && coreAdminService.isRoot(coreAdmin)) return true;
         BiFunction<CoreAdmin, StuInfo, Boolean> departmentMapOrDefault = departmentMap.getOrDefault(coreAdmin.getDepartment(),
@@ -259,10 +381,46 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
      * @param stuInfo
      * @return
      */
+    @Deprecated
     public boolean isWork(UserInfo userInfo, StuInfo stuInfo) {
         CoreAdmin coreAdmin = new CoreAdmin();
         BeanUtils.copyProperties(userInfo, coreAdmin);
         return isWork(coreAdmin, stuInfo, false);
+    }
+
+    /**
+     * 判断某个Student是否在当前用户的DataScope中
+     * @param stuInfo
+     * @return
+     */
+    public Boolean isWithinDataScope(StuInfo stuInfo){
+        String stuId = stuInfo.getId();
+        return isWithinDataScope(stuId);
+    }
+    /**
+     * 某个学号是否在当前用户的DataScope中
+     * @param stuId
+     * @return
+     */
+    public boolean isWithinDataScope(String stuId){
+        StuInfo stuInfo = getById(stuId);
+        Assert.notNull(stuInfo, "该学生不存在");
+        UserTokenDTO userTokenDTO = RequestUtil.getLoginUserTokenDTO();
+        List<UserDataScope> userDataScopeList = userTokenDTO.getUserDataScopeList();
+        Boolean flag = false;
+        for(UserDataScope userDataScope:userDataScopeList){
+            String department = userDataScope.getDepartment();
+            String educationBackground = userDataScope.getEducationBackground();
+            String grade = userDataScope.getGrade();
+            if (
+                    ((department!=null && department.equals(stuInfo.getDepartment())) || StrUtil.isBlank(department))
+                    && ((educationBackground != null && educationBackground.equals(stuInfo.getEducationBackground())) || StrUtil.isBlank(educationBackground))
+                    && ((grade!=null && grade.equals(stuInfo.getGrade())) || StrUtil.isBlank(grade))
+            ){
+                flag = true;
+            }
+        }
+        return flag;
     }
 
 }

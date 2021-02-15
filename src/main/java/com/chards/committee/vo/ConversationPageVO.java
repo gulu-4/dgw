@@ -12,8 +12,14 @@ public class ConversationPageVO {
     private Date datetime;
     private String number;
     private String traits;
+
     private String adminName;
     private String stuName;
+
+    // 用作过渡，以适配新的数据权限策略
+    private String grade;
+    private String educationBackground;
+
     private String stuGrade;
     private String stuEducationBackground;
 }

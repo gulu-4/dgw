@@ -34,8 +34,8 @@ public class PsychologicalInventionController {
     @PreAuthorize("hasAuthority('student_insert')")
     @PostMapping("/insert")
     public R insert(@RequestBody @Valid PsychologicalInventionInsertVO psychologicalInventionInsertVO) {
-        // 通过这里进行判断的时候会导致研究生的学生没有办法由ROOT之外的权限进行操作。
-        if (stuInfoService.isContainsReturnIsWork(psychologicalInventionInsertVO.getStuNum())) {
+        // 通过这里进行判断的时候会导致研究生的学生没有办法由ROOT之外的权限进行操作。(通过isWithinDataScope就可以啦)
+        if (stuInfoService.isWithinDataScope(psychologicalInventionInsertVO.getStuNum())) {
             PsychologicalInvention psychologicalInvention = new PsychologicalInvention();
             BeanUtils.copyProperties(psychologicalInventionInsertVO,psychologicalInvention);
             // 填写者和填写时间都是后台获取
@@ -52,7 +52,7 @@ public class PsychologicalInventionController {
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getInventionsByStuNum")
     public R getAll(@RequestParam String stuNum){
-        if (stuInfoService.isContainsReturnIsWork(stuNum)){
+        if (stuInfoService.isWithinDataScope(stuNum)){
             return R.success(psychologicalInventionService.getInventionsByStuNum(stuNum));
         }
         return R.failure(Code.PERMISSION_NO_ACCESS);

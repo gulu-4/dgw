@@ -6,7 +6,10 @@ import com.chards.committee.domain.Conversation;
 import com.chards.committee.dto.AdminWorkDTO;
 import com.chards.committee.mapper.ConversationMapper;
 import com.chards.committee.vo.ConversationPageVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * (Conversation)表服务类
@@ -16,11 +19,28 @@ import org.springframework.stereotype.Service;
  */
 @Service("conversationService")
 public class ConversationService extends ServiceImpl<ConversationMapper, Conversation> {
+    @Autowired
+    UserService userService;
     public Page<ConversationPageVO> getPageByStuid(Page<ConversationPageVO> page, String stuid) {
-        return baseMapper.getPageByStuid(page, stuid);
+        List <ConversationPageVO> conversationPageVOList = baseMapper.getPageByStuid(page, stuid).getRecords();
+        for(ConversationPageVO conversationPageVO:conversationPageVOList){
+            conversationPageVO.setAdminName(userService.getUserById(conversationPageVO.getNumber()).getName());
+            conversationPageVO.setStuEducationBackground(conversationPageVO.getEducationBackground());
+            conversationPageVO.setStuGrade(conversationPageVO.getGrade());
+        }
+        page.setRecords(conversationPageVOList);
+        return page;
     }
 
-    public Page<ConversationPageVO> getPageAll(Page<ConversationPageVO> page, AdminWorkDTO pageDTO) {
-        return baseMapper.getPageAll(page, pageDTO);
+
+    public Page<ConversationPageVO> getPageAll(Page<ConversationPageVO> page) {
+        List <ConversationPageVO> conversationPageVOList = baseMapper.getPageAll(page).getRecords();
+        for(ConversationPageVO conversationPageVO:conversationPageVOList){
+            conversationPageVO.setAdminName(userService.getUserById(conversationPageVO.getNumber()).getName());
+            conversationPageVO.setStuEducationBackground(conversationPageVO.getEducationBackground());
+            conversationPageVO.setStuGrade(conversationPageVO.getGrade());
+        }
+        page.setRecords(conversationPageVOList);
+        return page;
     }
 }

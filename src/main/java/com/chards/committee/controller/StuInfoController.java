@@ -15,6 +15,7 @@ import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
+import io.swagger.annotations.Api;
 import org.apache.xmlbeans.impl.schema.BuiltinSchemaTypeSystem;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/stu-info")
+@Api(tags = "学生信息管理")
 public class StuInfoController {
 	@Resource
 	private StuInfoService stuInfoService;
@@ -80,7 +82,7 @@ public class StuInfoController {
 	 * @param stuInfoId {@code Long}
 	 * @return {@link R}
 	 */
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasAuthority('student_update')")
 	@PostMapping("remove/{stuInfoId}")
 	public R remove(@PathVariable String stuInfoId) {
 		return R.success(stuInfoService.removeById(stuInfoId));
@@ -95,7 +97,7 @@ public class StuInfoController {
 	@PreAuthorize("hasAuthority('student_update')")
 	@PostMapping("/update")
 	public R update(@Valid @RequestBody StuInfoUpdateVO stuInfoUpdateVO) {
-		if (stuInfoService.isContainsReturnIsWork(stuInfoUpdateVO.getStuInfo().getId())) {
+		if (stuInfoService.isWithinDataScope(stuInfoUpdateVO.getStuInfo().getId())) {
 			return R.success(stuInfoService.updateStuInfoAndStuParentsInfo(stuInfoUpdateVO.getStuInfo(), stuInfoUpdateVO.getParentsInfo()));
 		}
 		return R.failure(Code.PERMISSION_NO_ACCESS);
@@ -156,7 +158,7 @@ public class StuInfoController {
 	@PreAuthorize("hasAuthority('student_select')")
 	@GetMapping("/parents/{id}")
 	public R getParentsInfoByStuId(@PathVariable String id) {
-		if (stuInfoService.isContainsReturnIsWork(id)) {
+		if (stuInfoService.isWithinDataScope(id)) {
 			return R.success(stuInfoService.getParentsInfo(id));
 		}
 		return R.failure(Code.PERMISSION_NO_ACCESS);
@@ -177,7 +179,7 @@ public class StuInfoController {
 
 
 	/**
-	 * 管理员获取某一学生信息
+	 * 管理员获取某一学生信息 ??
 	 *
 	 * @param stuInfoId {@code Long}
 	 * @return {@link R}
@@ -187,7 +189,7 @@ public class StuInfoController {
 	public R get(@PathVariable String stuInfoId) {
 		StuInfo stuInfo = stuInfoService.getById(stuInfoId);
 		Assert.notNull(stuInfo, Code.RESULT_DATA_NONE);
-		if (stuInfoService.isWork(stuInfo)) {
+		if (stuInfoService.isWithinDataScope(stuInfo)) {
 			if (stuInfo.getCounsellorNum() != null && !StringUtils.isBlank(stuInfo.getCounsellorNum())
 					&& !stuInfo.getCounsellorNum().equals("无")) {
 				CoreAdmin coreAdmin = coreAdminService.getById(stuInfo.getCounsellorNum());
@@ -213,7 +215,7 @@ public class StuInfoController {
 	@PreAuthorize("hasAuthority('student_select')")
 	@GetMapping("/page")
 	public R getStuInfoByParam(StuInfoPageDTO stuInfoPageDTO, Page<StuInfoPageVO> page) {
-		stuInfoPageDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//		stuInfoPageDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 		return R.success(stuInfoService.getLike(page, stuInfoPageDTO));
 	}
 
@@ -221,9 +223,12 @@ public class StuInfoController {
 	@PreAuthorize("hasAuthority('student_select')")
 	@GetMapping("/updateStuPwd")
 	public R updateStuPwd(@RequestParam("id") String id) {
-		StuInfo stuInfo = stuInfoService.getById(id);
-		stuInfo.setPassword(bCryptPasswordEncoder.encode(id));
-		return R.success(stuInfoService.updateById(stuInfo));
+		if (stuInfoService.isWithinDataScope(id)){
+			StuInfo stuInfo = stuInfoService.getById(id);
+			stuInfo.setPassword(bCryptPasswordEncoder.encode(id));
+			return R.success(stuInfoService.updateById(stuInfo));
+		}
+		return R.failure(Code.PERMISSION_NO_ACCESS);
 	}
 
 	/**

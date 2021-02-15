@@ -1,6 +1,7 @@
 package com.chards.committee.dto;
 
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -11,10 +12,12 @@ import java.util.List;
 
 
 @Data
+@ToString
 public class UserTokenDTO implements Serializable {
 	private UserInfo userInfo;
 	private List<String> roles = new ArrayList<>();
 	private List<String> permissionsList = new ArrayList<>();
+	private List<UserDataScope> userDataScopeList = new ArrayList<>();
 	// 这里权限 注解发挥作用的地方
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 

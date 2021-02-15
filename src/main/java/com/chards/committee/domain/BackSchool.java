@@ -5,11 +5,14 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * (BackSchool)表实体类
@@ -22,6 +25,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName("back_school")
+//@ApiModel(value = "返校参数类", description = "返校申请的请求参数")
 public class  BackSchool extends Model<BackSchool> {
 	private static final long serialVersionUID = 374506489809870668L;
 	//学号
@@ -31,10 +35,12 @@ public class  BackSchool extends Model<BackSchool> {
 	//请描述必要的返校原因
 	@TableField("reason")
 	@ExcelProperty("入校原因")
+//	@ApiModelProperty(value = "返校原因")
 	private String reason;
 	//到校日期
 	@TableField("date")
 	@ExcelProperty("到校时间")
+//	@ApiModelProperty(value = "到校时间")
 	private String date;
 	//个人行程
 	@TableField("note")
@@ -68,6 +74,11 @@ public class  BackSchool extends Model<BackSchool> {
 	@TableField("reviewed_by")
 	@ExcelProperty("审核人")
 	private String reviewedBy;
+
+	//新增审核时间
+	@TableField("reviewed_time")
+	@ExcelProperty("审核时间")
+	private LocalDateTime reviewedTime;
 	//抵徐地点
 	@TableField("pickup_loc")
 	@ExcelProperty("抵徐地点")

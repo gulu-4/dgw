@@ -49,7 +49,7 @@ public class StuPortraitController {
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping
     public R selectAll(Page<StuPortrait> page, @RequestParam("stuId") String stuId, @RequestParam(value = "kind", defaultValue = "-1") Integer kind) {
-        if (stuInfoService.isContainsReturnIsWork(stuId)) {
+        if (stuInfoService.isWithinDataScope(stuId)) {
             StuPortrait stuPortrait = new StuPortrait();
             stuPortrait.setStuNum(stuId);
             if (kind != -1) {
@@ -72,7 +72,7 @@ public class StuPortraitController {
         StuPortrait stuPortrait = stuPortraitService.getById(id);
         Assert.notNull(stuPortrait, Code.RESULT_DATA_NONE);
         StuInfo stuInfo = stuInfoService.getById(stuPortrait.getStuNum());
-        return stuInfo == null || stuInfoService.isWork(stuInfo) ? R.success(stuPortrait) : R.failure(Code.PERMISSION_NO_ACCESS);
+        return stuInfo == null || stuInfoService.isWithinDataScope(stuInfo) ? R.success(stuPortrait) : R.failure(Code.PERMISSION_NO_ACCESS);
     }
 
     /**
@@ -84,7 +84,7 @@ public class StuPortraitController {
     @PreAuthorize("hasAuthority('student_insert')")
     @PostMapping
     public R insert(@RequestBody @Valid StuPortraitInsertVO stuPortraitInsertVO) {
-        if (stuInfoService.isContainsReturnIsWork(stuPortraitInsertVO.getStuNum())) {
+        if (stuInfoService.isWithinDataScope(stuPortraitInsertVO.getStuNum())) {
             StuPortrait stuPortrait = new StuPortrait();
             BeanUtils.copyProperties(stuPortraitInsertVO, stuPortrait);
             stuPortrait.setNumber(RequestUtil.getId());

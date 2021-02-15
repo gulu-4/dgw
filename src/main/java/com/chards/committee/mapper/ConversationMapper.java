@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.Conversation;
 import com.chards.committee.dto.AdminWorkDTO;
+import com.chards.committee.util.DataScope;
 import com.chards.committee.vo.ConversationPageVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -16,5 +17,6 @@ import org.apache.ibatis.annotations.Param;
 public interface ConversationMapper extends BaseMapper<Conversation> {
     Page<ConversationPageVO> getPageByStuid(@Param("page") Page<ConversationPageVO> page, @Param("stuId") String stuId);
 
-    Page<ConversationPageVO> getPageAll(@Param("page") Page<ConversationPageVO> page, @Param("param") AdminWorkDTO pageDTO);
+    @DataScope()
+    Page<ConversationPageVO> getPageAll(@Param("page") Page<ConversationPageVO> page);
 }

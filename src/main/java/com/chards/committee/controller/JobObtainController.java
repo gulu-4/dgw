@@ -37,8 +37,8 @@ public class JobObtainController {
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/selectAll")
     public R selectAll(Page<JobObtainGetInfoVO> page) {
-        AdminWorkDTO adminWorkDTO = RequestUtil.getAdminWorkDTO();
-        return R.success(jobObtainService.getAdminManagementStudentJobObtain(page,adminWorkDTO));
+//        AdminWorkDTO adminWorkDTO = RequestUtil.getAdminWorkDTO();
+        return R.success(jobObtainService.getAdminManagementStudentJobObtain(page));
     }
 
     /**
@@ -49,7 +49,7 @@ public class JobObtainController {
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getInfoByStuNum")
     public R getInfoByStuNum(@RequestParam String stuNum) {
-        if (stuInfoService.isContainsReturnIsWork(stuNum)) {
+        if (stuInfoService.isWithinDataScope(stuNum)) {
             return R.success(jobObtainService.getInfoByStuNum(stuNum));
         }
         return R.failure(Code.PERMISSION_NO_ACCESS);
@@ -64,7 +64,7 @@ public class JobObtainController {
     @PreAuthorize("hasAuthority('student_insert')")
     @PostMapping
     public R insert(@RequestBody JobObtain jobObtain) {
-        if (stuInfoService.isContainsReturnIsWork(jobObtain.getStuNum())) {
+        if (stuInfoService.isWithinDataScope(jobObtain.getStuNum())) {
             // 判断是否已经有添加信息
             JobObtainGetInfoVO jobObtainGetInfoVO = jobObtainService.getInfoByStuNum(jobObtain.getStuNum());
             if (jobObtainGetInfoVO != null){
@@ -80,7 +80,7 @@ public class JobObtainController {
     @PreAuthorize("hasAuthority('student_insert')")
     @PutMapping
     public R update(@RequestBody JobObtain jobObtain) {
-        if (stuInfoService.isContainsReturnIsWork(jobObtain.getStuNum())) {
+        if (stuInfoService.isWithinDataScope(jobObtain.getStuNum())) {
             jobObtain.setRecordedTime(LocalDateTime.now());
             return R.success(jobObtainService.updateById(jobObtain));
         }

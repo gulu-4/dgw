@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.JobObtain;
 import com.chards.committee.dto.AdminWorkDTO;
+import com.chards.committee.dto.UserInfo;
 import com.chards.committee.mapper.JobObtainMapper;
 import com.chards.committee.vo.JobObtainGetInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,11 @@ public class JobObtainService extends ServiceImpl<JobObtainMapper, JobObtain> {
     @Autowired
     private CoreAdminService coreAdminService;
 
-    public Page<JobObtainGetInfoVO> getAdminManagementStudentJobObtain(Page<JobObtainGetInfoVO> page, AdminWorkDTO adminWorkDTO) {
-        return baseMapper.getAdminManagementStudentJobObtain(page,adminWorkDTO);
+    @Autowired
+    private UserService userService;
+
+    public Page<JobObtainGetInfoVO> getAdminManagementStudentJobObtain(Page<JobObtainGetInfoVO> page) {
+        return baseMapper.getAdminManagementStudentJobObtain(page);
     }
 
     public JobObtainGetInfoVO getInfoByStuNum(String stuNum){
@@ -33,10 +37,11 @@ public class JobObtainService extends ServiceImpl<JobObtainMapper, JobObtain> {
     }
 
     /**
-     * 根据admin工号返回工号和姓名
+     * 根据admin工号返回姓名
      */
     private String getCoreAdminName(String id){
-        CoreAdmin coreAdmin = coreAdminService.getById(id);
-        return coreAdmin.getName();
+//        CoreAdmin coreAdmin = coreAdminService.getById(id);
+        UserInfo userInfo = userService.getUserById(id);
+        return userInfo.getName();
     }
 }

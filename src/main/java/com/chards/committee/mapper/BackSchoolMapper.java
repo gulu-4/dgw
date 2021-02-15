@@ -6,6 +6,7 @@ import com.chards.committee.domain.BackSchool;
 import com.chards.committee.domain.StuInfo;
 import com.chards.committee.dto.BackSchoolAdminGetAndUpdateDTO;
 import com.chards.committee.dto.BackSchoolDateAreaDTO;
+import com.chards.committee.util.DataScope;
 import com.chards.committee.vo.BackSchoolGetAllVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,6 +20,7 @@ import java.util.List;
  */
 public interface BackSchoolMapper extends BaseMapper<BackSchool> {
 	//获取管理员管理的学生的返校审核
+	@DataScope
 	Page<BackSchoolGetAllVO> getAdminManagementStudentBackSchool(@Param("page") Page<BackSchoolGetAllVO> page, @Param("param") BackSchoolAdminGetAndUpdateDTO backSchoolAdminGetAndUpdateDTO);
 
 	boolean updateAdminManagementStudentBackSchoolPass(@Param("param") BackSchoolAdminGetAndUpdateDTO backSchoolAdminGetAndUpdateDTO);
@@ -29,7 +31,9 @@ public interface BackSchoolMapper extends BaseMapper<BackSchool> {
 	 * @param backSchoolDateAreaDTO
 	 * @return
 	 */
+	@DataScope()
 	List<BackSchoolGetAllVO> getAdminManagementStudentBackSchoolByDateArea(@Param("param") BackSchoolDateAreaDTO backSchoolDateAreaDTO);
 
+	@DataScope()
 	List<StuInfo> getDoNotApplyForBackSchoolByParams(@Param("param") BackSchoolDateAreaDTO backSchoolDateAreaDTO);
 }

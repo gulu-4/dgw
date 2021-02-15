@@ -1,5 +1,8 @@
 package com.chards.committee.service;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -7,11 +10,8 @@ import com.chards.committee.config.BusinessException;
 import com.chards.committee.constant.Constant;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.LoginIp;
-import com.chards.committee.dto.AdminPermissionDTO;
-import com.chards.committee.dto.AdminRoleDTO;
-import com.chards.committee.dto.CoreAdminDTO;
-import com.chards.committee.dto.UserInfo;
-import com.chards.committee.dto.UserTokenDTO;
+import com.chards.committee.domain.StuInfo;
+import com.chards.committee.dto.*;
 import com.chards.committee.mapper.CoreAdminMapper;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
@@ -55,7 +55,66 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
     TbRoleService tbRoleService;
     @Autowired
     StuInfoService stuInfoService;
+    @Autowired
+    DataScopeService dataScopeService;
+    public UserLoginRespVO getAdminTokenLdap(String username, String password, String ip) {
+        JSONObject jsonObject = JSONUtil.createObj();
+        jsonObject.put("username", username);
+        jsonObject.put("password", password);
+        String result = HttpRequest
+                .post("https://xyt-wx.cumt.edu.cn/ldap/check")
+                .body(String.valueOf(jsonObject))
+                .execute()
+                .body();
+        String code = JSONUtil.parseObj(result).get("code").toString();
+        if (code.equals("10000")){
+            CoreAdmin coreAdmin = getById(username);
+            UserTokenDTO userTokenDTO = new UserTokenDTO();
+            UserInfo userInfo = new UserInfo();
+            BeanUtils.copyProperties(coreAdmin, userInfo);
+            userTokenDTO.setUserInfo(userInfo);
+            List<AdminRoleDTO> adminRole = tbRoleService.getAdminRole(username);
+            List<String> roles = adminRole.stream().map(AdminRoleDTO::getEnname).collect(Collectors.toList());
+            if (roles.contains(Constant.XUEGONG)) {
+                userInfo.setDepartment("学工处");
+            }
+            userTokenDTO.setRoles(roles);
+            List<String> permisssions = tbRoleService.getAdminPermission(
+                    adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())
+            ).stream().map(AdminPermissionDTO::getPermission).collect(Collectors.toList());
+            userTokenDTO.setPermissionsList(permisssions);
+            List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(userInfo.getId());
+            System.out.println("userDataScopeList:");
+            System.out.println(userDataScopeList);
+            userTokenDTO.setUserDataScopeList(userDataScopeList);
+            String token = UUID.randomUUID().toString();
+            redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
+            UserLoginRespVO resp = new UserLoginRespVO();
+            resp.setToken(token);
+            resp.setName(coreAdmin.getName());
+            resp.setRoleList(roles);
+            resp.setUserDataScopeList(userDataScopeList);
+            LoginIp byLastIp = loginIpService.getByUserId(username);
+            resp.setOldIp(byLastIp != null ? byLastIp.getIp() : "空");
+            if (loginIpService.addLoginIp(username, ip)) {
+                resp.setNewIp(ip);
+            }
+            return resp;
+        }
+        else if (code.equals("10001")){
+            BusinessException.error(Code.USER_LOGIN_ERROR);
+        }
+        else if (code.equals("10002")){
+            BusinessException.error(Code.USER_LDAP_NOT_ACTIVATED);
+        }
+        else {
+            BusinessException.error(Code.ERROR);
+        }
+        UserLoginRespVO resp = null;
+        return resp;
 
+
+    }
     public UserLoginRespVO getAdminToken(String username, String password, String ip) {
         CoreAdmin coreAdmin = getById(username);
         if (coreAdmin == null || !bCryptPasswordEncoder.matches(password, coreAdmin.getPassword())) {
@@ -75,11 +134,17 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
                 adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())
         ).stream().map(AdminPermissionDTO::getPermission).collect(Collectors.toList());
         userTokenDTO.setPermissionsList(permisssions);
+        List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(userInfo.getId());
+        System.out.println("userDataScopeList:");
+        System.out.println(userDataScopeList);
+        userTokenDTO.setUserDataScopeList(userDataScopeList);
         String token = UUID.randomUUID().toString();
         redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
         UserLoginRespVO resp = new UserLoginRespVO();
         resp.setToken(token);
         resp.setName(coreAdmin.getName());
+        resp.setRoleList(roles);
+        resp.setUserDataScopeList(userDataScopeList);
         LoginIp byLastIp = loginIpService.getByUserId(username);
         resp.setOldIp(byLastIp != null ? byLastIp.getIp() : "空");
         if (loginIpService.addLoginIp(username, ip)) {

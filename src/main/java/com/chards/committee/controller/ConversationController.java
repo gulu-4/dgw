@@ -13,6 +13,8 @@ import com.chards.committee.vo.Code;
 import com.chards.committee.vo.ConversationInsertVO;
 import com.chards.committee.vo.ConversationPageVO;
 import com.chards.committee.vo.R;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +35,7 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("/conversations")
+@Api(tags = "谈话信息管理")
 public class ConversationController {
     /**
      * 服务对象
@@ -51,14 +54,16 @@ public class ConversationController {
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping
+    @ApiOperation(value = "【管】查询某位同学的所有数据")
     public R selectAllByStuid(Page<ConversationPageVO> page, @RequestParam("stuid") String stuId) {
-        return stuInfoService.isContainsReturnIsWork(stuId) ? R.success(conversationService.getPageByStuid(page, stuId)) : R.failure(Code.PERMISSION_NO_ACCESS);
+        return stuInfoService.isWithinDataScope(stuId) ? R.success(conversationService.getPageByStuid(page, stuId)) : R.failure(Code.PERMISSION_NO_ACCESS);
     }
 
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/all")
+    @ApiOperation(value = "查询管辖范围内的所有数据")
     public R selectAll(Page<ConversationPageVO> page) {
-        return R.success(conversationService.getPageAll(page, RequestUtil.getAdminWorkDTO()));
+        return R.success(conversationService.getPageAll(page));
     }
 
 
@@ -70,11 +75,12 @@ public class ConversationController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('student_select')")
+    @ApiOperation(value = "通过主键查询单条数据")
     public R selectOne(@PathVariable Serializable id) {
         Conversation conversation = conversationService.getById(id);
         Assert.notNull(conversation, Code.RESULT_DATA_NONE);
         StuInfo stuInfo = stuInfoService.getById(conversation.getStuNum());
-        return stuInfo == null || stuInfoService.isWork(stuInfo) ? R.success(conversation) : R.failure(Code.PERMISSION_NO_ACCESS);
+        return stuInfo == null || stuInfoService.isWithinDataScope(stuInfo) ? R.success(conversation) : R.failure(Code.PERMISSION_NO_ACCESS);
     }
 
     /**
@@ -85,8 +91,9 @@ public class ConversationController {
      */
     @PreAuthorize("hasAuthority('student_insert')")
     @PostMapping
+    @ApiOperation(value = "新增谈话记录")
     public R insert(@RequestBody @Valid ConversationInsertVO conversationInsertVO) {
-        if (stuInfoService.isContainsReturnIsWork(conversationInsertVO.getStuNum())) {
+        if (stuInfoService.isWithinDataScope(conversationInsertVO.getStuNum())) {
             Conversation conversation = new Conversation();
             BeanUtils.copyProperties(conversationInsertVO, conversation);
             conversation.setDatetime(LocalDateTime.now());
@@ -107,6 +114,7 @@ public class ConversationController {
      */
     @PreAuthorize("hasRole('ROOT')")
     @PostMapping("remove/{conversation}")
+    @ApiOperation(value = "【超】删除谈话记录")
     public R remove(@PathVariable String conversation) {
         return R.success(conversationService.removeById(conversation));
     }

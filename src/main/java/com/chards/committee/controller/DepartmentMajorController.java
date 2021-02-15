@@ -7,6 +7,8 @@ import com.chards.committee.domain.DepartmentMajor;
 import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.DepartmentMajorService;
 import com.chards.committee.vo.R;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +33,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/departmentMajors")
+@Api(tags = "学院专业管理")
 public class DepartmentMajorController {
 	/**
 	 * 服务对象
@@ -48,7 +51,7 @@ public class DepartmentMajorController {
 	 * @return 所有数据
 	 */
 	@GetMapping
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasAuthority('teacher_own')")
 	public R selectAll( DepartmentMajor departmentMajor) {
 		return R.success(departmentMajorService.list( new QueryWrapper<>(departmentMajor)));
 	}
@@ -98,13 +101,13 @@ public class DepartmentMajorController {
 	}
 
   @GetMapping("/admin")
-  @PreAuthorize("hasRole('STUDENT')")
+  @PreAuthorize("hasAuthority('teacher_own')")
   public R getAdminByDepartment(String department){
 		return R.success(coreAdminService.getAdminByDepartment(department));
 	}
 
 	@GetMapping("/dep")
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasAuthority('teacher_own')")
 	public R getSetDep(){
 		return R.success(departmentMajorService.getDepAll());
 	}

@@ -39,7 +39,7 @@ public class PsychologicalCounsellingCaseController {
     @PreAuthorize("hasAuthority('student_insert')")
     @PostMapping("/insert")
     public R insert(@RequestBody @Valid PsychologicalCounsellingCaseInsertVO psychologicalCounsellingCaseInsertVO) {
-        if (stuInfoService.isContainsReturnIsWork(psychologicalCounsellingCaseInsertVO.getStuNum())) {
+        if (stuInfoService.isWithinDataScope(psychologicalCounsellingCaseInsertVO.getStuNum())) {
             PsychologicalCounsellingCase psychologicalCounsellingCase = new PsychologicalCounsellingCase();
             BeanUtils.copyProperties(psychologicalCounsellingCaseInsertVO,psychologicalCounsellingCase);
             // 填写者和填写时间都是后台获取
@@ -58,7 +58,7 @@ public class PsychologicalCounsellingCaseController {
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getAll")
     public R getAll(@RequestParam String stuNum){
-        if (stuInfoService.isContainsReturnIsWork(stuNum)){
+        if (stuInfoService.isWithinDataScope(stuNum)){
             return R.success(psychologicalCounsellingCaseService.getAll(stuNum));
         }
         return R.failure(Code.PERMISSION_NO_ACCESS);

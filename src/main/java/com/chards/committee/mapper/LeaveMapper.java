@@ -7,6 +7,7 @@ import com.chards.committee.dto.BackSchoolDateAreaDTO;
 import com.chards.committee.dto.LeaveByIdOrNameDTO;
 import com.chards.committee.dto.LeaveDateAreaDTO;
 import com.chards.committee.dto.LeaveInfoDTO;
+import com.chards.committee.util.DataScope;
 import com.chards.committee.vo.BackSchoolGetAllVO;
 import com.chards.committee.vo.LeaveInfoVO;
 import com.chards.committee.vo.LeaveSchoolGetAllVO;
@@ -22,6 +23,7 @@ import java.util.List;
  * @since 2020-08-26 14:51:51
  */
 public interface LeaveMapper extends BaseMapper<Leave> {
+    @DataScope()
     Page<LeaveInfoVO> adminSelectLeave(@Param("page") Page<LeaveInfoVO> page, @Param("param") LeaveSchoolQueryParamVO leaveSchoolQueryParamVO);
 
 
@@ -31,8 +33,10 @@ public interface LeaveMapper extends BaseMapper<Leave> {
      * @param leaveDateAreaDTO
      * @return
      */
+    @DataScope()
     List<LeaveSchoolGetAllVO> getAdminManagementStudentLeaveSchoolByDateArea(@Param("param") LeaveDateAreaDTO leaveDateAreaDTO);
 
+    @DataScope()
     List<LeaveInfoVO> getByIdOrName(@Param("param")LeaveByIdOrNameDTO leaveByIdOrNameDTO);
 
 

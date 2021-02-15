@@ -38,7 +38,7 @@ public class PsychologicalLevelController {
     @PreAuthorize("hasAuthority('student_insert')")
     @PostMapping("/insert")
     public R insert(@RequestBody @Valid PsychologicalLevelInsertVO psychologicalLevelInsertVO){
-        if (stuInfoService.isContainsReturnIsWork(psychologicalLevelInsertVO.getStuNum())) {
+        if (stuInfoService.isWithinDataScope(psychologicalLevelInsertVO.getStuNum())) {
             PsychologicalLevel psychologicalLevel = new PsychologicalLevel();
             BeanUtils.copyProperties(psychologicalLevelInsertVO,psychologicalLevel);
             // 填写者和填写时间都是后台获取
@@ -60,7 +60,7 @@ public class PsychologicalLevelController {
                                        @RequestParam(value = "stuNum", defaultValue = "") String stuNum,
                                        Page<PsychologicalLevelCheckSelectVO> page){
         if (!stuNum.equals("")) {
-            if (!stuInfoService.isContainsReturnIsWork(stuNum)){
+            if (!stuInfoService.isWithinDataScope(stuNum)){
                 return R.failure(Code.PERMISSION_NO_ACCESS);
             }
         }
@@ -87,7 +87,7 @@ public class PsychologicalLevelController {
         PsychologicalLevel psychologicalLevel = psychologicalLevelService.getById(id);
         Assert.notNull(psychologicalLevel, Code.RESULT_DATA_NONE);
         StuInfo stuInfo = stuInfoService.getById(psychologicalLevel.getStuNum());
-        return stuInfo == null || stuInfoService.isWork(stuInfo) ? R.success(psychologicalLevel) : R.failure(Code.PERMISSION_NO_ACCESS);
+        return stuInfo == null || stuInfoService.isWithinDataScope(stuInfo) ? R.success(psychologicalLevel) : R.failure(Code.PERMISSION_NO_ACCESS);
     }
 
     /**
@@ -96,7 +96,7 @@ public class PsychologicalLevelController {
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping("/getPsychologicalLevelGetByStuNumVO")
     public R getPsyLevelById(@RequestParam String stuNum) {
-        if (stuInfoService.isContainsReturnIsWork(stuNum)) {
+        if (stuInfoService.isWithinDataScope(stuNum)) {
             return R.success(psychologicalLevelService.getPsychologicalLevelGetByStuNumVO(stuNum));
         }
         return R.failure(Code.PERMISSION_NO_ACCESS);

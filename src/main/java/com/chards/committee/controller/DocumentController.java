@@ -5,12 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.constant.Constant;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.StuInfo;
-import com.chards.committee.dto.BackSchoolDateAreaDTO;
-import com.chards.committee.dto.CoreAdminDTO;
-import com.chards.committee.dto.LeaveBackDateAreaDTO;
-import com.chards.committee.dto.LeaveDateAreaDTO;
-import com.chards.committee.dto.StuInfoPageDTO;
-import com.chards.committee.dto.UserTokenDTO;
+import com.chards.committee.dto.*;
 import com.chards.committee.service.*;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
@@ -75,8 +70,12 @@ public class DocumentController {
 	@Autowired
 	EasyExeclService easyExeclService;
 
+	@Autowired
+	UserService userService;
+
 	/**
 	 * 我觉得和权限判断有关的 都是走那一套
+	 * 学生头像接口
 	 *
 	 * @param id
 	 * @return
@@ -91,7 +90,7 @@ public class DocumentController {
 				if (file.exists()) {
 					RequestUtil.setUserTokenDTO(userTokenDTO);
 					// 本人查看放在前面  后面查看是否work （ 学生查看的话会报错NPE ）
-					if (RequestUtil.getId().equals(id) || stuInfoService.isContainsReturnIsWork(id)) {
+					if (RequestUtil.getId().equals(id) || stuInfoService.isWithinDataScope(id)) {
 						return getFileByte(file);
 					}
 				}
@@ -117,6 +116,7 @@ public class DocumentController {
 
 	/**
 	 * 获取管理员excel表格
+	 * 通过检索导出教职工名单
 	 *
 	 * @param token
 	 * @param param
@@ -134,7 +134,13 @@ public class DocumentController {
 		response.getWriter().write("no permission");
 	}
 
-
+	/**
+	 * 通过学院筛选导出教职工
+	 * @param token
+	 * @param department
+	 * @param response
+	 * @throws IOException
+	 */
 	@GetMapping(value = "/execls/admin/department")
 	public void getAdminByDepartmentExecl(String token, String department, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
@@ -146,6 +152,12 @@ public class DocumentController {
 		response.getWriter().write("no permission");
 	}
 
+	/**
+	 * 导出学生画像
+	 * @param token
+	 * @param response
+	 * @throws IOException
+	 */
 	@GetMapping(value = "/execls/stuInfo/portrait")
 	public void getStuInfoPortrait(String token, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
@@ -169,12 +181,19 @@ public class DocumentController {
 		response.getWriter().write("no permission");
 	}
 
+	/**
+	 * 通过关键词导出学生信息
+	 * @param token
+	 * @param stuInfoPageDTO
+	 * @param response
+	 * @throws IOException
+	 */
 	@GetMapping(value = "/execls/stuinfo/keywords")
 	public void getStuInfoKeywordsExecl(String token, StuInfoPageDTO stuInfoPageDTO, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			stuInfoPageDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//			stuInfoPageDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 			List<StuInfoPageVO> likeLists = stuInfoService.getLikeList(stuInfoPageDTO);
 			List<StuInfo> stuInfoList = new ArrayList<>();
 			likeLists.forEach(s -> {
@@ -217,7 +236,7 @@ public class DocumentController {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 			List<BackSchoolGetAllVO> dataList = backSchoolService.getAdminManagementStudentBackSchoolByDateArea(backSchoolDateAreaDTO);
 			List<BackSchoolGetAllVO1> backSchoolGetAllVO1List = new ArrayList<>();
 			dataList.forEach(data -> {
@@ -241,7 +260,7 @@ public class DocumentController {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 			List<StuInfo> dataList = backSchoolService.getDoNotApplyForBackSchoolByParams(backSchoolDateAreaDTO);
 			easyExeclService.writeToResponse(response, "backSchoolNotApply - " + System.currentTimeMillis(), dataList, StuInfo.class);
 			return;
@@ -250,24 +269,30 @@ public class DocumentController {
 	}
 
 
-
-	@GetMapping(value = "/execls/stuinfo/leavebackSchoolInfo")
-	public void getStuInfoAdvanceKeywordsExecl(String token, LeaveBackDateAreaDTO backSchoolDateAreaDTO, HttpServletResponse response) throws IOException {
-		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
-		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
-			RequestUtil.setUserTokenDTO(userTokenDTO);
-			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
-			List<LeaveBackGetAllVO> dataList = leaveBackService.getAdminManagementStudentBackSchoolByDateArea(backSchoolDateAreaDTO);
-			List<LeaveBackGetAllVO1> backSchoolGetAllVO1List = new ArrayList<>();
-			dataList.forEach(data -> {
-				LeaveBackGetAllVO1 backSchoolGetAllVO1 = setVO1ByVO(data);
-				backSchoolGetAllVO1List.add(backSchoolGetAllVO1);
-			});
-			easyExeclService.writeToResponse(response, "leavebackSchool - " + System.currentTimeMillis(), backSchoolGetAllVO1List, LeaveBackGetAllVO1.class);
-			return;
-		}
-		response.getWriter().write("no permission");
-	}
+	/**
+	 * 导出销假申请，暂时弃用
+	 * @param token
+	 * @param backSchoolDateAreaDTO
+	 * @param response
+	 * @throws IOException
+	 */
+//	@GetMapping(value = "/execls/stuinfo/leavebackSchoolInfo")
+//	public void getStuInfoAdvanceKeywordsExecl(String token, LeaveBackDateAreaDTO backSchoolDateAreaDTO, HttpServletResponse response) throws IOException {
+//		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+//		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
+//			RequestUtil.setUserTokenDTO(userTokenDTO);
+//			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//			List<LeaveBackGetAllVO> dataList = leaveBackService.getAdminManagementStudentBackSchoolByDateArea(backSchoolDateAreaDTO);
+//			List<LeaveBackGetAllVO1> backSchoolGetAllVO1List = new ArrayList<>();
+//			dataList.forEach(data -> {
+//				LeaveBackGetAllVO1 backSchoolGetAllVO1 = setVO1ByVO(data);
+//				backSchoolGetAllVO1List.add(backSchoolGetAllVO1);
+//			});
+//			easyExeclService.writeToResponse(response, "leavebackSchool - " + System.currentTimeMillis(), backSchoolGetAllVO1List, LeaveBackGetAllVO1.class);
+//			return;
+//		}
+//		response.getWriter().write("no permission");
+//	}
 
 
 	@GetMapping(value = "/execls/stuinfo/leaveInfo")
@@ -275,7 +300,7 @@ public class DocumentController {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			leaveDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//			leaveDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 			List<LeaveSchoolGetAllVO> leaveSchoollist = leaveService.getAdminManagementStudentLeaveSchoolByDateArea(leaveDateAreaDTO);
 			List<LeaveSchoolGetAllVO1> leaveSchoolGetAllVO1List = new ArrayList<>();
 			leaveSchoollist.forEach(leaveSchool->{
@@ -289,7 +314,7 @@ public class DocumentController {
 	}
 
 	/**
-	 * 2020年秋季离校申请导出
+	 * 2020年秋季离校申请导出（尚未适配最新的权限管理机制，10.4，poplar）
 	 * @param token
 	 * @param backSchoolDateAreaDTO
 	 * @param response
@@ -336,7 +361,8 @@ public class DocumentController {
 	@GetMapping(value = "/execls/psychological_counseling_case")
 	public void getPsychologicalLevelByParams(String token,PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO,HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
-		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
+//		这个仅学工处及以上权限者可导
+		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_TEACHER_SELECT)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<PsychologicalCounselingCaseExportVO> psychologicalCounselingCaseExportVOS = psychologicalCounsellingCaseService.getAllCounselingCaseByParams(psychologicalCounsellingCaseSelectVO);
 			easyExeclService.writeToResponse(response, "psychologicalCounselingCase - " + System.currentTimeMillis(), psychologicalCounselingCaseExportVOS, PsychologicalCounselingCaseExportVO.class);
@@ -375,8 +401,9 @@ public class DocumentController {
 			backSchoolGetAllVO1.setPass("未通过");
 		}
 		if (!StringUtils.isBlank(backSchoolGetAllVO.getReviewedBy())){
-			CoreAdmin coreAdmin = coreAdminService.getById(backSchoolGetAllVO.getReviewedBy());
-			backSchoolGetAllVO1.setReviewedBy(coreAdmin.getName());
+//			CoreAdmin coreAdmin = coreAdminService.getById(backSchoolGetAllVO.getReviewedBy());
+			UserInfo userInfo = userService.getUserById((backSchoolGetAllVO.getReviewedBy()));
+			backSchoolGetAllVO1.setReviewedBy(userInfo.getName());
 		}
     return backSchoolGetAllVO1;
 	}
@@ -400,10 +427,11 @@ public class DocumentController {
 		}
 
 		if (!StringUtils.isBlank(leaveSchoolGetAllVO.getReviewerId())){
-			CoreAdmin coreAdmin = coreAdminService.getById(leaveSchoolGetAllVO.getReviewerId());
-			if (coreAdmin!=null)
-			leaveSchoolGetAllVO1.setReviewerId(coreAdmin.getName());
-			else leaveSchoolGetAllVO1.setReviewerId("5704");
+//			CoreAdmin coreAdmin = coreAdminService.getById(leaveSchoolGetAllVO.getReviewerId());
+			UserInfo userInfo = userService.getUserById(leaveSchoolGetAllVO.getReviewerId());
+			if (userInfo!=null)
+			leaveSchoolGetAllVO1.setReviewerId(userInfo.getName());
+			else leaveSchoolGetAllVO1.setReviewerId("管理员");
 		}
     return leaveSchoolGetAllVO1;
 	}

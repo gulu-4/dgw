@@ -17,6 +17,8 @@ import com.chards.committee.vo.Code;
 import com.chards.committee.vo.CoreAdminAddVO;
 import com.chards.committee.vo.R;
 import com.chards.committee.vo.UserPwdVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,6 +39,7 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/core-admin")
+@Api(tags = "管理员模块")
 public class CoreAdminController {
 
 	@Autowired
@@ -134,7 +137,7 @@ public class CoreAdminController {
 	 * @param coreAdmin {@link CoreAdmin}
 	 * @return {@link R}
 	 */
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT')) ")
 	@PostMapping("/update/own")
 	public R updateOwn(@RequestBody CoreAdmin coreAdmin) {
 		CoreAdmin byId = coreAdminService.getById(coreAdmin.getId());
@@ -193,7 +196,7 @@ public class CoreAdminController {
 	 *
 	 * @return {@link R}
 	 */
-	@PreAuthorize("hasAuthority('teacher_select')")
+	@PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT')) ")
 	@GetMapping("get/own")
 	public R getOwnInfo() {
 		UserInfo userInfo = RequestUtil.getLoginUser();
@@ -202,7 +205,7 @@ public class CoreAdminController {
 	}
 
 
-	@PreAuthorize("hasAuthority('teacher_select')")
+	@PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT')) ")
 	@PostMapping("/updatePwd")
 	public R updatePwd(@Valid @RequestBody UserPwdVO pwd, @RequestHeader(value = "Authorization") String token) {
 		UserInfo userInfo = RequestUtil.getLoginUser();
@@ -217,8 +220,9 @@ public class CoreAdminController {
 	}
 
 
-	@PreAuthorize("hasAnyRole('STUDENT')")
+	@PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT')) ")
 	@GetMapping("/get")
+	@ApiOperation(value = "管理员获取自己的个人信息")
 	public R getAdminInfo() {
 		String adminId = RequestUtil.getId();
 		CoreAdmin coreAdmin = coreAdminService.getById(adminId);

@@ -12,58 +12,27 @@
     </resultMap>
     <sql id="page">
     SELECT
-	conversation.*,
-    core_admin.NAME AS admin_name,
-    stu_info.NAME AS stu_name,
-    stu_info.grade AS stu_grade,
-    stu_info.education_background AS stu_education_background
+    conversation.*,
+    stu_info.NAME as stu_name,
+    stu_info.grade,
+    stu_info.state,
+    stu_info.department,
+    stu_info.education_background
     FROM
     conversation
     INNER JOIN stu_info ON  conversation.stu_num = stu_info.id
     </sql>
-    <sql id="pageWhere">
-        INNER JOIN core_admin ON conversation.number = core_admin.id
-    </sql>
+
     <select id="getPageByStuid" resultType="com.chards.committee.vo.ConversationPageVO">
         <include refid="page"></include>
         and conversation.stu_num = #{stuId,jdbcType=VARCHAR}
-        <include refid="pageWhere"></include>
         ORDER BY
         datetime DESC
     </select>
     <select id="getPageAll" resultType="com.chards.committee.vo.ConversationPageVO">
-        <if test="param.identity ==1">
-            <include refid="page"></include>
-            <include refid="pageWhere"></include>
-            ORDER BY
-            datetime DESC
-        </if>
-        <if test="param.identity !=1">
-            select * from (
-            <foreach item="item" collection="param.works" index="index">
-                <include refid="page"></include>
-                <if test="item == '全部年级'">
-                    and stu_info.education_background='本科'
-                </if>
-                <if test="item == '研究生'">
-                    and stu_info.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and stu_info.education_background='本科'
-                    and stu_info.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="param.department != '学工处'">
-                    and stu_info.department = #{param2.department,jdbcType=VARCHAR}
-                </if>
-                <include refid="pageWhere"></include>
-                <if test="index != param.works.size()-1">
-                    union
-                </if>
-            </foreach>
-            )t
-            ORDER BY
-            datetime DESC
-        </if>
+        <include refid="page"></include>
+        ORDER BY
+        datetime DESC
     </select>
 
 </mapper>

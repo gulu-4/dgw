@@ -65,7 +65,7 @@ public class LeaveService extends ServiceImpl<LeaveMapper, Leave> {
 	public  List<LeaveInfoVO> getByIdOrName(String param){
 		LeaveByIdOrNameDTO leaveByIdOrNameDTO=new LeaveByIdOrNameDTO();
 		leaveByIdOrNameDTO.setParam(param);
-		leaveByIdOrNameDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//		leaveByIdOrNameDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 		return baseMapper.getByIdOrName(leaveByIdOrNameDTO);
 	}
 }

@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * @Author: chards
  * @Date: 22:35 2020/8/18
@@ -156,6 +158,11 @@ public class BackSchoolGetAllVO  {
     @TableField("reviewed_by")
     @ExcelProperty("审核人")
     private String reviewedBy;
+
+    //新增审核时间
+    @TableField("reviewed_time")
+    @ExcelProperty("审核时间")
+    private LocalDateTime reviewedTime;
 
 
     //审核人

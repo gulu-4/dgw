@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 public class LeaveSchoolQueryParamVO {
-    private AdminWorkDTO adminWorkDTO;
+//    private AdminWorkDTO adminWorkDTO;
     private Integer status; // 审核状态
 
     private String stuNum; //学号

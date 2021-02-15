@@ -9,12 +9,16 @@ import com.chards.committee.domain.Leave;
 import com.chards.committee.domain.StuInfo;
 import com.chards.committee.dto.LeaveByIdOrNameDTO;
 import com.chards.committee.dto.LeaveInfoDTO;
+import com.chards.committee.dto.UserInfo;
 import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.LeaveService;
 import com.chards.committee.service.StuInfoService;
+import com.chards.committee.service.UserService;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +36,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/leaves")
+@Api(tags = "请假信息模块")
 public class LeaveController {
 	/**
 	 * 服务对象
@@ -44,6 +49,9 @@ public class LeaveController {
 	@Autowired
 	private CoreAdminService coreAdminService;
 
+	@Autowired
+	private UserService userService;
+
 	/**
 	 * 学生查看自己的所有的数据
 	 *
@@ -51,6 +59,7 @@ public class LeaveController {
 	 */
 	@PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
 	@GetMapping
+	@ApiOperation(value = "学生查看自己的所有数据")
 	public R selectAll() {
 		Leave leave = new Leave();
 		leave.setStuNum(RequestUtil.getId());
@@ -61,9 +70,10 @@ public class LeaveController {
 
 		leaves.forEach(leave1 -> {
 			if (!StringUtils.isBlank(leave1.getReviewerId())) {
-				CoreAdmin byId = coreAdminService.getById(leave1.getReviewerId());
-				if (byId!=null)
-				leave1.setReviewerId(byId.getName());
+//				CoreAdmin byId = coreAdminService.getById(leave1.getReviewerId());
+				UserInfo userInfo = userService.getUserById(leave1.getReviewerId());
+				if (userInfo!=null)
+				leave1.setReviewerId(userInfo.getName());
 				else leave1.setReviewerId("管理员");
 			}
 		});
@@ -78,6 +88,7 @@ public class LeaveController {
 	 */
 	@PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
 	@PostMapping
+	@ApiOperation(value = "提交请假申请")
 	public R insert(@RequestBody @Valid LeaveInsertVO leaveInsertVO) {
 		if (leaveInsertVO.getEndDate().isBefore(leaveInsertVO.getStartDate())) {
 			return R.failure("结束时间不能小于开始时间");
@@ -101,6 +112,7 @@ public class LeaveController {
 
 	@PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
 	@PostMapping("/delete")
+	@ApiOperation(value = "删除请假申请记录")
 	public R delete(Long id) {
 		Leave leave = new Leave();
 		leave.setId(id);
@@ -117,15 +129,17 @@ public class LeaveController {
 	 */
 	@PreAuthorize("hasAuthority('student_select')")
 	@GetMapping("/stu")
+	@ApiOperation(value = "管理员查看所有的请假记录")
 	public R adminSelectLeaveAll(Page<LeaveInfoVO> page, LeaveSchoolQueryParamVO leaveSchoolQueryParamVO) {
-		leaveSchoolQueryParamVO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//		leaveSchoolQueryParamVO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 		Page<LeaveInfoVO> leaveInfoVOPage = leaveService.adminSelectLeave(page, leaveSchoolQueryParamVO);
 		leaveInfoVOPage.getRecords().forEach(leaveInfoVO -> {
 			if (!StringUtils.isBlank(leaveInfoVO.getReviewerId())) {
-				CoreAdmin byId = coreAdminService.getById(leaveInfoVO.getReviewerId());
-				if(byId!=null)
-				leaveInfoVO.setReviewerId(byId.getName());
-				else leaveInfoVO.setReviewerId("5704");
+//				CoreAdmin byId = coreAdminService.getById(leaveInfoVO.getReviewerId());
+				UserInfo userInfo = userService.getUserById(leaveInfoVO.getReviewerId());
+				if(userInfo!=null)
+				leaveInfoVO.setReviewerId(userInfo.getName());
+				else leaveInfoVO.setReviewerId("不详");
 			}
 		});
 		return R.success(leaveInfoVOPage);
@@ -139,6 +153,7 @@ public class LeaveController {
 	 */
 	@PreAuthorize("hasAuthority('student_select')")
 	@GetMapping("/stu/{param}")
+	@ApiOperation(value = "管理员根据姓名或学号，查看某一个学生的请假记录")
 	public R adminSelectLeaveByStuid(@PathVariable String param) {
 			return R.success(leaveService.getByIdOrName(param));
 	}
@@ -154,7 +169,7 @@ public class LeaveController {
 		if (leave.getEndDate().isBefore(LocalDateTime.now())) {
 			return R.failure("该条记录请假时间已过");
 		}
-		if (stuInfoService.isContainsReturnIsWork(leave.getStuNum())) {
+		if (stuInfoService.isWithinDataScope(leave.getStuNum())) {
 			leave.setStatus(updateVO.getStatus());
 			leave.setReviewerId(RequestUtil.getId());
 			return R.success(leaveService.updateById(leave));

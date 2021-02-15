@@ -41,6 +41,7 @@ public class HttpSecurityFilter extends OncePerRequestFilter {
 //            // 将authentication信息放入到上下文对象中
 //            // 那个注解前会判断这个authentication的权限
 //            SecurityContextHolder.getContext().setAuthentication(authentication);
+
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 		}
 		filterChain.doFilter(httpServletRequest, httpServletResponse);

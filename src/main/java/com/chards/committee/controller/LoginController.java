@@ -49,6 +49,13 @@ public class LoginController {
 	public R studentLogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
 		return R.success(stuInfoService.getUserToken(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
 	}
+	/**
+	 * 学生统一身份认证登录
+	 */
+	@PostMapping("/ldap/student")
+	public R studentLdapLogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
+		return R.success(stuInfoService.getUserTokenLdap(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
+	}
 
 	/**
 	 * 管理员登陆
@@ -57,13 +64,20 @@ public class LoginController {
 	public R adminlogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
 		return R.success(coreAdminService.getAdminToken(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
 	}
+	/**
+	 * 管理员统一身份认证登陆
+	 */
+	@PostMapping("/ldap/admin")
+	public R adminLdaplogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
+		return R.success(coreAdminService.getAdminTokenLdap(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
+	}
 
 	/**
 	 * 退出登录
 	 * @param token
 	 * @return
 	 */
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
 	@PostMapping("/out")
 	public R loginOut(@RequestHeader(value = "Authorization") String token) {
 		return R.success(redisTemplate.delete(token));
@@ -74,7 +88,7 @@ public class LoginController {
 	 * 查询登录ip记录
 	 * @return
 	 */
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
 	@GetMapping("/ip")
    public R getLoginIps(){
 		return R.success(loginIpService.getByUserIdLimitTen(RequestUtil.getId()));
@@ -85,7 +99,7 @@ public class LoginController {
 	 * token时间测试
 	 * @return
 	 */
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
 	@GetMapping("/token")
    public R setToken(@RequestHeader(value = "Authorization") String token,int min,int variate){
 		TimeUnit seconds = TimeUnit.SECONDS;

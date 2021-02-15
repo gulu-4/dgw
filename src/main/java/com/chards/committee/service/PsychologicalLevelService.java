@@ -8,6 +8,7 @@ import com.chards.committee.domain.PsychologicalLevel;
 import com.chards.committee.domain.StuInfo;
 import com.chards.committee.dto.PsychologicalLevelGetDTO;
 import com.chards.committee.dto.PsychologicalLevelRecordGetDTO;
+import com.chards.committee.dto.UserInfo;
 import com.chards.committee.mapper.PsychologicalLevelMapper;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
@@ -38,6 +39,9 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
     @Autowired
     private CoreAdminService coreAdminService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 更新审核状态
      * */
@@ -65,7 +69,7 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
         PsychologicalLevelRecordGetDTO psychologicalLevelRecordGetDTO = new PsychologicalLevelRecordGetDTO();
         psychologicalLevelRecordGetDTO.setCheckStatus(checkStatus);
         psychologicalLevelRecordGetDTO.setStuNum(stuNum);
-        psychologicalLevelRecordGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//        psychologicalLevelRecordGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 
         Page<PsychologicalLevelCheckSelectVO> psychologicalLevelCheckSelectVOPage = baseMapper.getPsychologicalLevelPage(page,psychologicalLevelRecordGetDTO);
         List<PsychologicalLevelCheckSelectVO> pSList = psychologicalLevelCheckSelectVOPage.getRecords();
@@ -156,7 +160,7 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
         regularClues(psychologicalLQNPVO);
         PsychologicalLevelGetDTO psychologicalLevelGetDTO = new PsychologicalLevelGetDTO();
         BeanUtils.copyProperties(psychologicalLQNPVO,psychologicalLevelGetDTO);
-        psychologicalLevelGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//        psychologicalLevelGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         // 需要对返回的数据进行记录者的处理
         Page<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOPage = baseMapper.getPsychologicalLevelByParams(page,psychologicalLevelGetDTO);
         List<PsychologicalLevelGetByStuNumVO> psychologicalLevelGetByStuNumVOList = psychologicalLevelGetByStuNumVOPage.getRecords();
@@ -177,7 +181,7 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
         regularClues(psychologicalLQNPVO);
         PsychologicalLevelGetDTO psychologicalLevelGetDTO = new PsychologicalLevelGetDTO();
         BeanUtils.copyProperties(psychologicalLQNPVO,psychologicalLevelGetDTO);
-        psychologicalLevelGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//        psychologicalLevelGetDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         // 需要对返回的数据进行记录者的处理
         List<PsychologicalLevelGetByStuNumVO1> psychologicalLevelGetByStuNumVO1List = baseMapper.getPsychologicalLevelByParams1(psychologicalLevelGetDTO);
         for (PsychologicalLevelGetByStuNumVO1 psychologicalLevelGetByStuNumVO1 : psychologicalLevelGetByStuNumVO1List){
@@ -221,9 +225,10 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
      * 根据admin工号返回工号和姓名
      */
     public CoreAdminBasicVO getCoreAdminBasic(String id){
-        CoreAdmin coreAdmin = coreAdminService.getById(id);
+//        CoreAdmin coreAdmin = coreAdminService.getById(id);
+        UserInfo userInfo = userService.getUserById(id);
         CoreAdminBasicVO coreAdminBasicVO = new CoreAdminBasicVO();
-        BeanUtils.copyProperties(coreAdmin,coreAdminBasicVO);
+        BeanUtils.copyProperties(userInfo,coreAdminBasicVO);
         return coreAdminBasicVO;
     }
 

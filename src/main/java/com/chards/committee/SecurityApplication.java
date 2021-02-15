@@ -1,6 +1,7 @@
 package com.chards.committee;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -24,14 +25,18 @@ public class SecurityApplication {
     }
 
 
-    /**
+     /**
      * 分页插件
      */
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         // 开启 count 的 join 优化,只针对 left join !!!
-        return new PaginationInterceptor().setCountSqlParser(new JsqlParserCountOptimize(true));
+        PaginationInterceptor page = new PaginationInterceptor().setCountSqlParser(new JsqlParserCountOptimize(true));
+//        page.setDialectType("mysql");
+        return page;
     }
+
+
     public static void main(String[] args) {
         SpringApplication.run(SecurityApplication.class, args);
     }

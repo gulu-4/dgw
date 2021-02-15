@@ -94,7 +94,7 @@
     </select>
 
     <sql id="psychologicalLevelPage">
-        select p.*  from psychological_level as p
+        select p.*, s.department, s.education_background, s.grade, s.state  from psychological_level as p
         inner join stu_info as s on s.id = p.stu_num
         <where>
             <if test = "param.stuNum != ''">
@@ -107,30 +107,7 @@
 
     </sql>
     <select id="getPsychologicalLevelPage" resultType="com.chards.committee.vo.PsychologicalLevelCheckSelectVO">
-        <if test="param.adminWorkDTO.identity == 1  ">
-            <include refid="psychologicalLevelPage"></include>
-        </if>
-        <if test="param.adminWorkDTO.identity == 2  ">
-            <include refid="psychologicalLevelPage"></include>
-        </if>
-        <if test="param.adminWorkDTO.identity != 1 and  param.adminWorkDTO.identity != 2">
-            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
-                <include refid="psychologicalLevelPage"></include>
-                <if test="item == '研究生'">
-                    and s.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and s.education_background='本科'
-                    and s.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="param.adminWorkDTO.department != '学工处'">
-                    and s.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
-                </if>
-                <if test="index != param.adminWorkDTO.works.size()-1">
-                    union
-                </if>
-            </foreach>
-        </if>
+        <include refid="psychologicalLevelPage"></include>
         order by
         recorded_time desc
     </select>
@@ -205,7 +182,10 @@
         s.name,
         s.gender,
         s.classes ,
-        s.department
+        s.department,
+        s.state,
+        s.grade,
+        s.education_background
         from psychological_level as p1
         inner join stu_info as s on p1.stu_num = s.id
         inner join (SELECT *,max(recorded_time) as max_time
@@ -257,56 +237,10 @@
 
 
     <select id="getPsychologicalLevelByParams" resultType="com.chards.committee.vo.PsychologicalLevelGetByStuNumVO">
-        <if test="psychologicalLGD.adminWorkDTO.identity == 1">
-            <include refid="psychologicalLevelByParams"></include>
-        </if>
-        <if test="psychologicalLGD.adminWorkDTO.identity == 2">
-            <include refid="psychologicalLevelByParams"></include>
-        </if>
-        <if test="psychologicalLGD.adminWorkDTO.identity != 1 and psychologicalLGD.adminWorkDTO.identity != 2">
-<!--            <include refid="psychologicalLevelByParams"></include>-->
-            <foreach item="item" collection="psychologicalLGD.adminWorkDTO.works" index="index">
-                <include refid="psychologicalLevelByParams"></include>
-                <if test="item == '研究生'">
-                    and s.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and s.education_background='本科'
-                    and s.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="psychologicalLGD.adminWorkDTO.department != '学工处'">
-                    and s.department = #{psychologicalLGD.adminWorkDTO.department,jdbcType=VARCHAR}
-                </if>
-                <if test="index != psychologicalLGD.adminWorkDTO.works.size()-1">
-                    union
-                </if>
-            </foreach>
-        </if>
+        <include refid="psychologicalLevelByParams"></include>
+
     </select>
     <select id="getPsychologicalLevelByParams1" resultType="com.chards.committee.vo.PsychologicalLevelGetByStuNumVO1">
-        <if test="psychologicalLGD.adminWorkDTO.identity == 1">
-            <include refid="psychologicalLevelByParams"></include>
-        </if>
-        <if test="psychologicalLGD.adminWorkDTO.identity == 2">
-            <include refid="psychologicalLevelByParams"></include>
-        </if>
-        <if test="psychologicalLGD.adminWorkDTO.identity != 1 and psychologicalLGD.adminWorkDTO.identity != 2">
-            <foreach item="item" collection="psychologicalLGD.adminWorkDTO.works" index="index">
-                <include refid="psychologicalLevelByParams"></include>
-                <if test="item == '研究生'">
-                    and s.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and s.education_background='本科'
-                    and s.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="psychologicalLGD.adminWorkDTO.department != '学工处'">
-                    and s.department = #{psychologicalLGD.adminWorkDTO.department,jdbcType=VARCHAR}
-                </if>
-                <if test="index != psychologicalLGD.adminWorkDTO.works.size()-1">
-                    union
-                </if>
-            </foreach>
-        </if>
+        <include refid="psychologicalLevelByParams"></include>
     </select>
 </mapper>

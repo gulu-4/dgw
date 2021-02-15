@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 public class LeaveByIdOrNameDTO {
-	private AdminWorkDTO adminWorkDTO;
+//	private AdminWorkDTO adminWorkDTO;
 	private String param;
 }

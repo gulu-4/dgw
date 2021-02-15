@@ -17,7 +17,7 @@
         <result property="reviewerId" column="reviewerId" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="adminSelectLeaveBase">
-        select t_leave.*, stu_info.name, stu_info.department, stu_info.classes
+        select t_leave.*, stu_info.name, stu_info.department, stu_info.classes, stu_info.education_background, stu_info.state, stu_info.grade
         from t_leave
         inner join
         stu_info
@@ -45,58 +45,16 @@
         order by create_time desc
     </sql>
     <select id="adminSelectLeave" resultType="com.chards.committee.vo.LeaveInfoVO">
-        <if test="param.adminWorkDTO.identity == 1">
-            <include refid="adminSelectLeaveBase"></include>
-            <include refid="adminSelectLeaveBaseOrder"></include>
-        </if>
-        <if test="param.adminWorkDTO.identity !=1">
-            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
-                <include refid="adminSelectLeaveBase"></include>
-                <if test="item == '研究生'">
-                    and stu_info.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and stu_info.education_background='本科'
-                    and stu_info.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="param.adminWorkDTO.department != '学工处'">
-                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
-                </if>
-                <if test="index != param.adminWorkDTO.works.size()-1">
-                    union
-                </if>
-            </foreach>
-           <include refid="adminSelectLeaveBaseOrder"></include>
-        </if>
+        <include refid="adminSelectLeaveBase"></include>
+        <include refid="adminSelectLeaveBaseOrder"></include>
     </select>
 
 
 
     <select id="getAdminManagementStudentLeaveSchoolByDateArea"
             resultType="com.chards.committee.vo.LeaveSchoolGetAllVO">
-        <if test="param.adminWorkDTO.identity == 1">
             <include refid="getAll"></include>
             <include refid="dateArea"></include>
-        </if>
-        <if test="param.adminWorkDTO.identity !=1">
-            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
-                <include refid="getAll"></include>
-                <include refid="dateArea"></include>
-                <if test="item == '研究生'">
-                    and stu_info.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and stu_info.education_background='本科'
-                    and stu_info.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="param.adminWorkDTO.department != '学工处'">
-                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
-                </if>
-                <if test="index != param.adminWorkDTO.works.size()-1">
-                    union
-                </if>
-            </foreach>
-        </if>
     </select>
 
 
@@ -114,7 +72,8 @@
         stu_info.gender,
         stu_info.education_background,
         stu_info.political_status,
-        stu_info.id_card
+        stu_info.id_card,
+        stu_info.state
         from t_leave
         inner join stu_info on t_leave.stu_num = stu_info.id
         <if test="param.status !=null ">
@@ -130,33 +89,13 @@
 
 
     <sql id="getByIdOrNameSql">
-        SELECT stu_info.`name`,t_leave.* FROM `t_leave`LEFT JOIN stu_info ON stu_info.id=t_leave.stu_num
+        SELECT stu_info.`name`,stu_info.grade, stu_info.education_background, stu_info.department, stu_info.state,t_leave.* FROM `t_leave`LEFT JOIN stu_info ON stu_info.id=t_leave.stu_num
         where t_leave.stu_num = #{param.param} OR stu_info.`name`= #{param.param}
 
     </sql>
 
     <select id="getByIdOrName" resultType="com.chards.committee.vo.LeaveInfoVO">
-        <if test="param.adminWorkDTO.identity == 1">
-            <include refid="getByIdOrNameSql"></include>
-        </if>
-        <if test="param.adminWorkDTO.identity !=1">
-            <foreach item="item" collection="param.adminWorkDTO.works" index="index">
-                <include refid="getByIdOrNameSql"></include>
-                <if test="item == '研究生'">
-                    and stu_info.education_background='研究生'
-                </if>
-                <if test="item != '全部年级' and item != '研究生'">
-                    and stu_info.education_background='本科'
-                    and stu_info.grade = #{item,jdbcType=VARCHAR}
-                </if>
-                <if test="param.adminWorkDTO.department != '学工处'">
-                    and stu_info.department = #{param.adminWorkDTO.department,jdbcType=VARCHAR}
-                </if>
-                <if test="index != param.adminWorkDTO.works.size()-1">
-                    union
-                </if>
-            </foreach>
-        </if>
+        <include refid="getByIdOrNameSql"></include>
         order by create_time desc
     </select>
 

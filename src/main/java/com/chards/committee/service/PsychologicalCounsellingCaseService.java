@@ -6,6 +6,7 @@ import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.PsychologicalCounsellingCase;
 import com.chards.committee.domain.PsychologicalTestRecord;
 import com.chards.committee.domain.StuInfo;
+import com.chards.committee.dto.UserInfo;
 import com.chards.committee.mapper.PsychologicalCounsellingCaseMapper;
 import com.chards.committee.mapper.PsychologicalTestRecordMapper;
 import com.chards.committee.vo.*;
@@ -35,6 +36,9 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
     @Autowired
     private CoreAdminService coreAdminService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 筛选心理咨询记录，可通过学号、起止时间筛选
      * 传入返回数据VO的page，以及请求参数VO的实例
@@ -63,7 +67,7 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
             List<PsychologicalTestRecord> recordList = psychologicalTestRecordMapper.getAllByStuNum(stuNum);
             psychologicalCounselingCaseDetailVO.setPsychologicalTestRecordList(recordList);
         }
-        System.out.println(PsychologicalCounselingCaseDetailVOList);
+//        System.out.println(PsychologicalCounselingCaseDetailVOList);
 
         psychologicalCounselingCaseDetailVOPage.setRecords(PsychologicalCounselingCaseDetailVOList);
         return psychologicalCounselingCaseDetailVOPage;
@@ -154,9 +158,10 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
      * 根据admin工号返回工号和姓名
      */
     public CoreAdminBasicVO getCoreAdminBasic(String id){
-        CoreAdmin coreAdmin = coreAdminService.getById(id);
+//        CoreAdmin coreAdmin = coreAdminService.getById(id);
+        UserInfo userInfo = userService.getUserById(id);
         CoreAdminBasicVO coreAdminBasicVO = new CoreAdminBasicVO();
-        BeanUtils.copyProperties(coreAdmin,coreAdminBasicVO);
+        BeanUtils.copyProperties(userInfo,coreAdminBasicVO);
         return coreAdminBasicVO;
     }
 

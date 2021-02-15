@@ -2,6 +2,7 @@ package com.chards.committee.util;
 
 import com.chards.committee.constant.Constant;
 import com.chards.committee.dto.AdminWorkDTO;
+import com.chards.committee.dto.UserDataScope;
 import com.chards.committee.dto.UserInfo;
 import com.chards.committee.dto.UserTokenDTO;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,13 +54,32 @@ public class RequestUtil {
     public static void setUserTokenDTO(UserTokenDTO userTokenDTO) {
         SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userTokenDTO.getUserInfo(), userTokenDTO, userTokenDTO.getAuthorities()));
     }
-
+    @Deprecated
     public static AdminWorkDTO getAdminWorkDTO() {
         AdminWorkDTO adminWorkDTO = new AdminWorkDTO();
         adminWorkDTO.setIdentity(isRoot() ? 1 : 0);
         adminWorkDTO.setWorks(getWork());
         adminWorkDTO.setDepartment(getDepartment());
         return adminWorkDTO;
+    }
+
+    /**
+     * 获取当前用户在缓存中的数据权限范围
+     * @return
+     */
+    public static List<UserDataScope> getUserDataScopeListForFuzzyQuery(){
+        UserTokenDTO userTokenDTO = getLoginUserTokenDTO();
+        List<UserDataScope> userDataScopeList = userTokenDTO.getUserDataScopeList();
+        for (UserDataScope userDataScope: userDataScopeList){
+            userDataScope.setDepartment("%" + (userDataScope.getDepartment()==null?"":userDataScope.getDepartment()) + "%");
+            userDataScope.setEducationBackground("%" + (userDataScope.getEducationBackground()==null?"":userDataScope.getEducationBackground()) + "%");
+            userDataScope.setGrade("%" + (userDataScope.getGrade()==null?"":userDataScope.getGrade()) + "%");
+            userDataScope.setMajor("%" + (userDataScope.getMajor()==null?"":userDataScope.getMajor()) + "%");
+            userDataScope.setClasses("%" + (userDataScope.getClasses()==null?"":userDataScope.getClasses()) + "%");
+        }
+        System.out.println(userDataScopeList);
+        return userDataScopeList;
+
     }
 
 }
