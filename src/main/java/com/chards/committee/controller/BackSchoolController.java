@@ -6,9 +6,7 @@ import com.chards.committee.config.BusinessException;
 import com.chards.committee.domain.BackSchool;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.StuInfo;
-import com.chards.committee.dto.BackSchoolAdminGetAndUpdateDTO;
-import com.chards.committee.dto.PassInfoDTO;
-import com.chards.committee.dto.UserInfo;
+import com.chards.committee.dto.*;
 import com.chards.committee.service.BackSchoolService;
 import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.StuInfoService;
@@ -66,10 +64,16 @@ public class BackSchoolController {
             @ApiImplicitParam(name = "pass", value = "审核状态(0未审；1拒绝；2通过；3已报到)", required = false, dataType = "Integer"),
     })
 
-    public R selectAll(Page<BackSchoolGetAllVO> page,Integer pass) {
+    public R selectAll(Page<BackSchoolGetAllVO> page, BackSchoolQueryDTO backSchoolQueryDTO) {
         BackSchoolAdminGetAndUpdateDTO backSchoolAdminGetAndUpdateDTO = new BackSchoolAdminGetAndUpdateDTO();
 //        backSchoolAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
-        backSchoolAdminGetAndUpdateDTO.setPass(pass);
+        backSchoolAdminGetAndUpdateDTO.setPass(backSchoolQueryDTO.getPass());
+        backSchoolAdminGetAndUpdateDTO.setDepartment(backSchoolQueryDTO.getDepartment());
+        backSchoolAdminGetAndUpdateDTO.setGrade(backSchoolQueryDTO.getGrade());
+        backSchoolAdminGetAndUpdateDTO.setStuNum(backSchoolQueryDTO.getStuNum());
+        backSchoolAdminGetAndUpdateDTO.setBeginDate(backSchoolQueryDTO.getBeginDate());
+        backSchoolAdminGetAndUpdateDTO.setEndDate(backSchoolQueryDTO.getEndDate());
+
         return R.success(backSchoolService.getAdminManagementStudentBackSchool(page,backSchoolAdminGetAndUpdateDTO));
     }
 

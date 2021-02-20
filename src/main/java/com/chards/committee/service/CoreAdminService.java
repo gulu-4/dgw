@@ -69,6 +69,7 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
         String code = JSONUtil.parseObj(result).get("code").toString();
         if (code.equals("10000")){
             CoreAdmin coreAdmin = getById(username);
+            Assert.notNull(coreAdmin, Code.USER_NOT_EXIST_TEACHER);
             UserTokenDTO userTokenDTO = new UserTokenDTO();
             UserInfo userInfo = new UserInfo();
             BeanUtils.copyProperties(coreAdmin, userInfo);
