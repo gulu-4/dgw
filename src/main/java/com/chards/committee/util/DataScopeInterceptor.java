@@ -81,17 +81,17 @@ public class DataScopeInterceptor implements Interceptor {
             UserTokenDTO loginUserTokenDTO = RequestUtil.getLoginUserTokenDTO();
             List<UserDataScope> userDataScopeList = loginUserTokenDTO.getUserDataScopeList();
 
-            if (sql.indexOf("department") == -1){
-                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的department放到select中！");
-                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的department放到select中！");
+            if (sql.indexOf("department") == -1 && sql.indexOf("stu_info.*") == -1){
+                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的department，或stu_info.* 放到select中！");
+                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的department，或stu_info.* 放到select中！");
             }
-            if (sql.indexOf("grade") == -1){
-                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的grade放到select中！");
-                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的grade放到select中！");
+            if (sql.indexOf("grade") == -1 && sql.indexOf("stu_info.*") == -1){
+                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的grade，或stu_info.* 放到select中！");
+                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的grade，或stu_info.* 放到select中！");
             }
-            if (sql.indexOf("education_background") == -1){
-                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的education_background放到select中！");
-                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的education_background放到select中！");
+            if (sql.indexOf("education_background") == -1 && sql.indexOf("stu_info.*") == -1){
+                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的education_background，或stu_info.* 放到select中！");
+                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的education_background，或stu_info.* 放到select中！");
             }
 
 
@@ -118,9 +118,9 @@ public class DataScopeInterceptor implements Interceptor {
         }
 //        若要进行学生状态的控制
         if (!StringUtils.isEmpty(studentState)){
-            if (sql.indexOf("state") == -1){
-                log.error("【错误！】在使用DataScope进行学生状态控制时，必须将stu_info表的state放到select中！");
-                throw new Exception("在使用DataScope进行学生状态控制时，必须将stu_info表的state放到select中！");
+            if (sql.indexOf("state") == -1 && sql.indexOf("stu_info.*") == -1){
+                log.error("【错误！】在使用DataScope进行学生状态控制时，必须将stu_info表的state，或stu_info.* 放到select中！");
+                throw new Exception("在使用DataScope进行学生状态控制时，必须将stu_info表的state，或stu_info.* 放到select中！");
             }
 //            若前边已经进行了数据权限控制
             if (isDataAccessControlled.equals("是")){

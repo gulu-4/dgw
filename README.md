@@ -2,12 +2,23 @@
 用来做党工委系统的后端系统的代码管理。
 
 ---
+## 定义
 
+    
+- 教职工
+    - 在本系统中具有管理权限的用户，一般来说，包括所有正式教职工（core_admin表中的）和部分具有管理权限的学生，即兼职教职工（stu_info表中的）
+
+- 正式教职工
+    - 出现在core_admin表中，有工号的，学校正式员工
+    
+- 兼职教职工
+    - 出现在stu_info中的，部分具有管理权限的学生
+    
 ## 权限控制说明
 - 由role和permission配合SpringSecurity来完成接口请求权限的控制（RBAC）
 - 由DataScope配合DataScope拦截器以及isWithinDataScope方法来完成大部分数据权限的控制
 - 接口权限约定
-    - 对于只能由学生访问的接口，用`hasAuthority('OWN_INFO_CRUD')` 或`hasAuthority('OWN_INFO_CRUD')`进行控制；
+    - 对于只能由学生访问的接口，用`hasRole('STUDENT')` 或`hasAuthority('OWN_INFO_CRUD')`进行控制；
     - 对于一般的学生信息查询，用`hasAuthority('student_select')`进行控制；
     - 对于只能由教师访问的接口，用`hasAuthority('teacher_own')`进行控制；
     - 对于仅允许教职工（不含学生管理员）访问的接口，用`hasAuthority('teacher_own') and (not hasRole('STUDENT'))`进行控制；
@@ -15,7 +26,17 @@
 ## 其他说明
 - 关于获取管理姓名的操作
     - 由于当前管理员可能是老师，也可能是学生，因此根据id获取姓名的操作，统一改用`userService.getUserById(id)`来完成；
+    
+- 关于建表
+    - 在与stu_info关联的表中，不要出现department, grade, education_background, major, classes, 以及 state字段；
+    
+- 关于学生状态控制
+    - 在学生状态管理完善之前，相关业务模块不进行学生状态的控制；
+    
 ## 更新日志（仅记录线上版本和历史线上版本）
+ * 2021年2月20日 v10.4.2
+     * 【调整】在学生状态管理完善之前，相关业务模块改为不进行学生状态的控制
+    
  * 2021年2月15日 v10.4.0
      * 改用统一身份认证登录
      * 全面重构数据权限控制模式

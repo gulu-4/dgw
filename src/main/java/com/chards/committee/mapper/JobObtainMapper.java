@@ -16,7 +16,7 @@ import java.util.List;
 public interface JobObtainMapper extends BaseMapper<JobObtain> {
     JobObtainGetInfoVO getInfoByStuNum(@Param("stuNum") String stuNum);
 
-//    由于在离校模块中也出现了state字段，与拦截器的要求相冲突了，暂且放弃进行状态控制，2021.2.15 poplar
+//    由于在就业模块中也出现了state字段，与拦截器的要求相冲突了，暂且放弃进行状态控制，2021.2.15 poplar
     @DataScope(studentState = "")
     Page<JobObtainGetInfoVO> getAdminManagementStudentJobObtain(@Param("page") Page<JobObtainGetInfoVO> page);
 }

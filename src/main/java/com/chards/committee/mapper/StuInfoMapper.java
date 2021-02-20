@@ -20,16 +20,16 @@ import java.util.List;
  * @since 2020-07-22
  */
 public interface StuInfoMapper extends BaseMapper<StuInfo> {
-    @DataScope()
+    @DataScope(studentState = "")
     Page<StuInfoPageVO> getLike(@Param("page") Page<StuInfoPageVO> page, @Param("param") StuInfoPageDTO param);
 
 //    导出用，不分页的
-    @DataScope()
+    @DataScope(studentState = "")
     List<StuInfoPageVO> getLikeList( @Param("param") StuInfoPageDTO param);
 
-    @DataScope()
+    @DataScope(studentState = "")
     Page<StuInfoPageVO> getSeniorSearch(@Param("page") Page<StuInfoPageVO> page, @Param("param") StuInfoSeniorDTO stuInfoSeniorDTO);
 
-    @DataScope()
+    @DataScope(studentState = "")
     List<StuInfoPageVO> getSeniorSearchList( @Param("param") StuInfoSeniorDTO stuInfoSeniorDTO);
 }

@@ -31,9 +31,9 @@ public interface BackSchoolMapper extends BaseMapper<BackSchool> {
 	 * @param backSchoolDateAreaDTO
 	 * @return
 	 */
-	@DataScope()
+	@DataScope(studentState = "")
 	List<BackSchoolGetAllVO> getAdminManagementStudentBackSchoolByDateArea(@Param("param") BackSchoolDateAreaDTO backSchoolDateAreaDTO);
 
-	@DataScope()
+	@DataScope(studentState = "")
 	List<StuInfo> getDoNotApplyForBackSchoolByParams(@Param("param") BackSchoolDateAreaDTO backSchoolDateAreaDTO);
 }
