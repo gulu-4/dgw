@@ -113,7 +113,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         String code = JSONUtil.parseObj(result).get("code").toString();
         if (code.equals("10000")){
             StuInfo stuInfo = getById(username);
-            Assert.notNull(stuInfo, Code.USER_LOGIN_ERROR);
+            Assert.notNull(stuInfo, Code.USER_NOT_EXIST);
             UserTokenDTO userTokenDTO = new UserTokenDTO();
             UserInfo userInfo = new UserInfo();
             BeanUtils.copyProperties(stuInfo, userInfo);

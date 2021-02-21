@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hongcha</groupId>
     <artifactId>newCommittee</artifactId>
-    <version>10.4.2</version>
+    <version>10.4.3</version>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -134,7 +134,7 @@
                     <to>
                         <image>registry.cn-hangzhou.aliyuncs.com/iampoplar/kddgw</image>
                         <tags>
-                            <tag>10.4.2</tag>
+                            <tag>10.4.3</tag>
                         </tags>
                         <auth>
                             <username>加油吧敬杨</username>
