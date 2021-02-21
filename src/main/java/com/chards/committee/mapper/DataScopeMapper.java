@@ -15,6 +15,7 @@ import java.util.List;
  */
 public interface DataScopeMapper extends BaseMapper<DataScope> {
     List<UserDataScope> getUserDataScopeById(@Param("userId") String userId);
+    int deleteByUserId(@Param("userId") String userId);
 //    Page<ConversationPageVO> getPageByStuid(@Param("page") Page<ConversationPageVO> page, @Param("stuId") String stuId);
 //
 //    Page<ConversationPageVO> getPageAll(@Param("page") Page<ConversationPageVO> page, @Param("param") AdminWorkDTO pageDTO);

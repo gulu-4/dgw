@@ -12,4 +12,11 @@
 
     </select>
 
+    <delete id="deleteByUserId" >
+        delete
+        from
+            user_data_scope
+        where
+            user_id = #{userId,jdbcType=VARCHAR}
+    </delete>
 </mapper>

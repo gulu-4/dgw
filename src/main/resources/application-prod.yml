@@ -7,4 +7,5 @@ spring:
     host: redis
     password: xxxxxx
 filepath: /photos
+tFilePath: /photos/admin/
 defaultPhoto: default.jpg
