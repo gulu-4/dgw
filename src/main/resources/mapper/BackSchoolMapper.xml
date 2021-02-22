@@ -37,6 +37,9 @@
         <if test="param.endDate != null">
             and unix_timestamp(back_school.date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
         </if>
+        <if test="param.province != null">
+            and back_school.loc like CONCAT(#{param.province,jdbcType = VARCHAR}, '%')
+        </if>
     </sql>
 
     <sql id="getNotApplyAll">

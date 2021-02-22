@@ -73,6 +73,7 @@ public class BackSchoolController {
         backSchoolAdminGetAndUpdateDTO.setStuNum(backSchoolQueryDTO.getStuNum());
         backSchoolAdminGetAndUpdateDTO.setBeginDate(backSchoolQueryDTO.getBeginDate());
         backSchoolAdminGetAndUpdateDTO.setEndDate(backSchoolQueryDTO.getEndDate());
+        backSchoolAdminGetAndUpdateDTO.setProvince(backSchoolQueryDTO.getProvince());
 
         return R.success(backSchoolService.getAdminManagementStudentBackSchool(page,backSchoolAdminGetAndUpdateDTO));
     }

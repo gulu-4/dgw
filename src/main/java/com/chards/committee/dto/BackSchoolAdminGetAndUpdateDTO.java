@@ -29,4 +29,6 @@ public class BackSchoolAdminGetAndUpdateDTO {
     private LocalDateTime reviewedTime;
     //    增加审核人
     private String reviewedBy;
+
+    private String province; // 出发地省份，在loc里进行模糊搜索
 }

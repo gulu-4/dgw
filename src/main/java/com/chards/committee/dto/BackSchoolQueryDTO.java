@@ -16,4 +16,6 @@ public class BackSchoolQueryDTO {
     private String endDate; // 结束时间
 
     private Integer pass; // 状态
+
+    private String province; // 出发地省份，在loc里进行模糊搜索
 }
