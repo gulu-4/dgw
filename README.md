@@ -20,8 +20,8 @@
 - 接口权限约定
     - 对于只能由学生访问的接口，用`hasRole('STUDENT')` 或`hasAuthority('OWN_INFO_CRUD')`进行控制；
     - 对于一般的学生信息查询，用`hasAuthority('student_select')`进行控制；
-    - 对于只能由教师访问的接口，用`hasAuthority('teacher_own')`进行控制；
-    - 对于仅允许教职工（不含学生管理员）访问的接口，用`hasAuthority('teacher_own') and (not hasRole('STUDENT'))`进行控制；
+    - 对于只能由教职工（含兼职）访问的接口，用`hasAuthority('teacher_own')`进行控制；
+    - 对于仅允正式许教职工（不含兼职教职工）访问的接口，用`hasAuthority('teacher_own') and (not hasRole('STUDENT'))`进行控制；
     
 ## 其他说明
 - 关于获取管理姓名的操作
@@ -34,8 +34,15 @@
     - 在学生状态管理完善之前，相关业务模块不进行学生状态的控制；
     
 ## 更新日志（仅记录部分线上版本和历史线上版本）
+ * 2021年2月22日 v10.5.2
+     * 【完善】对于报到操作增加了进一步地控制，确保非审核通过的无法报到；
+     * 【新增】返校模块提供自定义升序排序方案；
+     * 【新增】针对所有用户，返回其基本信息、角色以及数据权限范围的接口；
 
-* 2021年2月21日 v10.5.0.dev
+ * 2021年2月22日 v10.5.1
+     * 【新增】返校模块增加按照出发地省份筛选；
+    
+* 2021年2月21日 v10.5.0
     * 【新增】教职工数据权限管理；
     * 【新增】正式教职工简历管理；
     
@@ -85,3 +92,6 @@
 
  * 2020年11月20日 v10.0.0
      *  从黑天鹅工作室处接手系统，与12月2日提交了该代码。
+
+
+docker run -d -p 9090:9090 --name committee_10_5_2 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/iampoplar/kddgw:10.5.2 --spring.profiles.active=prod

@@ -1,6 +1,7 @@
 package com.chards.committee.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.config.BusinessException;
 import com.chards.committee.domain.BackSchool;
@@ -54,7 +55,6 @@ public class BackSchoolController {
     /**
      * 分页查询所有数据
      *
-     * @param pass 状态
      * @return 所有数据
      */
     @PreAuthorize("hasAuthority('student_select')")
@@ -74,6 +74,8 @@ public class BackSchoolController {
         backSchoolAdminGetAndUpdateDTO.setBeginDate(backSchoolQueryDTO.getBeginDate());
         backSchoolAdminGetAndUpdateDTO.setEndDate(backSchoolQueryDTO.getEndDate());
         backSchoolAdminGetAndUpdateDTO.setProvince(backSchoolQueryDTO.getProvince());
+
+        page.addOrder(OrderItem.asc(backSchoolQueryDTO.getAscOrderBy()));
 
         return R.success(backSchoolService.getAdminManagementStudentBackSchool(page,backSchoolAdminGetAndUpdateDTO));
     }
@@ -236,8 +238,13 @@ public class BackSchoolController {
     @ApiOperation(value = "【学】报道")
     public R setReports(){
         BackSchool backSchool = backSchoolService.getById(RequestUtil.getId());
-        backSchool.setPass(3); //3 是已报道
-        return R.success( backSchoolService.updateById(backSchool));
+        if (backSchool.getPass()==2){
+            backSchool.setPass(3); //3 是已报道
+            return R.success( backSchoolService.updateById(backSchool));
+        }else {
+            return R.failure(-1, "返校申请审核未通过，无法报到！");
+        }
+
     }
 
 

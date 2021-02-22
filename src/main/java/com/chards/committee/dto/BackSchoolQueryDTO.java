@@ -18,4 +18,6 @@ public class BackSchoolQueryDTO {
     private Integer pass; // 状态
 
     private String province; // 出发地省份，在loc里进行模糊搜索
+
+    private String ascOrderBy; // 升序排序的字段名
 }
