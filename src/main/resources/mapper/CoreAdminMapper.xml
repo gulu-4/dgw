@@ -36,7 +36,7 @@
     </select>
     <select id="getPartTimeStaffByDepartment" resultType="com.chards.committee.vo.PartTimeStaffVO">
         SELECT
-            stu_info.id,stu_info.name,stu_info.gender,stu_info.tel,
+            stu_info.id,stu_info.name,stu_info.gender,stu_info.phone,
             tb_role.name as role
         FROM
             stu_info

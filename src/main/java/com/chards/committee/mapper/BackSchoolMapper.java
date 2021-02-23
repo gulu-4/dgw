@@ -20,7 +20,7 @@ import java.util.List;
  */
 public interface BackSchoolMapper extends BaseMapper<BackSchool> {
 	//获取管理员管理的学生的返校审核
-	@DataScope
+	@DataScope(studentState = "")
 	Page<BackSchoolGetAllVO> getAdminManagementStudentBackSchool(@Param("page") Page<BackSchoolGetAllVO> page, @Param("param") BackSchoolAdminGetAndUpdateDTO backSchoolAdminGetAndUpdateDTO);
 
 	boolean updateAdminManagementStudentBackSchoolPass(@Param("param") BackSchoolAdminGetAndUpdateDTO backSchoolAdminGetAndUpdateDTO);

@@ -29,7 +29,7 @@ public class PartTimeStaffVO {
     private List<UserDataScope> userDataScopeList;
 
     @ExcelProperty("手机号")
-    private String tel;
+    private String phone;
 
     @ExcelProperty("角色")
     private String role;

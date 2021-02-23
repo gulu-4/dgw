@@ -95,6 +95,15 @@ public class CoreAdminController {
 	}
 
 
+	// TODO 新增教职工
+	/**
+	 *	这里上面有一个新增，只需要重新设置逻辑即可，还需要设置user_data_scope
+	 */
+	// TODO 新增兼职教职工
+	/**
+	 * 这里只需要传递一个学号，然后传递一个权限即可，然后在tb_admin_role表中加入一个字段，同时需要设置user_data_scope
+	 */
+
 
 
 	/**

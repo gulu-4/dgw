@@ -216,7 +216,13 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
     }
 
     public Page<PartTimeStaffVO> getPartTimeStaffByDepartment(String department, Page<PartTimeStaffVO> page){
-        return baseMapper.getPartTimeStaffByDepartment(department,page);
+        // 加入userDataScope
+        Page<PartTimeStaffVO> partTimeStaffVOPage = baseMapper.getPartTimeStaffByDepartment(department,page);
+        for (PartTimeStaffVO partTimeStaffVO : partTimeStaffVOPage.getRecords()){
+            List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(partTimeStaffVO.getId());
+            partTimeStaffVO.setUserDataScopeList(userDataScopeList);
+        }
+        return partTimeStaffVOPage;
     }
 
     public boolean isRoot(Serializable id) {

@@ -74,12 +74,12 @@ public class TeachingStaffResume extends Model<TeachingStaffResume> {
     private String occupation;
 
     @ExcelProperty("职级")
-    @TableField("rank")
-    private String rank;
+    @TableField("position")
+    private String position;
 
     @ExcelProperty("职级首聘时间")
-    @TableField("rank_time")
-    private String rankTime;
+    @TableField("position_time")
+    private String positionTime;
 
     @ExcelProperty("职称")
     @TableField("academic_title")
