@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.dto.CoreAdminDTO;
 
+import com.chards.committee.vo.PartTimeStaffVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -27,6 +28,11 @@ public interface CoreAdminMapper extends BaseMapper<CoreAdmin> {
 
 
 	List<CoreAdminDTO> getDepList(@Param("department") String department);
+
+	Page<CoreAdminDTO> getDepList(@Param("department") String department,@Param("page") Page<CoreAdminDTO> page);
+
+	Page<PartTimeStaffVO> getPartTimeStaffByDepartment(@Param("department") String department,
+											   @Param("page") Page<PartTimeStaffVO> page);
 
 
 

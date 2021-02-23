@@ -13,10 +13,7 @@ import com.chards.committee.service.StuInfoService;
 import com.chards.committee.service.TbAdminRoleService;
 import com.chards.committee.service.TbRoleService;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.Code;
-import com.chards.committee.vo.CoreAdminAddVO;
-import com.chards.committee.vo.R;
-import com.chards.committee.vo.UserPwdVO;
+import com.chards.committee.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -188,6 +185,32 @@ public class CoreAdminController {
 		QueryWrapper<CoreAdmin> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("department", department);
 		return R.success(coreAdminService.page(page, queryWrapper));
+	}
+
+	/**
+	 * 根据学院 查询管理员信息 这里包括 这里是ROOT才拥有的吧
+	 * @param department
+	 * @param page
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('teacher_select')")
+	@GetMapping("/getStaffByDepartment")
+	public R getStaffByDepartment(String department, Page<CoreAdminDTO> page) {
+		return R.success(coreAdminService.getDepList(department,page));
+	}
+
+
+
+	/**
+	 * 根据学院  查询兼职管理员信息
+	 * @param department
+	 * @param page
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('teacher_select')")
+	@GetMapping("/getPartTimeStaffByDepartment")
+	public R getPartTimeStaffByDepartment(String department, Page<PartTimeStaffVO> page) {
+		return R.success(coreAdminService.getPartTimeStaffByDepartment(department,page));
 	}
 
 

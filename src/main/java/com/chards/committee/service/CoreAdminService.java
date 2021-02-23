@@ -17,6 +17,7 @@ import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.DepartmentMajorsAdminVO;
+import com.chards.committee.vo.PartTimeStaffVO;
 import com.chards.committee.vo.UserLoginRespVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -200,6 +201,22 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
     public List<CoreAdminDTO> getDepList(String param) {
 
         return baseMapper.getDepList(param);
+    }
+
+    public Page<CoreAdminDTO> getDepList(String department, Page<CoreAdminDTO> page) {
+        /**
+         * 循环为每一个加入dataScopeList
+         */
+        Page<CoreAdminDTO> coreAdminDTOPage = baseMapper.getDepList(department,page);
+        for (CoreAdminDTO coreAdminDTO : coreAdminDTOPage.getRecords()){
+            List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(coreAdminDTO.getId());
+            coreAdminDTO.setUserDataScopeList(userDataScopeList);
+        }
+        return coreAdminDTOPage;
+    }
+
+    public Page<PartTimeStaffVO> getPartTimeStaffByDepartment(String department, Page<PartTimeStaffVO> page){
+        return baseMapper.getPartTimeStaffByDepartment(department,page);
     }
 
     public boolean isRoot(Serializable id) {
