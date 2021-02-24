@@ -103,6 +103,23 @@ public class CoreAdminController {
 	/**
 	 * 这里只需要传递一个学号，然后传递一个权限即可，然后在tb_admin_role表中加入一个字段，同时需要设置user_data_scope
 	 */
+	@PreAuthorize("hasRole('ROOT')")
+	@PostMapping("/addPartTimeStaff")
+	public R addPartTimeStaff(@Valid @RequestBody PartTimeStaffAddVO partTimeStaffAddVO){
+		if (partTimeStaffAddVO.getRoleId() == null) {
+			partTimeStaffAddVO.setRoleId((long) 4);
+		}
+		return  R.success(tbAdminRoleService.addPartTimeStaff(partTimeStaffAddVO));
+	}
+
+	@PreAuthorize("hasRole('ROOT')")
+	@DeleteMapping("/removePTStaffById/{staffId}")
+	public R deletePartTimeStaff(@PathVariable String staffId) {
+		if (staffId == null) {
+			return R.failure(Code.PARAM_IS_BLANK);
+		}
+		return R.success(tbAdminRoleService.deletePartTimeStaff(staffId));
+	}
 
 
 
