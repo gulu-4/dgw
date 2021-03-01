@@ -75,6 +75,8 @@ public class LeaveController {
 				if (userInfo!=null)
 				leave1.setReviewerId(userInfo.getName());
 				else leave1.setReviewerId("管理员");
+			} else {
+				leave1.setReviewerId("管理员");
 			}
 		});
 		return R.success(leaves);

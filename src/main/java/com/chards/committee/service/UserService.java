@@ -31,7 +31,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
             BeanUtils.copyProperties(stuInfo,userInfo);
             return userInfo;
         }else {
-            BusinessException.error(Code.USER_NOT_EXIST);
             return null;
         }
 

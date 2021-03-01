@@ -101,4 +101,4 @@
      *  从黑天鹅工作室处接手系统，与12月2日提交了该代码。
 
 
-docker run -d -p 9090:9090 --name committee_10_5_2 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/iampoplar/kddgw:10.5.2 --spring.profiles.active=prod
+docker run -d -p 9090:9090 --name committee_10_5_4 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/iampoplar/kddgw:10.5.4 --spring.profiles.active=prod
