@@ -1,8 +1,6 @@
 package com.chards.committee.domain;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * @author LiuSu
@@ -23,19 +21,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @TableName("teaching_staff_resume")
 public class TeachingStaffResume extends Model<TeachingStaffResume> {
-    private static final long serialVersionUID = 319803036181383175L;
 
-    @ExcelIgnore
-    @TableId(value = "id", type = IdType.ASSIGN_ID)
-    private Long id;
-
-    @ExcelProperty("工号")
-    @TableField("staff_id")
+    @ExcelProperty("工号")//学号
+    @TableId(value = "staff_id")
     private String staffId;
-
-    @ExcelIgnore
-    @TableField("avatar")
-    private String avatar;
 
     @ExcelProperty("民族")
     @TableField("national")
@@ -141,13 +130,12 @@ public class TeachingStaffResume extends Model<TeachingStaffResume> {
     @TableField("working_philosophy")
     private String workingPhilosophy;
 
-    /**
-     * 获取主键值
-     *
-     * @return 主键值
-     */
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
+    @TableField("create_time")
+    @ExcelProperty("创建时间")
+    private LocalDateTime createTime;
+
+    @TableField("update_time")
+    @ExcelProperty("更新时间")
+    private LocalDateTime updateTime;
+
 }

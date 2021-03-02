@@ -53,7 +53,7 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
         List<PsychologicalCounselingCaseDetailVO> PsychologicalCounselingCaseDetailVOList = psychologicalCounselingCaseDetailVOPage.getRecords();
 
         for (PsychologicalCounselingCaseDetailVO psychologicalCounselingCaseDetailVO:PsychologicalCounselingCaseDetailVOList){
-            System.out.println(psychologicalCounselingCaseDetailVO);
+//            System.out.println(psychologicalCounselingCaseDetailVO);
             String stuNum = psychologicalCounselingCaseDetailVO.getStuNum();
             StuInfo stuInfo = stuInfoService.getById(stuNum);
 

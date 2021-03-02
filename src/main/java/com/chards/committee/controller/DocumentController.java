@@ -64,6 +64,9 @@ public class DocumentController {
 
 	@Value("${filepath}")
 	String path;
+
+	@Value("${tFilePath}")
+	String tPath;
 	@Value("${defaultPhoto}")
 	String DEFAULE_IMG;
 
@@ -86,11 +89,38 @@ public class DocumentController {
 		try {
 			UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 			if (userTokenDTO != null) {
-				File file = new File(path, id + ".jpg");
+				File file = new File(tPath, id + ".jpg");
 				if (file.exists()) {
 					RequestUtil.setUserTokenDTO(userTokenDTO);
 					// 本人查看放在前面  后面查看是否work （ 学生查看的话会报错NPE ）
 					if (RequestUtil.getId().equals(id) || stuInfoService.isWithinDataScope(id)) {
+						return getFileByte(file);
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return getFileByte(new File(path, DEFAULE_IMG));
+	}
+
+	/**
+	 * 获取教职工头像接口
+	 * @param id
+	 * @param token
+	 * @return
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/staff/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+	public byte[] getAdminDocuments(@PathVariable String id, String token) throws IOException {
+		try {
+			UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+			if (userTokenDTO != null) {
+				File file = new File(path, id + ".png");
+				if (file.exists()) {
+					RequestUtil.setUserTokenDTO(userTokenDTO);
+					// 本人查看放在前面  后面是ROOT查看
+					if (RequestUtil.getId().equals(id) || RequestUtil.getRoles().get(0).equals("ROOT")) {
 						return getFileByte(file);
 					}
 				}
@@ -272,7 +302,7 @@ public class DocumentController {
 	/**
 	 * 导出销假申请，暂时弃用
 	 * @param token
-	 * @param backSchoolDateAreaDTO
+	 * @param
 	 * @param response
 	 * @throws IOException
 	 */

@@ -1,11 +1,15 @@
 package com.chards.committee.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.TeachingStaffResume;
 import com.chards.committee.service.TeachingStaffResumeService;
+import com.chards.committee.service.UserService;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.R;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
  * @author LiuSu
@@ -34,14 +39,48 @@ public class TeachingStaffResumeController {
     @Value("${tFilePath}")
     private String tFilePath;
 
+    @GetMapping("/getPage")
+    @PreAuthorize("hasRole('ROOT')")
+    @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true) })
+    @ApiOperation(value = "ROOT分页获取教职工简历列表")
+    public R getPage(Page<TeachingStaffResume> page){
+        return R.success(teachingStaffResumeService.getPage(page));
+    }
+
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT'))")
+    @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true) })
     @ApiOperation(value = "教职工自己添加自己的简历")
     public R add(@RequestBody TeachingStaffResume teachingStaffResume){
+        // 判断是否已经存在
+        TeachingStaffResume teachingStaffResume0 = teachingStaffResumeService.getByStaffId(RequestUtil.getId());
+        if (teachingStaffResume0 != null) {
+            return R.failure(Code.DATA_ALREADY_EXISTED);
+        }
+        teachingStaffResume.setStaffId(RequestUtil.getId());
+        teachingStaffResume.setCreateTime(LocalDateTime.now());
+        teachingStaffResume.setUpdateTime(LocalDateTime.now());
         return R.success(teachingStaffResumeService.save(teachingStaffResume));
     }
 
-    //添加一个修改的接口
+    /**
+     * 修改的接口
+     * @param teachingStaffResume
+     * @return
+     */
+    @PutMapping("/update")
+    @PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT'))")
+    @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true) })
+    @ApiOperation(value = "教职工自己更新自己的简历")
+    public R update(@RequestBody TeachingStaffResume teachingStaffResume){// 判断是否已经存在
+        TeachingStaffResume teachingStaffResume0 = teachingStaffResumeService.getByStaffId(RequestUtil.getId());
+        if (teachingStaffResume0 == null) {
+            return R.failure(Code.RESULT_DATA_NONE);
+        }
+        teachingStaffResume.setStaffId(RequestUtil.getId());
+        teachingStaffResume.setUpdateTime(LocalDateTime.now());
+        return R.success(teachingStaffResumeService.updateById(teachingStaffResume));
+    }
 
     //图片上传，这里主要是头像
     @PostMapping("/avatar")
@@ -74,10 +113,18 @@ public class TeachingStaffResumeController {
     }
 
     @GetMapping("/get/{staffId}")
-    @PreAuthorize("hasAuthority('teacher_select')")
+    @PreAuthorize("hasRole('ROOT')")
     @ApiOperation(value = "根据教职工工号获取简历信息")
     public R getByStaffId(@PathVariable String staffId){
         return R.success(teachingStaffResumeService.getByStaffId(staffId));
+    }
+
+    @GetMapping("/own")
+    @PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT'))")
+    @ApiOperation(value = "教职工自己获取简历信息")
+    @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true) })
+    public R getByOwn(){
+        return R.success(teachingStaffResumeService.getByStaffId(RequestUtil.getId()));
     }
 
     private String getFileExtension(MultipartFile File) {
