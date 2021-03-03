@@ -33,6 +33,9 @@
             <if test="stuNum != null and stuNum != ''">
                 and stu_num = #{stuNum}
             </if>
+            <if test="counselor != null and counselor != ''">
+                and counselor LIKE #{counselor}
+            </if>
             <if test="startTime != null">
                 and unix_timestamp( counselling_time ) &gt;= unix_timestamp(#{startTime})
             </if>
@@ -47,6 +50,9 @@
         <where>
             <if test="stuNum != null and stuNum != ''">
                 and stu_num = #{stuNum}
+            </if>
+            <if test="counselor != null and counselor != ''">
+                and counselor LIKE #{counselor}
             </if>
             <if test="startTime != null">
                 and unix_timestamp( counselling_time ) &gt;= unix_timestamp(#{startTime})

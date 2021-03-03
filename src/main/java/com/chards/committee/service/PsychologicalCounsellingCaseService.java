@@ -49,12 +49,15 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
         String startTime = timeTransfer(psychologicalCounsellingCaseSelectVO.getStartTime());
         String endTime = timeTransfer(psychologicalCounsellingCaseSelectVO.getEndTime());
         //        需要返回的咨询记录详情Page VO
-        Page<PsychologicalCounselingCaseDetailVO> psychologicalCounselingCaseDetailVOPage = baseMapper.getAllCounselingCaseByParams(page,psychologicalCounsellingCaseSelectVO.getStuNum(),startTime,endTime);
+        Page<PsychologicalCounselingCaseDetailVO> psychologicalCounselingCaseDetailVOPage =
+                baseMapper.getAllCounselingCaseByParams(page,psychologicalCounsellingCaseSelectVO.getStuNum(),psychologicalCounsellingCaseSelectVO.getCounselor(),startTime,endTime);
         List<PsychologicalCounselingCaseDetailVO> PsychologicalCounselingCaseDetailVOList = psychologicalCounselingCaseDetailVOPage.getRecords();
 
         for (PsychologicalCounselingCaseDetailVO psychologicalCounselingCaseDetailVO:PsychologicalCounselingCaseDetailVOList){
-//            System.out.println(psychologicalCounselingCaseDetailVO);
             String stuNum = psychologicalCounselingCaseDetailVO.getStuNum();
+            if (userService.getUserById(stuNum) == null) {
+                continue;
+            }
             StuInfo stuInfo = stuInfoService.getById(stuNum);
 
             psychologicalCounselingCaseDetailVO.setClasses(stuInfo.getClasses());
@@ -67,7 +70,6 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
             List<PsychologicalTestRecord> recordList = psychologicalTestRecordMapper.getAllByStuNum(stuNum);
             psychologicalCounselingCaseDetailVO.setPsychologicalTestRecordList(recordList);
         }
-//        System.out.println(PsychologicalCounselingCaseDetailVOList);
 
         psychologicalCounselingCaseDetailVOPage.setRecords(PsychologicalCounselingCaseDetailVOList);
         return psychologicalCounselingCaseDetailVOPage;
@@ -82,7 +84,8 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
         String startTime = timeTransfer(psychologicalCounsellingCaseSelectVO.getStartTime());
         String endTime = timeTransfer(psychologicalCounsellingCaseSelectVO.getEndTime());
         //        需要返回的咨询记录详情Page VO
-        List<PsychologicalCounselingCaseDetailVO> psychologicalCounselingCaseDetailVOS = baseMapper.getAllCounselingCaseByParams1(psychologicalCounsellingCaseSelectVO.getStuNum(),startTime,endTime);
+        List<PsychologicalCounselingCaseDetailVO> psychologicalCounselingCaseDetailVOS =
+                baseMapper.getAllCounselingCaseByParams1(psychologicalCounsellingCaseSelectVO.getStuNum(),psychologicalCounsellingCaseSelectVO.getCounselor(),startTime,endTime);
         List<PsychologicalCounselingCaseExportVO> psychologicalCounselingCaseExportVOS = new ArrayList<>();
 
         for (PsychologicalCounselingCaseDetailVO psychologicalCounselingCaseDetailVO:psychologicalCounselingCaseDetailVOS){
@@ -90,6 +93,9 @@ public class PsychologicalCounsellingCaseService extends ServiceImpl<Psychologic
             PsychologicalCounselingCaseExportVO psychologicalCounselingCaseExportVO = new PsychologicalCounselingCaseExportVO();
             BeanUtils.copyProperties(psychologicalCounselingCaseDetailVO,psychologicalCounselingCaseExportVO);
             String stuNum = psychologicalCounselingCaseDetailVO.getStuNum();
+            if (userService.getUserById(stuNum) == null) {
+                continue;
+            }
             StuInfo stuInfo = stuInfoService.getById(stuNum);
 
             ZoneId zone = ZoneId.systemDefault();

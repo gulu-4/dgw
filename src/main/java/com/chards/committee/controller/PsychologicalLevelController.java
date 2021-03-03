@@ -91,6 +91,19 @@ public class PsychologicalLevelController {
     }
 
     /**
+     * 通过id删除定级记录
+     * @param id
+     * @return
+     */
+    @PreAuthorize("hasRole('XUEGONG')")
+    @DeleteMapping("/deleteById/{id}")
+    public R deleteById(@PathVariable Serializable id) {
+        PsychologicalLevel psychologicalLevel = psychologicalLevelService.getById(id);
+        Assert.notNull(psychologicalLevel, Code.RESULT_DATA_NONE);
+        return R.success(psychologicalLevelService.removeById(id));
+    }
+
+    /**
      * 通过学生学号获取定级记录
      */
     @PreAuthorize("hasAuthority('student_select')")

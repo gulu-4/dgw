@@ -391,8 +391,8 @@ public class DocumentController {
 	@GetMapping(value = "/execls/psychological_counseling_case")
 	public void getPsychologicalLevelByParams(String token,PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO,HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
-//		这个仅学工处及以上权限者可导
-		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_TEACHER_SELECT)) {
+//		这个仅学工处及以上和咨询师可导
+		if (userTokenDTO != null && (userTokenDTO.getRoles().contains(Constant.PCOUNSELOR) ||  userTokenDTO.getRoles().contains(Constant.XUEGONG))) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<PsychologicalCounselingCaseExportVO> psychologicalCounselingCaseExportVOS = psychologicalCounsellingCaseService.getAllCounselingCaseByParams(psychologicalCounsellingCaseSelectVO);
 			easyExeclService.writeToResponse(response, "psychologicalCounselingCase - " + System.currentTimeMillis(), psychologicalCounselingCaseExportVOS, PsychologicalCounselingCaseExportVO.class);

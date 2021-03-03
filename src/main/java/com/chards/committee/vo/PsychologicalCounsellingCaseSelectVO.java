@@ -15,6 +15,8 @@ public class PsychologicalCounsellingCaseSelectVO {
 //    @NotBlank(message = "学生学号不能为空")
     private String stuNum;
 
+    private String counselor;
+
     private Date startTime;
 
     private Date endTime;

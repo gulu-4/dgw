@@ -26,16 +26,19 @@ public interface PsychologicalCounsellingCaseMapper extends BaseMapper<Psycholog
      * 通过学号、起止时间查询所有心理咨询记录
      * @param page 分页
      * @param stuNum 学号
+     * @param counselor 咨询师
      * @param startTime 开始时间
      * @param endTime 结束时间
      * @return
      */
     Page<PsychologicalCounselingCaseDetailVO> getAllCounselingCaseByParams(@Param("page") Page<PsychologicalCounselingCaseDetailVO> page,
                                                                            @Param("stuNum") String stuNum,
+                                                                           @Param("counselor") String counselor,
                                                                            @Param("startTime") String startTime,
                                                                            @Param("endTime") String endTime);
 
     List<PsychologicalCounselingCaseDetailVO> getAllCounselingCaseByParams1(@Param("stuNum") String stuNum,
+                                                                            @Param("counselor") String counselor,
                                                                             @Param("startTime") String startTime,
                                                                             @Param("endTime") String endTime);
 

@@ -8,6 +8,7 @@ public class Constant {
 	public static final String EDUCATIONBACKGROUND_GRADUATE = "研究生";
 	public static final String DEPARTMENT_STUDENT_WORKER = "学工处";
 	public static final String XUEGONG = "XUEGONG";
+	public static final String PCOUNSELOR = "PCOUNSELOR";
 
 
 	public static final String PERMISSION_TEACHER_SELECT = "teacher_select";

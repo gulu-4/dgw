@@ -36,7 +36,7 @@ public class PsychologicalCounsellingCaseController {
      * @param psychologicalCounsellingCaseInsertVO 请求内容
      * @return 新增结果
      */
-    @PreAuthorize("hasAuthority('student_insert')")
+    @PreAuthorize("hasRole('PCOUNSELOR')")
     @PostMapping("/insert")
     public R insert(@RequestBody @Valid PsychologicalCounsellingCaseInsertVO psychologicalCounsellingCaseInsertVO) {
         if (stuInfoService.isWithinDataScope(psychologicalCounsellingCaseInsertVO.getStuNum())) {
@@ -55,7 +55,7 @@ public class PsychologicalCounsellingCaseController {
      * 通过学生学号获取所有该学生咨询记录和测试记录
      * @return 某位同学的基本信息中嵌套其心理咨询记录和心理测评结果
      */
-    @PreAuthorize("hasAuthority('student_select')")
+    @PreAuthorize("hasRole('PCOUNSELOR') or hasRole('XUEGONG')")
     @GetMapping("/getAll")
     public R getAll(@RequestParam String stuNum){
         if (stuInfoService.isWithinDataScope(stuNum)){
@@ -71,12 +71,10 @@ public class PsychologicalCounsellingCaseController {
      * poplar 21.1.1
      * @return 分页的咨询记录列表，每条咨询记录中嵌套学生基本信息和心理测评记录
      */
-    @PreAuthorize("hasAuthority('student_select')")
+    @PreAuthorize("hasRole('PCOUNSELOR') or hasRole('XUEGONG')")
     @GetMapping("/getAllCounselingCaseByParams")
     public R getAll(PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO,
                     Page<PsychologicalCounselingCaseDetailVO> page){
-//        System.out.println(psychologicalCounsellingCaseSelectVO);
-//        System.out.println(page);
         return R.success(psychologicalCounsellingCaseService.getAllCounselingCaseByParams(page,psychologicalCounsellingCaseSelectVO));
     }
 }
