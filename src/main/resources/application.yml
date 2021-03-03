@@ -22,11 +22,11 @@ spring:
       connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
       connection-test-query: SELECT 1
   profiles:
-    active: prod
+    active: test
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
-version: 10.5.4
+version: 10.5.5.test
 
 swagger:
   enabled: true

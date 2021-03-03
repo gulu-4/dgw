@@ -34,6 +34,8 @@
     - 在学生状态管理完善之前，相关业务模块不进行学生状态的控制；
     
 ## 更新日志（仅记录部分线上版本和历史线上版本）
+ * 2021年3月2日 v10.5.5
+     * 心理模块修复与优化
  * 2021年3月2日 v10.5.2
     * 【新增】获取教职工简历头像、教职工简历修改接口、教职工获取自己简历信息、ROOT分页获取简历列表接口
     * 【完善】为简历表添加创建时间和更新时间属性
@@ -105,4 +107,28 @@
      *  从黑天鹅工作室处接手系统，与12月2日提交了该代码。
 
 
-docker run -d -p 9090:9090 --name committee_10_5_4 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/iampoplar/kddgw:10.5.4 --spring.profiles.active=prod
+## Docker使用
+- 容器镜像服务（Registry）
+    - registry.cn-hangzhou.aliyuncs.com/xzszkj
+    
+- docker 登录
+    - sudo docker login --username=quietttt registry.cn-hangzhou.aliyuncs.com
+    
+- 从Registry中拉取镜像
+    - sudo docker pull registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:[镜像版本号]
+    
+- 将镜像推送到Registry
+    - 一般方式
+        - $ sudo docker login --username=quietttt registry.cn-hangzhou.aliyuncs.com
+        - $ sudo docker tag [ImageId] registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:[镜像版本号]
+        - $ sudo docker push registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:[镜像版本号]
+    - jib插件方式（本项目使用的方式）
+        - 在pom.xml里配置好jib插件处的账号和密码以及版本号等，用mvn clean package后，在用mvn jib:build即可完成镜像的构建和上传
+        - 注意，若此处的版本号和云端的相同，则云端的会被覆盖掉，因此测试服务一定记得在版本号后加个`.test`
+        - 另外，上传代码时，不要将密码给上传上去了，可将其替换为xxxxxx
+    
+- 部署
+    - 在目标服务器上先用docker login登录到公司的容器镜像服务（登陆过一次就不用再登录了）
+    - 用docker ps 检查一下有没有还在运行的老服务，若有，先用docker stop关掉；
+    - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名。
+        - sudo docker run -d -p 9090:9090 --name committee_10_5_5_test --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.5.5.test
