@@ -89,7 +89,7 @@ public class DocumentController {
 		try {
 			UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 			if (userTokenDTO != null) {
-				File file = new File(tPath, id + ".jpg");
+				File file = new File(path, id + ".jpg");
 				if (file.exists()) {
 					RequestUtil.setUserTokenDTO(userTokenDTO);
 					// 本人查看放在前面  后面查看是否work （ 学生查看的话会报错NPE ）
@@ -116,7 +116,7 @@ public class DocumentController {
 		try {
 			UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 			if (userTokenDTO != null) {
-				File file = new File(path, id + ".png");
+				File file = new File(tPath, id + ".png");
 				if (file.exists()) {
 					RequestUtil.setUserTokenDTO(userTokenDTO);
 					// 本人查看放在前面  后面是ROOT查看
