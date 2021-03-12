@@ -4,6 +4,8 @@ import com.chards.committee.domain.TbAdminRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
 * <p>
     * 用户角色表 Mapper 接口
@@ -18,5 +20,9 @@ public interface TbAdminRoleMapper extends BaseMapper<TbAdminRole> {
                          @Param("roleId") Long roleId);
 
     int deleteByAdminId(@Param("adminId") String adminId);
+
+
+    int addAdminRoles(@Param("adminId") String adminId,
+                      @Param("list") List<Long> roleIds);
 
 }

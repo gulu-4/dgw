@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.*;
 
 /**
  * <p>
@@ -96,6 +97,7 @@ public class CoreAdminController {
 
 
 	/**
+	 * 增加兼职教职工
 	 * 这里只需要传递一个学号，然后传递一个权限即可，然后在tb_admin_role表中加入一个字段，同时需要设置user_data_scope
 	 * @param partTimeStaffAddVO
 	 * @return
@@ -272,11 +274,11 @@ public class CoreAdminController {
 	public R getAdminInfo() {
 		String adminId = RequestUtil.getId();
 		CoreAdmin coreAdmin = coreAdminService.getById(adminId);
-		TbAdminRole tbAdminRole = tbAdminRoleService.getInfoByAdminId(adminId);
-		TbRole tbRole = tbRoleService.getById(tbAdminRole.getRoleId());
-		if (tbRole.getId() == 1) {
-			coreAdmin.setOccupation("学工处");
-		} else coreAdmin.setOccupation(tbRole.getName());
+//		TbAdminRole tbAdminRole = tbAdminRoleService.getInfoByAdminId(adminId);
+//		TbRole tbRole = tbRoleService.getById(tbAdminRole.getRoleId());
+//		if (tbRole.getId() == 1) {
+//			coreAdmin.setOccupation("学工处");
+//		} else coreAdmin.setOccupation(tbRole.getName());
 		return R.success(coreAdmin);
 	}
 

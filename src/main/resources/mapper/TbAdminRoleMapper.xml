@@ -12,4 +12,10 @@
         WHERE
         admin_id = #{adminId,jdbcType=VARCHAR}
     </delete>
+    <insert id="addAdminRoles" >
+        insert into tb_admin_role(admin_id,role_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{adminId},#{item})
+        </foreach>
+    </insert>
 </mapper>

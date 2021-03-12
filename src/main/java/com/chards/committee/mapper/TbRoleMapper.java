@@ -4,6 +4,7 @@ import com.chards.committee.domain.TbRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chards.committee.dto.AdminPermissionDTO;
 import com.chards.committee.dto.AdminRoleDTO;
+import com.chards.committee.vo.AdminRoleVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
