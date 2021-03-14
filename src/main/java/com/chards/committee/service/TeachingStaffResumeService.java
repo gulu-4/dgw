@@ -18,7 +18,7 @@ public class TeachingStaffResumeService extends ServiceImpl<TeachingStaffResumeM
         return baseMapper.getByStaffId(staffId);
     }
 
-    public Page<TeachingStaffResume> getPage(@Param("page") Page<TeachingStaffResume> page){
-        return baseMapper.getPage(page);
+    public Page<TeachingStaffResume> getPage(@Param("page") Page<TeachingStaffResume> page, Integer checkStatus){
+        return baseMapper.getPage(page, checkStatus);
     }
 }

@@ -12,5 +12,5 @@ import org.apache.ibatis.annotations.Param;
 public interface TeachingStaffResumeMapper extends BaseMapper<TeachingStaffResume> {
     TeachingStaffResume getByStaffId(@Param(value = "staffId") String staffId);
 
-    Page<TeachingStaffResume> getPage(@Param("page") Page<TeachingStaffResume> page);
+    Page<TeachingStaffResume> getPage(@Param("page") Page<TeachingStaffResume> page, @Param("checkStatus")  Integer checkStatus);
 }

@@ -108,7 +108,8 @@ public class LeaveController {
 		leave.setReviewerId(null);
 
 //		2021年1月29日，按学工处要求，在10.3.0版中取消自动审批
-//		leave = getAutoReview(leave);
+//		2021年3月14日晚，10.6.0版回复自动审批
+		leave = getAutoReview(leave);
 		return R.success(leaveService.save(leave));
 	}
 
@@ -186,16 +187,19 @@ public class LeaveController {
 	 * @return
 	 */
 	private Leave getAutoReview(Leave leave){
+//		徐州市内
 		if (leave.getMovement().substring(0,7).equals("江苏省 徐州市")){
 			LocalDateTime startDate = leave.getStartDate();
 			LocalDateTime endDate = leave.getEndDate();
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			String start = startDate.format(dtf);
 			String end = endDate.format(dtf);
+//			当天返回
 			if (end.equals(start)){
 				StuInfo stuInfo = stuInfoService.getById(leave.getStuNum());
 				if (stuInfo.getCounsellorNum()!=null){
-					leave.setReviewerId(stuInfo.getCounsellorNum());
+//					设0为系统
+					leave.setReviewerId("0");
 					leave.setStatus(1);
 				}
 			}

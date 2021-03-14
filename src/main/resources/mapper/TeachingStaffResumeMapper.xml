@@ -4,6 +4,9 @@
     <select id="getPage" resultType="com.chards.committee.domain.TeachingStaffResume">
         select *
         from teaching_staff_resume
+        <if test="checkStatus != null">
+            where check_status= #{checkStatus}
+        </if>
     </select>
     <select id="getByStaffId" resultType="com.chards.committee.domain.TeachingStaffResume">
         select *

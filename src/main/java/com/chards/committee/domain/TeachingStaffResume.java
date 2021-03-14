@@ -138,4 +138,24 @@ public class TeachingStaffResume extends Model<TeachingStaffResume> {
     @ExcelProperty("更新时间")
     private LocalDateTime updateTime;
 
+    @ExcelProperty("教学情况")
+    @TableField("teachings")
+    private String teachings;
+
+    @ExcelProperty("科研情况")
+    @TableField("researches")
+    private String researches;
+
+    @ExcelProperty("审核状态")
+    @TableField("check_status")
+    private Integer checkStatus;
+
+    @ExcelProperty("审核时间")
+    @TableField("check_time")
+    private LocalDateTime checkTime;
+
+    @ExcelProperty("审核人")
+    @TableField("check_by")
+    private String checkBy;
+
 }

@@ -41,11 +41,32 @@ public class TeachingStaffResumeController {
 
     @GetMapping("/getPage")
     @PreAuthorize("hasRole('ROOT')")
-    @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true) })
+    @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true),
+             @ApiImplicitParam(paramType = "param", dataType = "String", name = "checkStatus", value = "审核状态", required = true) })
     @ApiOperation(value = "ROOT分页获取教职工简历列表")
-    public R getPage(Page<TeachingStaffResume> page){
-        return R.success(teachingStaffResumeService.getPage(page));
+    public R getPage(Page<TeachingStaffResume> page, Integer checkStatus){
+        return R.success(teachingStaffResumeService.getPage(page, checkStatus));
     }
+    /**
+     * 学工处审核接口
+     * @return
+     */
+    @PutMapping("/check")
+    @PreAuthorize("hasRole('ROOT')")
+    @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true) })
+    @ApiOperation(value = "学工处审核接口")
+    public R check(@RequestBody String  staffId, @RequestBody Integer checkStatus){// 判断是否已经存在
+        TeachingStaffResume teachingStaffResume = teachingStaffResumeService.getByStaffId(staffId);
+        if (teachingStaffResume == null) {
+            return R.failure(Code.RESULT_DATA_NONE);
+        }
+        teachingStaffResume.setCheckStatus(checkStatus);
+        teachingStaffResume.setCheckBy(RequestUtil.getId());
+        teachingStaffResume.setCheckTime(LocalDateTime.now());
+
+        return R.success(teachingStaffResumeService.updateById(teachingStaffResume));
+    }
+
 
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT'))")
@@ -60,6 +81,8 @@ public class TeachingStaffResumeController {
         teachingStaffResume.setStaffId(RequestUtil.getId());
         teachingStaffResume.setCreateTime(LocalDateTime.now());
         teachingStaffResume.setUpdateTime(LocalDateTime.now());
+//        将审核状态设为：未审核
+        teachingStaffResume.setCheckStatus(0);
         return R.success(teachingStaffResumeService.save(teachingStaffResume));
     }
 
@@ -79,6 +102,8 @@ public class TeachingStaffResumeController {
         }
         teachingStaffResume.setStaffId(RequestUtil.getId());
         teachingStaffResume.setUpdateTime(LocalDateTime.now());
+        //        将审核状态设为：未审核
+        teachingStaffResume.setCheckStatus(0);
         return R.success(teachingStaffResumeService.updateById(teachingStaffResume));
     }
 
