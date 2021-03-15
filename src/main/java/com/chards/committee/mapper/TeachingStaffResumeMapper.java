@@ -3,6 +3,7 @@ package com.chards.committee.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.TeachingStaffResume;
+import com.chards.committee.vo.TeachingStaffResumeVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -12,5 +13,5 @@ import org.apache.ibatis.annotations.Param;
 public interface TeachingStaffResumeMapper extends BaseMapper<TeachingStaffResume> {
     TeachingStaffResume getByStaffId(@Param(value = "staffId") String staffId);
 
-    Page<TeachingStaffResume> getPage(@Param("page") Page<TeachingStaffResume> page, @Param("checkStatus")  Integer checkStatus);
+    Page<TeachingStaffResumeVO> getPage(@Param("page") Page<TeachingStaffResumeVO> page, @Param("checkStatus")  Integer checkStatus);
 }

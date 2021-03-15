@@ -26,9 +26,6 @@ public class TeachingStaffResume extends Model<TeachingStaffResume> {
     @TableId(value = "staff_id")
     private String staffId;
 
-//    仅用于补充返回姓名信息
-    private String name;
-
     @ExcelProperty("民族")
     @TableField("national")
     private String national;

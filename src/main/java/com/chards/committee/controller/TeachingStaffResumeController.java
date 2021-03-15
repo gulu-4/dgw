@@ -8,6 +8,7 @@ import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.R;
 import com.chards.committee.vo.TeachingStaffResumeCheckVO;
+import com.chards.committee.vo.TeachingStaffResumeVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -45,7 +46,7 @@ public class TeachingStaffResumeController {
     @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true),
              @ApiImplicitParam(paramType = "param", dataType = "String", name = "checkStatus", value = "审核状态", required = true) })
     @ApiOperation(value = "ROOT分页获取教职工简历列表")
-    public R getPage(Page<TeachingStaffResume> page, Integer checkStatus){
+    public R getPage(Page<TeachingStaffResumeVO> page, Integer checkStatus){
         return R.success(teachingStaffResumeService.getPage(page, checkStatus));
     }
     /**
