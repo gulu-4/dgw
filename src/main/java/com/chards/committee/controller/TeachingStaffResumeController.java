@@ -7,6 +7,7 @@ import com.chards.committee.service.UserService;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.R;
+import com.chards.committee.vo.TeachingStaffResumeCheckVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -55,12 +56,12 @@ public class TeachingStaffResumeController {
     @PreAuthorize("hasRole('ROOT')")
     @ApiImplicitParams({ @ApiImplicitParam(paramType = "header", dataType = "String", name = "Authorization", value = "token标记", required = true) })
     @ApiOperation(value = "学工处审核接口")
-    public R check(@RequestBody String  staffId, @RequestBody Integer checkStatus){// 判断是否已经存在
-        TeachingStaffResume teachingStaffResume = teachingStaffResumeService.getByStaffId(staffId);
+    public R check(@RequestBody TeachingStaffResumeCheckVO teachingStaffResumeCheckVO){// 判断是否已经存在
+        TeachingStaffResume teachingStaffResume = teachingStaffResumeService.getByStaffId(teachingStaffResumeCheckVO.getStaffId());
         if (teachingStaffResume == null) {
             return R.failure(Code.RESULT_DATA_NONE);
         }
-        teachingStaffResume.setCheckStatus(checkStatus);
+        teachingStaffResume.setCheckStatus(teachingStaffResumeCheckVO.getCheckStatus());
         teachingStaffResume.setCheckBy(RequestUtil.getId());
         teachingStaffResume.setCheckTime(LocalDateTime.now());
 

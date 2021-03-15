@@ -34,6 +34,9 @@
     - 在学生状态管理完善之前，相关业务模块不进行学生状态的控制；
     
 ## 更新日志（仅记录部分线上版本和历史线上版本）
+ * 2021年3月15日 v10.6.1
+     * 修复审批接口的问题；
+     * 给获取审核信息的接口加上了姓名字段；
  * 2021年3月14日 v10.6.0
      * 教职工管理模块增加教学情况和科研情况两个字段，增加审核功能
      * 恢复徐州市内当天返回自动审批功能
@@ -135,4 +138,4 @@
     - 在目标服务器上先用docker login登录到公司的容器镜像服务（登陆过一次就不用再登录了）
     - 用docker ps 检查一下有没有还在运行的老服务，若有，先用docker stop关掉；
     - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名。
-        - sudo docker run -d -p 9090:9090 --name committee_10_6_0 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.0
+        - sudo docker run -d -p 9090:9090 --name committee_10_6_1 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.1
