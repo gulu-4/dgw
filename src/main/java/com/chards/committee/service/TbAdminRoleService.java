@@ -66,4 +66,10 @@ public class TbAdminRoleService extends ServiceImpl<TbAdminRoleMapper, TbAdminRo
 		return result1;
 	}
 
+	public List<TbAdminRole> getTbAdminRoleByRoleId(Integer roleId) {
+		QueryWrapper<TbAdminRole> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("role_id",roleId);
+		return baseMapper.selectList(queryWrapper);
+	}
+
 }

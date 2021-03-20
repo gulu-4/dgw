@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.FieldOrderMapper">
+    <sql id="getList">
+        select *
+        from field_order as fo
+        inner join field_rent as fr on fo.rent_id = fr.id
+        <where>
+            <if test="param.stuNumber != null">
+                and fo.stu_number = #{param.stuNumber}
+            </if>
+            <if test="param.status != null">
+                and fo.status = #{param.status}
+            </if>
+            <if test="param.manager != null">
+                and FIND_IN_SET(#{param.manager},fr.manager)
+            </if>
+            <if test="param.startTime != null">
+                and unix_timestamp(fo.start_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.startTime,jdbcType=VARCHAR})
+            </if>
+            <if test="param.endTime != null">
+                and unix_timestamp(fo.end_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.end_time,jdbcType=VARCHAR})
+            </if>
+        </where>
+        order by fo.create_time
+    </sql>
+
+    <select id="getList" resultType="com.chards.committee.domain.FieldOrder">
+        <include refid="getList"></include>
+    </select>
+    <select id="getOrderById" resultType="com.chards.committee.domain.FieldOrder">
+        <include refid="getList"></include>
+    </select>
+</mapper>

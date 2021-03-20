@@ -135,6 +135,7 @@ public class TeachingStaffResumeController {
             file.transferTo(dest);
         } catch (IOException e) {
             log.error(e.toString());
+            return R.failure(Code.ERROR);
         }
         return R.success(Code.SUCCESS);
     }
