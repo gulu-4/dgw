@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 @Data
 public class FieldOrderGetParamVO {
     // 主键id
-    private Integer id;
+    private Long id;
+
+    // 租借场地id
+    private Long rentId;
 
     // 学生学号
     private String stuNumber;

@@ -6,6 +6,12 @@
         from field_order as fo
         inner join field_rent as fr on fo.rent_id = fr.id
         <where>
+            <if test="param.id != null">
+                and fo.id = #{param.id}
+            </if>
+            <if test="param.rentId != null">
+                and fo.rent_id = #{param.rentId}
+            </if>
             <if test="param.stuNumber != null">
                 and fo.stu_number = #{param.stuNumber}
             </if>
@@ -19,16 +25,48 @@
                 and unix_timestamp(fo.start_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.startTime,jdbcType=VARCHAR})
             </if>
             <if test="param.endTime != null">
-                and unix_timestamp(fo.end_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.end_time,jdbcType=VARCHAR})
+                and unix_timestamp(fo.end_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.endTime,jdbcType=VARCHAR})
             </if>
         </where>
         order by fo.create_time
+    </sql>
+    <sql id="getAlreadyPassedList">
+        select *
+        from field_order
+        <where>
+            <if test="param.rentId != null">
+                and rent_id = #{param.rentId}
+            </if>
+            <if test="param.status != null">
+                and status = #{param.status}
+            </if>
+            <if test="param.startTime != null">
+                and (unix_timestamp(start_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.startTime,jdbcType=VARCHAR})
+
+                and unix_timestamp(end_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.startTime,jdbcType=VARCHAR})
+            </if>
+            <if test="param.endTime != null">
+                or unix_timestamp(start_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.endTime,jdbcType=VARCHAR})
+                and unix_timestamp(end_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.endTime,jdbcType=VARCHAR}))
+            </if>
+        </where>
     </sql>
 
     <select id="getList" resultType="com.chards.committee.domain.FieldOrder">
         <include refid="getList"></include>
     </select>
+    <select id="getAlreadyPassedList" resultType="com.chards.committee.domain.FieldOrder">
+        <include refid="getAlreadyPassedList"></include>
+    </select>
     <select id="getOrderById" resultType="com.chards.committee.domain.FieldOrder">
         <include refid="getList"></include>
+    </select>
+    <select id="getAlreadyOrderedTime" resultType="com.chards.committee.domain.FieldOrder">
+        SELECT *
+        FROM field_order
+        WHERE rent_id = #{rentId} and status = 1
+        and unix_timestamp(start_time) <![CDATA[ >= ]]>  unix_timestamp(#{startTime})
+        and unix_timestamp(end_time) <![CDATA[ <= ]]>  unix_timestamp(#{endTime})
+        ORDER BY start_time
     </select>
 </mapper>

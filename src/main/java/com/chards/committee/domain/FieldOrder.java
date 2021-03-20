@@ -33,7 +33,7 @@ public class FieldOrder extends Model<FieldOrder> {
     private Long id;
 
     @ApiModelProperty(value = "需要租借场地的id")
-    private Long rent_id;
+    private Long rentId;
 
     @ApiModelProperty(value = "预约人学号")
     private String stuNumber;
