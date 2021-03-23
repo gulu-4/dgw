@@ -47,7 +47,7 @@
         LEFT JOIN user_data_scope on user_data_scope.user_id = stu_info.id
         WHERE
         user_data_scope.department LIKE  #{department,jdbcType=VARCHAR}
-        GROUP BY core_admin.id
+        GROUP BY stu_info.id
     </select>
 
 
