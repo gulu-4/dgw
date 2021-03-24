@@ -131,6 +131,30 @@ public class DocumentController {
 		return getFileByte(new File(path, DEFAULE_IMG));
 	}
 
+	/**
+	 * 获取租借场地图片接口
+	 * @param id
+	 * @param token
+	 * @return
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/field/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+	public byte[] getFieldDocuments(@PathVariable String id, String token) throws IOException {
+		try {
+			UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+			if (userTokenDTO != null) {
+				File file = new File(path + "/field/", id + ".png");
+				if (file.exists()) {
+					RequestUtil.setUserTokenDTO(userTokenDTO);
+					return getFileByte(file);
+				}
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return getFileByte(new File(path, DEFAULE_IMG));
+	}
+
 	private byte[] getFileByte(File file) throws IOException {
 		FileInputStream inputStream = null;
 		try {

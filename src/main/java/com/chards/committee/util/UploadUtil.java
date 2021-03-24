@@ -23,7 +23,7 @@ public class UploadUtil {
             try {
                 filename = UUID.randomUUID().toString().replaceAll("-", "") + ".png";
                 multipartFile.transferTo(new File(filePath + filename));
-                urlList.add(filename);
+                urlList.add(filename.substring(0,filename.lastIndexOf(".")));
             } catch (IOException e) {
                 e.printStackTrace();
             }
