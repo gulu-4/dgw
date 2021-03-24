@@ -11,6 +11,9 @@
         tb_admin_role
         WHERE
         admin_id = #{adminId,jdbcType=VARCHAR}
+        <if test="roleId != ''">
+            and role_id = #{roleId,jdbcType=VARCHAR}
+        </if>
     </delete>
     <insert id="addAdminRoles" >
         insert into tb_admin_role(admin_id,role_id) values

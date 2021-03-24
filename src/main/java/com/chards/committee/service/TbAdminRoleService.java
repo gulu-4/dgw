@@ -3,9 +3,11 @@ package com.chards.committee.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chards.committee.domain.TbAdminRole;
+import com.chards.committee.dto.UserInfo;
 import com.chards.committee.mapper.TbAdminRoleMapper;
 import com.chards.committee.vo.AdminRoleVO;
 import com.chards.committee.vo.PartTimeStaffAddVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,8 @@ import java.util.List;
 public class TbAdminRoleService extends ServiceImpl<TbAdminRoleMapper, TbAdminRole>  {
 	@Autowired
 	private DataScopeService dataScopeService;
+	@Autowired
+	private UserService userService;
 
 	public TbAdminRole getInfoByAdminId(String adminId){
 		QueryWrapper <TbAdminRole> queryWrapper=new QueryWrapper<>();
@@ -48,7 +52,7 @@ public class TbAdminRoleService extends ServiceImpl<TbAdminRoleMapper, TbAdminRo
 	@Transactional
 	public int updateAdminRoles(AdminRoleVO adminRoleVO) {
 		// 先删除原来的
-		baseMapper.deleteByAdminId(adminRoleVO.getAdminId());
+		baseMapper.deleteByAdminId(adminRoleVO.getAdminId(),"");
 		// 再替换新的
 		List<Long> roleIds = new ArrayList<>();
 		for (String roleId : adminRoleVO.getRoleIds().split(",")) {
@@ -58,18 +62,27 @@ public class TbAdminRoleService extends ServiceImpl<TbAdminRoleMapper, TbAdminRo
 	}
 
 	@Transactional
-	public int deletePartTimeStaff(String staffId) {
+	public int deletePartTimeStaff(String staffId,String roleId) {
 		// 首先出tb_admin_role中的数据
-		int result1 = baseMapper.deleteByAdminId(staffId);
+		int result1 = baseMapper.deleteByAdminId(staffId,roleId);
 		// 其次删除user_data_scope中的数据，这里主要确保删除tb_admin_role中的数据
 		int result2 = dataScopeService.deleteByUserId(staffId);
 		return result1;
 	}
 
-	public List<TbAdminRole> getTbAdminRoleByRoleId(Integer roleId) {
+	public List<AdminRoleVO> getTbAdminRoleByRoleId(Integer roleId) {
 		QueryWrapper<TbAdminRole> queryWrapper = new QueryWrapper<>();
 		queryWrapper.eq("role_id",roleId);
-		return baseMapper.selectList(queryWrapper);
+		List<AdminRoleVO> adminRoleVOList = new ArrayList<>();
+		List<TbAdminRole> tbAdminRoleList = baseMapper.selectList(queryWrapper);
+		for (TbAdminRole tbAdminRole : tbAdminRoleList) {
+			AdminRoleVO adminRoleVO = new AdminRoleVO();
+			UserInfo userInfo = userService.getUserById(tbAdminRole.getAdminId());
+			BeanUtils.copyProperties(tbAdminRole,adminRoleVO);
+			adminRoleVO.setName(userInfo.getName());
+			adminRoleVOList.add(adminRoleVO);
+		}
+		return adminRoleVOList;
 	}
 
 }

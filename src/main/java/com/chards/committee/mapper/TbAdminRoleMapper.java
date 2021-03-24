@@ -19,7 +19,8 @@ public interface TbAdminRoleMapper extends BaseMapper<TbAdminRole> {
     int addPartTimeStaff(@Param("adminId") String adminId,
                          @Param("roleId") Long roleId);
 
-    int deleteByAdminId(@Param("adminId") String adminId);
+    int deleteByAdminId(@Param("adminId") String adminId,
+                        @Param("roleId") String roleId);
 
 
     int addAdminRoles(@Param("adminId") String adminId,

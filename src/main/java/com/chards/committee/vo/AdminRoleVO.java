@@ -14,4 +14,7 @@ public class AdminRoleVO {
     private String adminId;
     @NotBlank(message = "管理员角色id不能为空")
     private String roleIds;
+
+    // 管理员名字
+    private String name;
 }

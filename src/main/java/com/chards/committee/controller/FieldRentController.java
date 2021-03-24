@@ -83,18 +83,7 @@ public class FieldRentController {
     @PreAuthorize("hasRole('STUDENT') or hasRole('ROOT')")
     @GetMapping("/getAll")
     public R getAll() {
-        List<FieldRent> fieldRentList = new ArrayList<>();
-        for (FieldRent fieldRent : fieldRentService.list()) {
-            String[] pathList = fieldRent.getPictures().split(",");
-            String pictures = "";
-            for (String path : pathList) {
-                path = filePath + PATH + path + ",";
-                pictures += path;
-            }
-            fieldRent.setPictures(pictures);
-            fieldRentList.add(fieldRent);
-        }
-        return R.success(fieldRentList);
+        return R.success(fieldRentService.list());
     }
 
     @ApiOperation("根据场地id获取详细信息")
@@ -102,13 +91,6 @@ public class FieldRentController {
     @GetMapping("/getDetailById/{id}")
     public R getDetailById(@PathVariable Serializable id){
         FieldRent fieldRent = fieldRentService.getById(id);
-        String[] pathList = fieldRent.getPictures().split(",");
-        String pictures = "";
-        for (String path : pathList) {
-            path = filePath + PATH + path + ",";
-            pictures += path;
-        }
-        fieldRent.setPictures(pictures);
         return R.success(fieldRent);
     }
 

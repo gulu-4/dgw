@@ -113,11 +113,12 @@ public class CoreAdminController {
 
 	@PreAuthorize("hasRole('ROOT')")
 	@DeleteMapping("/removePTStaffById/{staffId}")
-	public R deletePartTimeStaff(@PathVariable String staffId) {
+	public R deletePartTimeStaff(@PathVariable String staffId,
+								 @RequestParam(value = "roleId") String roleId) {
 		if (staffId == null) {
 			return R.failure(Code.PARAM_IS_BLANK);
 		}
-		return R.success(tbAdminRoleService.deletePartTimeStaff(staffId));
+		return R.success(tbAdminRoleService.deletePartTimeStaff(staffId,roleId));
 	}
 
 
