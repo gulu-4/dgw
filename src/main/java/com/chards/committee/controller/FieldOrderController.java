@@ -8,6 +8,7 @@ import com.chards.committee.service.FieldOrderService;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.FieldOrderGetParamVO;
+import com.chards.committee.vo.FieldOrderGetVO;
 import com.chards.committee.vo.R;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -48,19 +49,22 @@ public class FieldOrderController {
         return R.success("预约信息登记成功");
     }
 
-    @ApiOperation("查看所有的场地预约记录，学生看自己的，管理员看所有的")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('FIELDMANAGER')")
+    @ApiOperation("查看所有的场地预约记录，管理员看所管所有的")
+    @PreAuthorize("hasRole('FIELDMANAGER')")
     @PostMapping("/getList")
-    public R getList(@RequestBody FieldOrderGetParamVO fieldOrderGetParamVO,Page<FieldOrder> page) {
-        if (RequestUtil.getRoles().contains("STUDENT") && !RequestUtil.getRoles().contains("FIELDMANAGER")){
-            // 如果是学生就将学号放进去
-            fieldOrderGetParamVO.setStuNumber(RequestUtil.getId());
-        } else if (RequestUtil.getRoles().contains("FIELDMANAGER")){
-            fieldOrderGetParamVO.setManager(RequestUtil.getId());
-        }
+    public R getList(@RequestBody FieldOrderGetParamVO fieldOrderGetParamVO,Page<FieldOrderGetVO> page) {
+        fieldOrderGetParamVO.setManager(RequestUtil.getId());
         if (RequestUtil.getRoles().contains("ROOT")) {
             fieldOrderGetParamVO.setManager(null);
         }
+        return R.success(fieldOrderService.getList(page,fieldOrderGetParamVO));
+    }
+
+    @ApiOperation("查看所有的场地预约记录，学生看自己的")
+    @PreAuthorize("hasRole('STUDENT')")
+    @PostMapping("/getStudentList")
+    public R getStudentList(@RequestBody FieldOrderGetParamVO fieldOrderGetParamVO,Page<FieldOrderGetVO> page) {
+        fieldOrderGetParamVO.setStuNumber(RequestUtil.getId());
         return R.success(fieldOrderService.getList(page,fieldOrderGetParamVO));
     }
 

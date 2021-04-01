@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chards.committee.mapper.FieldOrderMapper">
     <sql id="getList">
-        select *
+        select fo.*,s.name,fr.name as rentName,fr.location as rentLocation
         from field_order as fo
-        inner join field_rent as fr on fo.rent_id = fr.id
+        left join stu_info as s on fo.stu_number = s.id
+        left join field_rent as fr on fo.rent_id = fr.id
         <where>
             <if test="param.id != null">
                 and fo.id = #{param.id}
@@ -52,7 +53,7 @@
         </where>
     </sql>
 
-    <select id="getList" resultType="com.chards.committee.domain.FieldOrder">
+    <select id="getList" resultType="com.chards.committee.vo.FieldOrderGetVO">
         <include refid="getList"></include>
     </select>
     <select id="getAlreadyPassedList" resultType="com.chards.committee.domain.FieldOrder">

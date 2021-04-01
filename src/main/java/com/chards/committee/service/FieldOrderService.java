@@ -6,6 +6,7 @@ import com.chards.committee.domain.FieldOrder;
 import com.chards.committee.mapper.FieldOrderMapper;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.FieldOrderGetParamVO;
+import com.chards.committee.vo.FieldOrderGetVO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ import java.util.*;
 @Service("fieldOrderService")
 public class FieldOrderService extends ServiceImpl<FieldOrderMapper,FieldOrder> {
 
-    public Page<FieldOrder> getList(Page<FieldOrder> page,FieldOrderGetParamVO fieldOrderGetParamVO) {
+    public Page<FieldOrder> getList(Page<FieldOrderGetVO> page, FieldOrderGetParamVO fieldOrderGetParamVO) {
         return baseMapper.getList(page,fieldOrderGetParamVO);
     }
 
@@ -87,8 +88,8 @@ public class FieldOrderService extends ServiceImpl<FieldOrderMapper,FieldOrder> 
      * @param time
      * @return
      */
-    public Map<String, Object> getAlreadyOrderedTime(String id, String time) {
-        Map<String, Object> section = new HashMap<>();
+    public List<Map<String, Object>> getAlreadyOrderedTime(String id, String time) {
+        List<Map<String, Object>> sectionList =  new ArrayList<Map<String,Object>>();
 
         DateTimeFormatter DATEFORMATTER1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         DateTimeFormatter DATEFORMATTER = new DateTimeFormatterBuilder().append(DATEFORMATTER1)
@@ -99,16 +100,22 @@ public class FieldOrderService extends ServiceImpl<FieldOrderMapper,FieldOrder> 
         LocalDateTime startTime = LocalDateTime.parse(time, DATEFORMATTER);
         LocalDateTime endTime = startTime.plusDays(1);
         List<FieldOrder> fieldOrderList = baseMapper.getAlreadyOrderedTime(id,startTime,endTime);
-        if (fieldOrderList.size() > 0) {
-            startTime = fieldOrderList.get(0).getStartTime();
-            endTime = fieldOrderList.get(fieldOrderList.size() - 1).getEndTime();
-            section.put("startTime",startTime);
-            section.put("endTime",endTime);
-        }else {
-            section.put("startTime",0);
-            section.put("endTime",0);
+//        if (fieldOrderList.size() > 0) {
+//            startTime = fieldOrderList.get(0).getStartTime();
+//            endTime = fieldOrderList.get(fieldOrderList.size() - 1).getEndTime();
+//            section.put("startTime",startTime);
+//            section.put("endTime",endTime);
+//        }else {
+//            section.put("startTime",0);
+//            section.put("endTime",0);
+//        }
+        for(FieldOrder fieldOrder : fieldOrderList) {
+            Map<String, Object> section = new HashMap<>();
+            section.put("startTime",fieldOrder.getStartTime());
+            section.put("endTime",fieldOrder.getEndTime());
+            sectionList.add(section);
         }
-        return section;
+        return sectionList;
     }
 
     public Integer checkOrder(FieldOrder fieldOrder) {

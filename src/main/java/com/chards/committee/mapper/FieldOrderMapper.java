@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.FieldOrder;
 import com.chards.committee.vo.FieldOrderGetParamVO;
+import com.chards.committee.vo.FieldOrderGetVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.*;
  */
 public interface FieldOrderMapper extends BaseMapper<FieldOrder> {
 
-    Page<FieldOrder> getList(@Param("page") Page<FieldOrder> page,
+    Page<FieldOrder> getList(@Param("page") Page<FieldOrderGetVO> page,
                              @Param("param") FieldOrderGetParamVO fieldOrderGetParamVO);
 
     List<FieldOrder> getAlreadyPassedList(@Param("param") FieldOrderGetParamVO fieldOrderGetParamVO);
