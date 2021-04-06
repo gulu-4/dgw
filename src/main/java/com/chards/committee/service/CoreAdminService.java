@@ -25,8 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.chards.committee.domain.StuInfo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -58,6 +60,9 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
     StuInfoService stuInfoService;
     @Autowired
     DataScopeService dataScopeService;
+    @Autowired
+    UserService userService;
+
     public UserLoginRespVO getAdminTokenLdap(String username, String password, String ip) {
         JSONObject jsonObject = JSONUtil.createObj();
         jsonObject.put("username", username);
@@ -152,6 +157,59 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
         if (loginIpService.addLoginIp(username, ip)) {
             resp.setNewIp(ip);
         }
+        return resp;
+    }
+
+    public UserLoginRespVO getUserTokenForRoot(String username, String ip){
+        UserInfo userInfo = new UserInfo();
+        UserTokenDTO userTokenDTO = new UserTokenDTO();
+        System.out.println(username);
+        if (username.length() <8 ){
+//            教职工
+            CoreAdmin coreAdmin = getById(username);
+            BeanUtils.copyProperties(coreAdmin, userInfo);
+            userTokenDTO.setUserInfo(userInfo);
+        }else {
+//            学生
+            StuInfo stuInfo = stuInfoService.getById(username);
+            Assert.notNull(stuInfo, Code.USER_NOT_EXIST);
+            BeanUtils.copyProperties(stuInfo, userInfo);
+            userTokenDTO.setUserInfo(userInfo);
+        }
+        List<AdminRoleDTO> adminRole = tbRoleService.getAdminRole(username);
+        List<String> roles = adminRole.stream().map(AdminRoleDTO::getEnname).collect(Collectors.toList());
+
+        if (username.length() >=8 ){
+            roles.add(Constant.STUDENT);
+        }
+        if (roles.contains(Constant.XUEGONG)) {
+            userInfo.setDepartment("学工处");
+        }
+        userTokenDTO.setRoles(roles);
+        List<String> permisssions = new ArrayList<>();
+        if (adminRole.toArray().length>0){
+            permisssions = tbRoleService.getAdminPermission(
+                    adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())
+            ).stream().map(AdminPermissionDTO::getPermission).collect(Collectors.toList());
+        }
+        if (username.length() >=8 ){
+            permisssions.add("OWN_INFO_CRUD");
+        }
+        userTokenDTO.setPermissionsList(permisssions);
+        List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(userInfo.getId());
+        System.out.println("userDataScopeList:");
+        System.out.println(userDataScopeList);
+        userTokenDTO.setUserDataScopeList(userDataScopeList);
+        String token = UUID.randomUUID().toString();
+        redisTemplate.opsForValue().set(token, userTokenDTO, 1, TimeUnit.HOURS);
+        UserLoginRespVO resp = new UserLoginRespVO();
+        resp.setToken(token);
+        resp.setName(userService.getUserById(username).getName());
+        resp.setRoleList(roles);
+        resp.setUserDataScopeList(userDataScopeList);
+        LoginIp byLastIp = loginIpService.getByUserId(username);
+        resp.setOldIp(byLastIp != null ? byLastIp.getIp() : "空");
+        resp.setNewIp(ip);
         return resp;
     }
 

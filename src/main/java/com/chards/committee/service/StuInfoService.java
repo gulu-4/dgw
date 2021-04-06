@@ -101,6 +101,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         return updateById(stuInfo);
     }
 
+
     public UserLoginRespVO getUserTokenLdap(String username, String password, String ip) {
         JSONObject jsonObject = JSONUtil.createObj();
         jsonObject.put("username", username);
@@ -141,9 +142,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
             }
             userTokenDTO.setRoles(roles);
             List<String> permisssions = new ArrayList<>();
-            System.out.println(adminRole);
-            System.out.println(adminRole.toArray().length>0);
-            System.out.println(adminRole.toArray().length);
+
             if (adminRole.toArray().length>0){
                 permisssions = tbRoleService.getAdminPermission(
                         adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())

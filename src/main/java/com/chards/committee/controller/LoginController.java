@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -64,6 +65,18 @@ public class LoginController {
 	public R adminlogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
 		return R.success(coreAdminService.getAdminToken(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
 	}
+
+
+	/**
+	 * 超级管理员登陆某个用户的号，学生的和老师的都可以，时效为1小时
+	 */
+	@PreAuthorize("hasRole('ROOT')")
+	@PostMapping("/root/user")
+	public R rootLoginUser(@RequestBody Map params, HttpServletRequest request) {
+		return R.success(coreAdminService.getUserTokenForRoot((String) params.get("username"), ipGetService.getIpAddr(request)));
+	}
+
+
 	/**
 	 * 管理员统一身份认证登陆
 	 */

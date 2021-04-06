@@ -57,7 +57,7 @@
             <include refid="dateArea"></include>
     </select>
 
-
+<!--21年4月6日，删除重复的gender和id_card-->
     <sql id="getAll">
         select t_leave.*,
         stu_info.name,
@@ -69,10 +69,8 @@
         stu_info.address as address1,
         stu_info.grade,
         stu_info.phone,
-        stu_info.gender,
         stu_info.education_background,
         stu_info.political_status,
-        stu_info.id_card,
         stu_info.state
         from t_leave
         inner join stu_info on t_leave.stu_num = stu_info.id
