@@ -26,7 +26,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
-version: 10.6.3
+version: 10.6.4
 
 swagger:
   enabled: false
