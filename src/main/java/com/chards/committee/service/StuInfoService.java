@@ -271,6 +271,18 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         return baseMapper.getLike(page, stuInfoPageDTO);
     }
 
+    /**
+     * 心理咨询师专用，不受数据权限控制，可查所有学生学号姓名等信息
+     * @param page
+     * @param stuInfoPageDTO
+     * @return
+     */
+    public Page<StuInfoPageVO> getLikeForPsychologicalCounselor(Page<StuInfoPageVO> page, StuInfoPageDTO stuInfoPageDTO) {
+        stuInfoPageDTO.setParam("%" + stuInfoPageDTO.getParam() + "%");
+        return baseMapper.getLikeForPsychologicalCounselor(page, stuInfoPageDTO);
+    }
+
+
     public List<StuInfoPageVO> getLikeList(StuInfoPageDTO stuInfoPageDTO) {
         stuInfoPageDTO.setParam("%" + stuInfoPageDTO.getParam() + "%");
         return baseMapper.getLikeList(stuInfoPageDTO);

@@ -179,7 +179,7 @@ public class StuInfoController {
 
 
 	/**
-	 * 管理员获取某一学生信息 ??
+	 * 管理员获取某一学生信息
 	 *
 	 * @param stuInfoId {@code Long}
 	 * @return {@link R}
@@ -205,6 +205,28 @@ public class StuInfoController {
 	}
 
 	/**
+	 * 根据学号查看某一学生的信息，向咨询师放开数据权限限制
+	 * @param stuInfoId
+	 * @return
+	 */
+	@PreAuthorize("hasRole('PCOUNSELOR')")
+	@GetMapping("/get/psychological_counselor/{stuInfoId}")
+	public R getForPsychologicalCounselor(@PathVariable String stuInfoId) {
+		StuInfo stuInfo = stuInfoService.getById(stuInfoId);
+		Assert.notNull(stuInfo, Code.RESULT_DATA_NONE);
+		if (stuInfo.getCounsellorNum() != null && !StringUtils.isBlank(stuInfo.getCounsellorNum())
+				&& !stuInfo.getCounsellorNum().equals("无")) {
+			CoreAdmin coreAdmin = coreAdminService.getById(stuInfo.getCounsellorNum());
+			if (coreAdmin != null) {
+				stuInfo.setCounsellorName(coreAdmin.getName());
+				stuInfo.setCounsellorPhone(coreAdmin.getPhone());
+			}
+			return R.success(stuInfo);
+		}
+		return R.success(stuInfo);
+	}
+
+	/**
 	 * 模糊查询
 	 * 辅导员只能查看自己工作范围内所管理的学生
 	 *
@@ -217,6 +239,22 @@ public class StuInfoController {
 	public R getStuInfoByParam(StuInfoPageDTO stuInfoPageDTO, Page<StuInfoPageVO> page) {
 //		stuInfoPageDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 		return R.success(stuInfoService.getLike(page, stuInfoPageDTO));
+	}
+
+	/**
+
+	 * 心理咨询师专用
+	 * 模糊查询
+	 * 可以不受数据权限控制查全校所有学生信息
+	 * @param stuInfoPageDTO
+	 * @param page
+	 * @return
+	 */
+	@PreAuthorize("hasRole('PCOUNSELOR')")
+	@GetMapping("/psychological_counselor/page")
+	public R getStuByParamForPsychologicalCounselorInfo(StuInfoPageDTO stuInfoPageDTO, Page<StuInfoPageVO> page) {
+//		stuInfoPageDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+		return R.success(stuInfoService.getLikeForPsychologicalCounselor(page, stuInfoPageDTO));
 	}
 
 
