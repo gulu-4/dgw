@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chards.committee.domain.FieldOrder;
 import com.chards.committee.mapper.FieldOrderMapper;
+import com.chards.committee.mapper.FieldRentMapper;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.FieldOrderGetParamVO;
 import com.chards.committee.vo.FieldOrderGetVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,12 +29,41 @@ import java.util.*;
 @Service("fieldOrderService")
 public class FieldOrderService extends ServiceImpl<FieldOrderMapper,FieldOrder> {
 
-    public Page<FieldOrder> getList(Page<FieldOrderGetVO> page, FieldOrderGetParamVO fieldOrderGetParamVO) {
+    @Autowired
+    private FieldRentMapper fieldRentMapper;
+
+    public Page<FieldOrderGetVO> getList(Page<FieldOrderGetVO> page, FieldOrderGetParamVO fieldOrderGetParamVO) {
         return baseMapper.getList(page,fieldOrderGetParamVO);
     }
 
     public FieldOrder getOrderById(FieldOrderGetParamVO fieldOrderGetParamVO) {
         return baseMapper.getOrderById(fieldOrderGetParamVO);
+    }
+
+    /**
+     * 判断登录人是否是场地负责人
+     * @param userId
+     * @return
+     */
+    public Boolean getIsManager(String userId) {
+        Integer result = fieldRentMapper.getIsManager(userId);
+        if (result > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断登录人是否是某个场地负责人
+     * @param userId
+     * @return
+     */
+    public Boolean getIsRentManager(String userId,String rentId) {
+        Integer result = fieldRentMapper.getIsRentManager(userId,rentId);
+        if (result > 0) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -56,8 +87,9 @@ public class FieldOrderService extends ServiceImpl<FieldOrderMapper,FieldOrder> 
                 if (end - start > 7200) {
                     result = 0; //预约时间不能超过两个小时
                 } else{
-                    if (fieldOrder.getStartTime().getDayOfMonth() <= LocalDateTime.now().getDayOfMonth()) {
-                        result = 0; //预约时间至少是第二天
+                    // fieldOrder.getStartTime().getDayOfMonth() <= LocalDateTime.now().getDayOfMonth()
+                    if ( fieldOrder.getStartTime().isBefore(LocalDateTime.now()) ) {
+                        result = 0; //预约时间应该是未来时间
                     } else{
                         String stuNumber = RequestUtil.getId();
                         fieldOrder.setStuNumber(stuNumber);

@@ -2,6 +2,7 @@ package com.chards.committee.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chards.committee.domain.FieldRent;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +14,8 @@ import com.chards.committee.domain.FieldRent;
  */
 public interface FieldRentMapper extends BaseMapper<FieldRent> {
 
+    Integer getIsManager(@Param("userId") String userId);
+
+    Integer getIsRentManager(@Param("userId") String userId,
+                         @Param("rentId") String rentId);
 }

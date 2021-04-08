@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.chards.committee.mapper.FieldRentMappere">
+<mapper namespace="com.chards.committee.mapper.FieldRentMapper">
 
+    <select id="getIsManager" resultType="java.lang.Integer">
+        select count(*)
+        from field_rent
+        where FIND_IN_SET(#{userId},manager)
+    </select>
+    <select id="getIsRentManager" resultType="java.lang.Integer">
+        select count(*)
+        from field_rent
+        where FIND_IN_SET(#{userId},manager) and id = #{rentId}
+    </select>
 </mapper>

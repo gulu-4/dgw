@@ -51,7 +51,7 @@ public class FieldRentController {
 
     @ApiOperation(value = "上传租借场地照片")
     @PostMapping("/uploadPicture")
-    @PreAuthorize("hasRole('ROOT')")
+    @PreAuthorize("hasRole('FIELDMANAGER')")
     public R uploadPic(@RequestParam(value = "files") MultipartFile[] multipartFiles, HttpServletRequest request) throws IOException {
         if (multipartFiles == null || multipartFiles.length <= 0) {
             log.error("文件不能为空");
@@ -63,15 +63,15 @@ public class FieldRentController {
         return R.success(resultMap);
     }
 
-    @ApiOperation(value = "获取场地负责人学号或者工号")
-    @PreAuthorize("hasRole('ROOT')")
-    @GetMapping("/getAllManager")
-    public R getAllManager(){
-        return R.success(tbAdminRoleService.getTbAdminRoleByRoleId(8));
-    }
+//    @ApiOperation(value = "获取场地负责人学号或者工号")
+//    @PreAuthorize("hasRole('ROOT')")
+//    @GetMapping("/getAllManager")
+//    public R getAllManager(){
+//        return R.success(tbAdminRoleService.getTbAdminRoleByRoleId(8));
+//    }
 
     @ApiOperation(value = "新增租借场地")
-    @PreAuthorize("hasRole('ROOT')")
+    @PreAuthorize("hasRole('FIELDMANAGER')")
     @PostMapping("/add")
     public R add(@Valid @RequestBody FieldRent fieldRent){
         fieldRent.setCreateTime(LocalDateTime.now());
@@ -80,14 +80,14 @@ public class FieldRentController {
     }
 
     @ApiOperation(value = "获取所有租借场地接口")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('ROOT')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @GetMapping("/getAll")
     public R getAll() {
         return R.success(fieldRentService.list());
     }
 
     @ApiOperation("根据场地id获取详细信息")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('ROOT')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @GetMapping("/getDetailById/{id}")
     public R getDetailById(@PathVariable Serializable id){
         FieldRent fieldRent = fieldRentService.getById(id);
@@ -95,14 +95,14 @@ public class FieldRentController {
     }
 
     @ApiOperation("根据id更新场地信息")
-    @PreAuthorize("hasRole('ROOT')")
+    @PreAuthorize("hasRole('FIELDMANAGER')")
     @PutMapping("/update")
     public R update(@RequestBody FieldRent fieldRent) {
         return R.success(fieldRentService.updateById(fieldRent));
     }
 
     @ApiOperation("根据id删除场地信息")
-    @PreAuthorize("hasRole('ROOT')")
+    @PreAuthorize("hasRole('FIELDMANAGER')")
     @DeleteMapping("/delete/{id}")
     public R delete(@PathVariable Serializable id) {
         return R.success(fieldRentService.removeById(id));

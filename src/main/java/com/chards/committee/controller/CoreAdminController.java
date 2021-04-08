@@ -106,7 +106,7 @@ public class CoreAdminController {
 	@PostMapping("/addPartTimeStaff")
 	public R addPartTimeStaff(@Valid @RequestBody PartTimeStaffAddVO partTimeStaffAddVO){
 		if (partTimeStaffAddVO.getRoleId() == null) {
-			partTimeStaffAddVO.setRoleId((long) 4);
+			partTimeStaffAddVO.setRoleId((long) 5);
 		}
 		return  R.success(tbAdminRoleService.addPartTimeStaff(partTimeStaffAddVO));
 	}

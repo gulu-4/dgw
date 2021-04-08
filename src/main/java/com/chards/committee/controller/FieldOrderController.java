@@ -37,7 +37,7 @@ public class FieldOrderController {
     private FieldOrderService fieldOrderService;
 
     @ApiOperation("学生添加场地预约")
-    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @PostMapping("/add")
     public R add(@RequestBody FieldOrder fieldOrder){
         Integer result = fieldOrderService.addFieldOrder(fieldOrder);
@@ -50,7 +50,7 @@ public class FieldOrderController {
     }
 
     @ApiOperation("查看所有的场地预约记录，管理员看所管所有的")
-    @PreAuthorize("hasRole('FIELDMANAGER')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @PostMapping("/getList")
     public R getList(@RequestBody FieldOrderGetParamVO fieldOrderGetParamVO,Page<FieldOrderGetVO> page) {
         fieldOrderGetParamVO.setManager(RequestUtil.getId());
@@ -58,6 +58,22 @@ public class FieldOrderController {
             fieldOrderGetParamVO.setManager(null);
         }
         return R.success(fieldOrderService.getList(page,fieldOrderGetParamVO));
+    }
+
+    @ApiOperation("调用接口，查看某个登录人是否是场地负责人，不是的话返回false，是的话返回true")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
+    @GetMapping("/getIsManager")
+    public R getIsManager() {
+        String userId = RequestUtil.getId();
+        if (RequestUtil.getRoles().contains("ROOT")) {
+            return R.success(true);
+        }
+        Boolean flag = fieldOrderService.getIsManager(userId);
+        if (flag) {
+            return R.success(true);
+        }else {
+            return R.failure("抱歉，您不是改场地负责人，没有权限!");
+        }
     }
 
     @ApiOperation("查看所有的场地预约记录，学生看自己的")
@@ -69,7 +85,7 @@ public class FieldOrderController {
     }
 
     @ApiOperation("根据id查询某条场地预约记录")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('FIELDMANAGER')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @GetMapping("/getOrderById/{id}")
     public R getOrderById(@PathVariable String id) {
         FieldOrderGetParamVO fieldOrderGetParamVO = new FieldOrderGetParamVO();
@@ -88,7 +104,7 @@ public class FieldOrderController {
             @ApiImplicitParam(name = "id", value = "某个租借场地的id", required = true, dataType = "String"),
             @ApiImplicitParam(name = "time", value = "需要查询的某天时间,具体到某天即可", required = true, dataType = "String")
     })
-    @PreAuthorize("hasRole('STUDENT')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @GetMapping("/getAlreadyOrderedTime")
     public R getAlreadyOrderedTime(@RequestParam String id,
                                    @RequestParam String time){
@@ -96,12 +112,22 @@ public class FieldOrderController {
     }
 
     @ApiOperation(value = "管理员审核自己所管场地的预约信息")
-    @PreAuthorize("hasRole('FIELDMANAGER')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @PutMapping("/update")
     public R update(@RequestBody FieldOrder fieldOrder) {
-        // 这里没有进行审核人与manager的匹配，因为默认前面获取列表的时候做过
+        // 判断审核人是否是manager中的或者是场地管理员
+        Boolean flag = fieldOrderService.getIsRentManager(RequestUtil.getId(), String.valueOf(fieldOrder.getRentId()));
+        if (RequestUtil.getRoles().contains("FIELDMANAGER")) {
+            flag = true;
+        }
+        if (!flag) {
+            return R.failure(Code.PERMISSION_NO_ACCESS);
+        }
         if (fieldOrder.getStatus() == null) {
             fieldOrder.setStatus(1);
+        }
+        if (fieldOrder.getStatus() == -1 && fieldOrder.getCheckRemark() == null) {
+            fieldOrder.setCheckRemark("抱歉，预约未通过，请尝试联系管理员或预约其他场地或时间段！");
         }
         fieldOrder.setUpdateTime(LocalDateTime.now());
         fieldOrder.setChecker(RequestUtil.getId());

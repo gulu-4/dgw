@@ -11,7 +11,7 @@
 
     <sql id="get">
         SELECT
-        core_admin.* ,GROUP_CONCAT(tb_role.`name`) as 'role'
+        core_admin.* ,GROUP_CONCAT(DISTINCT tb_role.`name`) as 'role'
         FROM
         `core_admin`
         LEFT JOIN tb_admin_role on tb_admin_role.admin_id=core_admin.id
@@ -26,7 +26,7 @@
 
     <select id="getDepList" resultType="com.chards.committee.dto.CoreAdminDTO">
         SELECT
-        core_admin.* ,GROUP_CONCAT(tb_role.`name`) as 'role'
+        core_admin.* ,GROUP_CONCAT(DISTINCT tb_role.`name`) as 'role'
         FROM
         `core_admin`
         LEFT JOIN tb_admin_role on tb_admin_role.admin_id=core_admin.id
@@ -39,7 +39,7 @@
     <select id="getPartTimeStaffByDepartment" resultType="com.chards.committee.vo.PartTimeStaffVO">
         SELECT
             stu_info.id,stu_info.name,stu_info.gender,stu_info.phone,
-            GROUP_CONCAT(tb_role.`name`) as 'role'
+            GROUP_CONCAT(DISTINCT tb_role.`name`) as 'role'
         FROM
             stu_info
         LEFT JOIN tb_admin_role on tb_admin_role.admin_id=stu_info.id

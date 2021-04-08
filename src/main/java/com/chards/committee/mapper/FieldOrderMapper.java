@@ -20,7 +20,7 @@ import java.util.*;
  */
 public interface FieldOrderMapper extends BaseMapper<FieldOrder> {
 
-    Page<FieldOrder> getList(@Param("page") Page<FieldOrderGetVO> page,
+    Page<FieldOrderGetVO> getList(@Param("page") Page<FieldOrderGetVO> page,
                              @Param("param") FieldOrderGetParamVO fieldOrderGetParamVO);
 
     List<FieldOrder> getAlreadyPassedList(@Param("param") FieldOrderGetParamVO fieldOrderGetParamVO);
