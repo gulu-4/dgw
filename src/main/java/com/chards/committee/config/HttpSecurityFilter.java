@@ -1,7 +1,9 @@
 package com.chards.committee.config;
 
 import com.alibaba.fastjson.JSON;
+import com.chards.committee.domain.UsageLog;
 import com.chards.committee.dto.UserTokenDTO;
+import com.chards.committee.mapper.UsageLogMapper;
 import com.chards.committee.service.RedisService;
 import com.chards.committee.util.RequestUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 //过滤器
 @Component
@@ -20,6 +23,9 @@ import java.io.IOException;
 public class HttpSecurityFilter extends OncePerRequestFilter {
 	@Autowired
 	RedisService redisService;
+
+	@Autowired
+	UsageLogMapper usageLogMapper;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -35,6 +41,13 @@ public class HttpSecurityFilter extends OncePerRequestFilter {
 					httpServletRequest.getMethod(),
 					JSON.toJSONString(httpServletRequest.getParameterMap())
 			);
+			UsageLog usageLog = new UsageLog();
+			usageLog.setUserId(userTokenDTO.getUserInfo().getId());
+			usageLog.setUri(httpServletRequest.getRequestURI());
+			usageLog.setMethod(httpServletRequest.getMethod());
+			usageLog.setParams(JSON.toJSONString(httpServletRequest.getParameterMap()));
+			usageLog.setCreateTime(LocalDateTime.now());
+			usageLogMapper.insert(usageLog);
 //            // 组装authentication对象，构造参数是Principal Credentials 与 Authorities
 //            // 后面的拦截器里面会用到 grantedAuthorities 方法
 //            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userTokenDTO.getUserInfo(), userTokenDTO, userTokenDTO.getAuthorities());

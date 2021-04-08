@@ -39,6 +39,10 @@
     </select>
 
 
+    <select id="getLikeForPsychologicalCounselor" resultType="com.chards.committee.vo.StuInfoPageVO">
+        <include refid="likePage"></include>
+    </select>
+
 
     <sql id="seniorSearch">
         SELECT

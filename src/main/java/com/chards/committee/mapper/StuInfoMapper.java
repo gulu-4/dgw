@@ -23,6 +23,8 @@ public interface StuInfoMapper extends BaseMapper<StuInfo> {
     @DataScope(studentState = "")
     Page<StuInfoPageVO> getLike(@Param("page") Page<StuInfoPageVO> page, @Param("param") StuInfoPageDTO param);
 
+    Page<StuInfoPageVO> getLikeForPsychologicalCounselor(@Param("page") Page<StuInfoPageVO> page, @Param("param") StuInfoPageDTO param);
+
 //    导出用，不分页的
     @DataScope(studentState = "")
     List<StuInfoPageVO> getLikeList( @Param("param") StuInfoPageDTO param);

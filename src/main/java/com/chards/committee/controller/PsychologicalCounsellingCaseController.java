@@ -39,15 +39,13 @@ public class PsychologicalCounsellingCaseController {
     @PreAuthorize("hasRole('PCOUNSELOR')")
     @PostMapping("/insert")
     public R insert(@RequestBody @Valid PsychologicalCounsellingCaseInsertVO psychologicalCounsellingCaseInsertVO) {
-        if (stuInfoService.isWithinDataScope(psychologicalCounsellingCaseInsertVO.getStuNum())) {
-            PsychologicalCounsellingCase psychologicalCounsellingCase = new PsychologicalCounsellingCase();
-            BeanUtils.copyProperties(psychologicalCounsellingCaseInsertVO,psychologicalCounsellingCase);
-            // 填写者和填写时间都是后台获取
-            psychologicalCounsellingCase.setRecordedTime(LocalDateTime.now());
-            psychologicalCounsellingCase.setRecorder(RequestUtil.getLoginUser().getId());
-            return R.success(psychologicalCounsellingCaseService.save(psychologicalCounsellingCase));
-        }
-        return R.failure(Code.PERMISSION_NO_ACCESS);
+        PsychologicalCounsellingCase psychologicalCounsellingCase = new PsychologicalCounsellingCase();
+        BeanUtils.copyProperties(psychologicalCounsellingCaseInsertVO,psychologicalCounsellingCase);
+        // 填写者和填写时间都是后台获取
+        psychologicalCounsellingCase.setRecordedTime(LocalDateTime.now());
+        psychologicalCounsellingCase.setRecorder(RequestUtil.getLoginUser().getId());
+        return R.success(psychologicalCounsellingCaseService.save(psychologicalCounsellingCase));
+
     }
 
 
@@ -58,10 +56,7 @@ public class PsychologicalCounsellingCaseController {
     @PreAuthorize("hasRole('PCOUNSELOR') or hasRole('XUEGONG')")
     @GetMapping("/getAll")
     public R getAll(@RequestParam String stuNum){
-        if (stuInfoService.isWithinDataScope(stuNum)){
-            return R.success(psychologicalCounsellingCaseService.getAll(stuNum));
-        }
-        return R.failure(Code.PERMISSION_NO_ACCESS);
+        return R.success(psychologicalCounsellingCaseService.getAll(stuNum));
     }
 
 
