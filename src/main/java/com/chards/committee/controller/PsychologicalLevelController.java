@@ -153,9 +153,9 @@ public class PsychologicalLevelController {
         if (psychologicalLevel.getCheckStatus() == 1){
             return R.failure("当前记录已审核通过，不可以再更新");
         }
-        if (!psychologicalLevel.getRecorder().equals(RequestUtil.getId())){
-            return R.failure(Code.PERMISSION_NO_ACCESS);
-        }
+//        if (!psychologicalLevel.getRecorder().equals(RequestUtil.getId())){
+//            return R.failure(Code.PERMISSION_NO_ACCESS);
+//        }
         psychologicalLevelUpdateVO.setRecordedTime(LocalDateTime.now());
         return R.success(psychologicalLevelService.updatePsyLevelById(psychologicalLevelUpdateVO));
     }
