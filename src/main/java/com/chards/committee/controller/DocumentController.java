@@ -155,6 +155,30 @@ public class DocumentController {
 		return getFileByte(new File(path, DEFAULE_IMG));
 	}
 
+	/**
+	 * 获取教师培训经历附件照片图片接口
+	 * @param id
+	 * @param token
+	 * @return
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/qualification/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+	public byte[] getQualificationDocuments(@PathVariable String id, String token) throws IOException {
+		try {
+			UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+			if (userTokenDTO != null) {
+				File file = new File(path + "/qualification/", id + ".png");
+				if (file.exists()) {
+					RequestUtil.setUserTokenDTO(userTokenDTO);
+					return getFileByte(file);
+				}
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return getFileByte(new File(path, DEFAULE_IMG));
+	}
+
 	private byte[] getFileByte(File file) throws IOException {
 		FileInputStream inputStream = null;
 		try {

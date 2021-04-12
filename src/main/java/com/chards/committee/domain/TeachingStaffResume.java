@@ -1,5 +1,6 @@
 package com.chards.committee.domain;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -157,5 +158,25 @@ public class TeachingStaffResume extends Model<TeachingStaffResume> {
     @ExcelProperty("审核人")
     @TableField("check_by")
     private String checkBy;
+
+    @ExcelProperty("财务编号")
+    @TableField("financial_number")
+    private String financialNumber;
+
+    @ExcelProperty("编制情况")
+    @TableField("establishment")
+    private String establishment;
+
+    @ExcelProperty("办公地点")
+    @TableField("office_location")
+    private String officeLocation;
+
+    @ExcelIgnore
+    @TableField("qualification_pictures")
+    private String qualificationPictures;
+
+    @ExcelProperty("家庭成员基本信息")
+    @TableField("family_information")
+    private String familyInformation;
 
 }

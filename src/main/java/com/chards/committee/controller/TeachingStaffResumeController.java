@@ -5,6 +5,7 @@ import com.chards.committee.domain.TeachingStaffResume;
 import com.chards.committee.service.TeachingStaffResumeService;
 import com.chards.committee.service.UserService;
 import com.chards.committee.util.RequestUtil;
+import com.chards.committee.util.UploadUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.R;
 import com.chards.committee.vo.TeachingStaffResumeCheckVO;
@@ -24,6 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author LiuSu
@@ -34,6 +38,12 @@ import java.time.LocalDateTime;
 @Api(tags = "教职工简历相关接口", value = "教职工简历接口")
 @Slf4j
 public class TeachingStaffResumeController {
+
+    // 图片路径
+    @Value("${filepath}")
+    private String filePath;
+
+    private static final String PATH = "/qualification/";  // 教室建立培训经历附件  照片
 
     @Autowired
     private TeachingStaffResumeService teachingStaffResumeService;
@@ -138,6 +148,20 @@ public class TeachingStaffResumeController {
             return R.failure(Code.ERROR);
         }
         return R.success(Code.SUCCESS);
+    }
+
+    @ApiOperation(value = "上传培训经历照片")
+    @PostMapping("/uploadPicture")
+    @PreAuthorize("hasAuthority('teacher_own') and (not hasRole('STUDENT'))")
+    public R uploadPic(@RequestParam(value = "files") MultipartFile[] multipartFiles, HttpServletRequest request) throws IOException {
+        if (multipartFiles == null || multipartFiles.length <= 0) {
+            log.error("文件不能为空");
+            return R.failure(Code.PARAM_IS_BLANK);
+        }
+        Map<String, Object> resultMap = new HashMap<>();
+        List<String> paths = UploadUtil.uploadPic(multipartFiles,filePath + PATH);
+        resultMap.put("path",paths);
+        return R.success(resultMap);
     }
 
     @GetMapping("/get/{staffId}")
