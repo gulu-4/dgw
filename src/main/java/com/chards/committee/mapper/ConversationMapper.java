@@ -6,6 +6,7 @@ import com.chards.committee.domain.Conversation;
 import com.chards.committee.dto.AdminWorkDTO;
 import com.chards.committee.util.DataScope;
 import com.chards.committee.vo.ConversationPageVO;
+import com.chards.committee.vo.ConversationParamVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -19,4 +20,9 @@ public interface ConversationMapper extends BaseMapper<Conversation> {
 
     @DataScope(studentState = "")
     Page<ConversationPageVO> getPageAll(@Param("page") Page<ConversationPageVO> page);
+
+    @DataScope(studentState = "")
+    Page<ConversationPageVO> getPageAllWithParam(@Param("page") Page<ConversationPageVO> page,
+                                                 @Param("param")ConversationParamVO conversationParamVO);
+
 }

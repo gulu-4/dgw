@@ -10,7 +10,7 @@
         <result property="basicJudgment" column="basic_judgment" jdbcType="VARCHAR"/>
         <result property="type" column="type" jdbcType="VARCHAR"/>
         <result property="referral" column="referral" jdbcType="VARCHAR"/>
-        <result property="has_diagnosis" column="hasDiagnosis" jdbcType="BOOLEAN"/>
+        <result property="hasDiagnosis" column="has_diagnosis" jdbcType="BOOLEAN"/>
         <result property="diagnosisAndAdvice" column="diagnosis_and_advice" jdbcType="VARCHAR"/>
         <result property="counselor" column="counselor" jdbcType="VARCHAR"/>
         <result property="attentionLevel" column="attention_level" jdbcType="VARCHAR"/>

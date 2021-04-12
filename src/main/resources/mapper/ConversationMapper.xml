@@ -34,5 +34,29 @@
         ORDER BY
         datetime DESC
     </select>
+    <select id="getPageAllWithParam" resultType="com.chards.committee.vo.ConversationPageVO">
+        <include refid="page"></include>
+        INNER JOIN core_admin ON conversation.number = core_admin.id
+        <where>
+            <if test="param.department != null">
+                stu_info.department LIKE CONCAT("%",#{param.department},"%")
+            </if>
+            <if test="param.adminName != null">
+                and core_admin.name Like CONCAT("%",#{param.adminName},"%")
+            </if>
+            <if test="param.number != null">
+                and core_admin.id = #{param.number}
+            </if>
+            <if test="param.traits != null">
+                and conversation.traits LIKE CONCAT("%",#{param.traits},"%")
+            </if>
+            <if test="param.startTime != null">
+                and unix_timestamp( conversation.datetime ) &gt;= unix_timestamp(#{param.startTime})
+            </if>
+            <if test="param.endTime != null">
+                and unix_timestamp( conversation.datetime ) &lt;= unix_timestamp(#{param.endTime})
+            </if>
+        </where>
+    </select>
 
 </mapper>

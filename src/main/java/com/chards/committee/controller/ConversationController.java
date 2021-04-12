@@ -9,10 +9,7 @@ import com.chards.committee.service.ConversationService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.Code;
-import com.chards.committee.vo.ConversationInsertVO;
-import com.chards.committee.vo.ConversationPageVO;
-import com.chards.committee.vo.R;
+import com.chards.committee.vo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -64,6 +61,13 @@ public class ConversationController {
     @ApiOperation(value = "查询管辖范围内的所有数据")
     public R selectAll(Page<ConversationPageVO> page) {
         return R.success(conversationService.getPageAll(page));
+    }
+
+    @PreAuthorize("hasAuthority('student_select')")
+    @PostMapping("/allWithParam")
+    @ApiOperation(value = "查询管辖范围内的所有数据")
+    public R selectAllWithParam(Page<ConversationPageVO> page, @RequestBody ConversationParamVO conversationParamVO) {
+        return R.success(conversationService.getPageAllWithParam(page,conversationParamVO));
     }
 
 
