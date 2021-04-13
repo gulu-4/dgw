@@ -22,11 +22,20 @@ spring:
       connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
       connection-test-query: SELECT 1
   profiles:
-    active: prod
+    active: test
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
-version: 10.6.5
+version: 10.6.6  # 加入场地预约短信
+
+huawei:
+  sms:
+    url: https://rtcsms.cn-north-1.myhuaweicloud.com:10743/sms/batchSendSms/v1  # APP接入地址+接口访问URI
+    appKey: Aeio4815PHanS65ZEMwbqvKzFmFZ  # APP_Key
+    appSecret: 9CrX2m6yjJOF45x14EzHwTvtidQf  # APP_Secret
+    sender: 8821041208745  # 国内短信签名通道号或国际/港澳台短信通道号
+    templateId: ca1d293f12ef4a65b078e4adba703869   # 模板ID
+    signature: 微学工  # 签名名称
 
 swagger:
   enabled: false

@@ -3,8 +3,11 @@ package com.chards.committee.controller;
 
 import com.chards.committee.domain.FieldOrder;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chards.committee.domain.FieldRent;
 import com.chards.committee.dto.UserInfo;
 import com.chards.committee.service.FieldOrderService;
+import com.chards.committee.service.FieldRentService;
+import com.chards.committee.util.HuaweiSmsUtil;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
 import com.chards.committee.vo.FieldOrderGetParamVO;
@@ -35,6 +38,10 @@ import java.time.LocalDateTime;
 public class FieldOrderController {
     @Autowired
     private FieldOrderService fieldOrderService;
+    @Autowired
+    private FieldRentService fieldRentService;
+    @Autowired
+    private HuaweiSmsUtil huaweiSmsUtil;
 
     @ApiOperation("学生添加场地预约")
     @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
@@ -72,7 +79,7 @@ public class FieldOrderController {
         if (flag) {
             return R.success(true);
         }else {
-            return R.failure("抱歉，您不是改场地负责人，没有权限!");
+            return R.failure("抱歉，您不是该场地负责人，没有权限!");
         }
     }
 
@@ -123,7 +130,7 @@ public class FieldOrderController {
         if (!flag) {
             return R.failure(Code.PERMISSION_NO_ACCESS);
         }
-        if (fieldOrder.getStatus() == null) {
+        if (fieldOrder.getStatus() == null || fieldOrder.getStatus() == 0) {
             fieldOrder.setStatus(1);
         }
         if (fieldOrder.getStatus() == -1 && fieldOrder.getCheckRemark() == null) {
@@ -134,7 +141,19 @@ public class FieldOrderController {
         Integer result = fieldOrderService.checkOrder(fieldOrder);
         if (result == -1) {
             return R.failure("该场地该时间段已经有被审核通过的预约记录");
-        } else{
+        } else {
+            // 手机号码 phone 预约地点 localtion 预约时间 time
+            FieldOrder fieldOrder1 = fieldOrderService.getById(fieldOrder.getId());
+            String phone = fieldOrder1.getPhone();
+            FieldRent fieldRent = fieldRentService.getById(fieldOrder1.getRentId());
+            String location = fieldRent.getName();
+            LocalDateTime startTime = fieldOrder1.getStartTime();
+            String time = huaweiSmsUtil.transformLocalTime(startTime);
+            try {
+                huaweiSmsUtil.sendSms(phone,location,time);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return R.success("审核完成");
         }
     }
