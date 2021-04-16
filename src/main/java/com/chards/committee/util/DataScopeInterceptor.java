@@ -94,10 +94,26 @@ public class DataScopeInterceptor implements Interceptor {
                 throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的education_background，或stu_info.* 放到select中！");
             }
 
+            if (sql.indexOf("major") == -1 && sql.indexOf("stu_info.*") == -1){
+                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的major，或stu_info.* 放到select中！");
+                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的major，或stu_info.* 放到select中！");
+            }
+            if (sql.indexOf("classes") == -1 && sql.indexOf("stu_info.*") == -1){
+                log.error("【错误！】在使用DataScope进行数据权限控制时，必须将stu_info表的classes，或stu_info.* 放到select中！");
+                throw new Exception("在使用DataScope进行数据权限控制时，必须将stu_info表的classes，或stu_info.* 放到select中！");
+            }
 
+
+            /**
+             * 权限控制时对学生的年级，在读情况，学院，专业，年级进行控制
+             */
             for (int i = 0; i< userDataScopeList.size(); i++){
                 UserDataScope userDataScope = userDataScopeList.get(i);
-                String statement = "(origin.department like '%"+ (userDataScope.getDepartment()!=null?userDataScope.getDepartment():"") +"%' and origin.education_background like '%"+ (userDataScope.getEducationBackground()!=null?userDataScope.getEducationBackground():"") +"%' and origin.grade like '%" + (userDataScope.getGrade()!=null?userDataScope.getGrade():"") + "%')";
+                String statement = "(origin.department like '%" + (userDataScope.getDepartment()!=null?userDataScope.getDepartment():"")
+                                    + "%' and origin.education_background like '%"+ (userDataScope.getEducationBackground()!=null?userDataScope.getEducationBackground():"")
+                                    + "%' and origin.grade like '%" + (userDataScope.getGrade()!=null?userDataScope.getGrade():"")
+                                    + "%' and origin.major like '%" + (userDataScope.getMajor()!=null?userDataScope.getMajor():"")
+                                    + "%' and origin.classes like '%" + (userDataScope.getClasses()!=null?userDataScope.getClasses():"") + "%')";
                 if (i == 0){
                     sql += " ( ";
                 }

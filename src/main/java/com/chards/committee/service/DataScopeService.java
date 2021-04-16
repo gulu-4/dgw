@@ -8,6 +8,7 @@ import com.chards.committee.mapper.DataScopeMapper;
 import com.chards.committee.vo.DataScopeListAddOrUpdateVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class DataScopeService extends ServiceImpl<DataScopeMapper, DataScope> {
     }
 
     // 新增和更新
+    @Transactional
     public String addOrUpdateUserDataScopeList(DataScopeListAddOrUpdateVO dataScopeListAddOrUpdateVO) {
         String userId = dataScopeListAddOrUpdateVO.getUserId();
         String returnStr = "设置成功";

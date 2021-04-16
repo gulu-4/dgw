@@ -53,9 +53,17 @@ public class DepartmentMajorController {
 	@GetMapping
 	@PreAuthorize("hasAuthority('teacher_own')")
 	public R selectAll( DepartmentMajor departmentMajor) {
-		return R.success(departmentMajorService.list( new QueryWrapper<>(departmentMajor)));
+		return R.success(departmentMajorService.list(new QueryWrapper<>(departmentMajor)));
 	}
-
+	/**
+	 * 查询学院，专业，班级列表
+	 * @return 所有数据
+	 */
+	@GetMapping("/getCascaderClasses")
+	@PreAuthorize("hasAuthority('teacher_own')")
+	public R getCascaderClasses() {
+		return R.success(departmentMajorService.getCascaderClasses());
+	}
 	/**
 	 * 通过主键查询单条数据
 	 *

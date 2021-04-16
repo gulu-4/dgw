@@ -26,4 +26,7 @@ public class DepartmentMajor extends Model<DepartmentMajor> {
 
 	@TableField("major")
 	private String major;
+
+	@TableField("classes")
+	private String classes;
 }
