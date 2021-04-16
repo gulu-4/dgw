@@ -3,6 +3,7 @@ package com.chards.committee.vo;
 import com.chards.committee.dto.UserDataScope;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.util.*;
 
 /**
@@ -11,6 +12,7 @@ import java.util.*;
  */
 @Data
 public class DataScopeListAddOrUpdateVO {
+    @NotBlank(message = "用户工号或者学号不能为空")
     private String userId;
 
     private List<UserDataScope> dataScopeList;

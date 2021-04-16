@@ -49,7 +49,7 @@ public class DataScope extends Model<DataScope> {
     private String classes;
 
     @TableField("is_active")
-    private String isActive;
+    private Integer isActive;
 
     /**
      * 获取主键值

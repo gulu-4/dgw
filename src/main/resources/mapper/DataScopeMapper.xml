@@ -9,6 +9,7 @@
             user_data_scope
         WHERE
             user_id = #{userId,jdbcType=VARCHAR}
+            and is_active = true
 
     </select>
 

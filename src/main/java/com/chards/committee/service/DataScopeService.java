@@ -17,7 +17,16 @@ import java.util.List;
 @Service("dataScopeService")
 public class DataScopeService extends ServiceImpl<DataScopeMapper, DataScope> {
     public List<UserDataScope> getUserDataScope(String userId) {
-        return baseMapper.getUserDataScopeById(userId);
+        List<UserDataScope> userDataScopeList = baseMapper.getUserDataScopeById(userId);
+        // 判断字段是否为空，为空则设置为 空字符串“”
+        for (UserDataScope userDataScope : userDataScopeList){
+            if (userDataScope.getDepartment() == null) userDataScope.setDepartment("");
+            if (userDataScope.getEducationBackground() == null) userDataScope.setEducationBackground("");
+            if (userDataScope.getGrade() == null) userDataScope.setGrade("");
+            if (userDataScope.getMajor() == null) userDataScope.setMajor("");
+            if (userDataScope.getClasses() == null) userDataScope.setClasses("");
+        }
+        return userDataScopeList;
     }
 
     // 新增和更新
@@ -39,6 +48,7 @@ public class DataScopeService extends ServiceImpl<DataScopeMapper, DataScope> {
             DataScope dataScope = new DataScope();
             BeanUtils.copyProperties(userDataScope,dataScope);
             dataScope.setUserId(userId);
+            dataScope.setIsActive(1);
             save(dataScope);
         }
         return returnStr;
