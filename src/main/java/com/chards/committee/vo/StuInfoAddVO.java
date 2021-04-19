@@ -32,6 +32,8 @@ public class StuInfoAddVO implements Serializable {
 	private String grade;
 	@NotBlank(message = "学院不能为空")
 	private String department;
+	@NotBlank(message = "专业不能为空")
+	private String major;
 	@NotBlank(message = "专业班级不能为空")
 	private String classes;
 	@NotBlank(message = "民族不能为空")

@@ -6,6 +6,7 @@
         stu_info.name,
         stu_info.gender,
         stu_info.classes ,
+        stu_info.major ,
         stu_info.id_card ,
         stu_info.dormitory,
         stu_info.department,

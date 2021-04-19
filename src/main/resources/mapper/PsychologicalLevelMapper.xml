@@ -94,7 +94,7 @@
     </select>
 
     <sql id="psychologicalLevelPage">
-        select p.*, s.department, s.education_background, s.grade, s.state  from psychological_level as p
+        select p.*, s.department, s.education_background,s.classes, s.major, s.grade, s.state  from psychological_level as p
         inner join stu_info as s on s.id = p.stu_num
         <where>
             <if test = "param.stuNum != ''">
@@ -182,6 +182,7 @@
         s.name,
         s.gender,
         s.classes ,
+        s.major,
         s.department,
         s.state,
         s.grade,

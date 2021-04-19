@@ -42,6 +42,8 @@ public class StuInfo implements Serializable {
 	private String grade;
 	@ExcelProperty("学院")
 	private String department;
+	@ExcelProperty("专业")
+	private String major;
 	@ExcelProperty("班级")
 	private String classes;
 	@ExcelProperty("民族")

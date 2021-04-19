@@ -18,6 +18,7 @@
         stu_info.name,
         stu_info.gender,
         stu_info.education_background,
+        stu_info.major,
         stu_info.classes,
         stu_info.department,
         stu_info.grade
