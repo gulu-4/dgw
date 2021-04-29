@@ -71,7 +71,7 @@ public class StuInfoController {
 		BeanUtils.copyProperties(stuInfoAddVO,stuInfo);
 		CoreAdmin coreAdmin = coreAdminService.getById(stuInfoAddVO.getCounsellorNum());
 		Assert.notNull(coreAdmin,"该辅导员工号不存在");
-		if (!stuInfoService.isWork(coreAdmin,stuInfo,true))BusinessException.error("辅导员没有该学院年级的权限");
+//		if (!stuInfoService.isWork(coreAdmin,stuInfo,true))BusinessException.error("辅导员没有该学院年级的权限");
 
 		return R.success(stuInfoService.save(stuInfo));
 	}

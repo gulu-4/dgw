@@ -60,9 +60,9 @@
             and counsellor_num = #{param.counsellorNum,jdbcType=VARCHAR}
         </if>
         <if test="param.educationBackground != '研究生' and param.educationBackground != ''">
-<!--            <if test="param.classes !=''">-->
-<!--                and classes like #{param.classes}-->
-<!--            </if>-->
+            <if test="param.classes !=''">
+                and classes like #{param.classes}
+            </if>
             <if test="param.dormitory != ''">
                 and dormitory like #{param.dormitory,jdbcType=VARCHAR}
             </if>
