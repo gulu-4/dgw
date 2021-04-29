@@ -6,6 +6,8 @@ import com.chards.committee.service.PsychologicalCounsellingCaseService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
  */
 @RequestMapping("/psychological_counselling_case")
 @RestController
+@Api(tags = "心理咨询管理")
 public class PsychologicalCounsellingCaseController {
     /**
      * 服务对象
@@ -38,6 +41,7 @@ public class PsychologicalCounsellingCaseController {
      */
     @PreAuthorize("hasRole('PCOUNSELOR')")
     @PostMapping("/insert")
+    @ApiOperation(value = "新增心理咨询记录")
     public R insert(@RequestBody @Valid PsychologicalCounsellingCaseInsertVO psychologicalCounsellingCaseInsertVO) {
         PsychologicalCounsellingCase psychologicalCounsellingCase = new PsychologicalCounsellingCase();
         BeanUtils.copyProperties(psychologicalCounsellingCaseInsertVO,psychologicalCounsellingCase);
@@ -55,6 +59,7 @@ public class PsychologicalCounsellingCaseController {
      */
     @PreAuthorize("hasRole('PCOUNSELOR') or hasRole('XUEGONG')")
     @GetMapping("/getAll")
+    @ApiOperation(value = "通过学生学号获取所有该学生咨询记录和测试记录")
     public R getAll(@RequestParam String stuNum){
         return R.success(psychologicalCounsellingCaseService.getAll(stuNum));
     }
@@ -68,8 +73,37 @@ public class PsychologicalCounsellingCaseController {
      */
     @PreAuthorize("hasRole('PCOUNSELOR') or hasRole('XUEGONG')")
     @GetMapping("/getAllCounselingCaseByParams")
+    @ApiOperation(value = "通过学生学号或时间段获取所有咨询记录和测试记录详情")
     public R getAll(PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO,
                     Page<PsychologicalCounselingCaseDetailVO> page){
         return R.success(psychologicalCounsellingCaseService.getAllCounselingCaseByParams(page,psychologicalCounsellingCaseSelectVO));
+    }
+
+    /**
+     * 更新心理咨询
+     * @param psychologicalCounsellingCaseInsertVO
+     * @return
+     */
+    @PreAuthorize("hasRole('PCOUNSELOR') or hasRole('XUEGONG')")
+    @PutMapping("/updateCounsellingCase")
+    @ApiOperation(value = "更新心理咨询")
+    public R update(@RequestBody @Valid PsychologicalCounsellingCaseInsertVO psychologicalCounsellingCaseInsertVO){
+        PsychologicalCounsellingCase psychologicalCounsellingCase = new PsychologicalCounsellingCase();
+        BeanUtils.copyProperties(psychologicalCounsellingCaseInsertVO,psychologicalCounsellingCase);
+        psychologicalCounsellingCase.setRecordedTime(LocalDateTime.now());
+        psychologicalCounsellingCase.setRecorder(RequestUtil.getLoginUser().getId());
+        return R.success(psychologicalCounsellingCaseService.updateById(psychologicalCounsellingCase));
+    }
+
+    /**
+     * 通过id删除心理咨询记录
+     * @param id
+     * @return
+     */
+    @PreAuthorize("hasRole('PCOUNSELOR') or hasRole('XUEGONG')")
+    @DeleteMapping("/delete/{id}")
+    @ApiOperation(value = "通过id删除心理咨询记录")
+    public R delete(@PathVariable String id){
+        return R.success(psychologicalCounsellingCaseService.removeById(id));
     }
 }

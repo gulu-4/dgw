@@ -64,9 +64,9 @@ public class ConversationController {
     }
 
     @PreAuthorize("hasAuthority('student_select')")
-    @PostMapping("/allWithParam")
+    @GetMapping("/allWithParam")
     @ApiOperation(value = "查询管辖范围内的所有数据")
-    public R selectAllWithParam(Page<ConversationPageVO> page, @RequestBody ConversationParamVO conversationParamVO) {
+    public R selectAllWithParam(Page<ConversationPageVO> page,ConversationParamVO conversationParamVO) {
         return R.success(conversationService.getPageAllWithParam(page,conversationParamVO));
     }
 
