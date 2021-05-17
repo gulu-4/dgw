@@ -190,7 +190,7 @@
         from psychological_level as p1
         inner join stu_info as s on p1.stu_num = s.id
         inner join (SELECT *,max(recorded_time) as max_time
-        FROM psychological_level WHERE check_status=1 group by stu_num) p2 on p1.recorded_time = p2.max_time and p1.stu_num=p2.stu_num
+        FROM psychological_level WHERE check_status=1 group by psychological_level.stu_num) p2 on p1.recorded_time = p2.max_time and p1.stu_num=p2.stu_num
         <where>
             <if test="psychologicalLGD.stuNum != null">
                 And s.id = #{psychologicalLGD.stuNum}

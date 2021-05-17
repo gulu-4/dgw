@@ -1,5 +1,6 @@
 package com.chards.committee.controller;
 
+import com.chards.committee.constant.Constant;
 import com.chards.committee.domain.PsychologicalLevel;
 import com.chards.committee.domain.StuInfo;
 import com.chards.committee.service.PsychologicalLevelService;
@@ -132,6 +133,7 @@ public class PsychologicalLevelController {
         return R.success(psychologicalLevelService.checkStatus(psychologicalLevelCheckStatusVO,reviewer));
     }
 
+
     /**
      * 辅导员对定级表的更新
      * @param psychologicalLevelUpdateVO
@@ -150,9 +152,10 @@ public class PsychologicalLevelController {
         if (psychologicalLevel == null) {
             return R.failure("定级记录不存在");
         }
-        if (psychologicalLevel.getCheckStatus() == 1){
+        if ((!RequestUtil.getRoles().contains(Constant.XUEGONG)) && (psychologicalLevel.getCheckStatus() == 1)){
             return R.failure("当前记录已审核通过，不可以再更新");
         }
+
 //        if (!psychologicalLevel.getRecorder().equals(RequestUtil.getId())){
 //            return R.failure(Code.PERMISSION_NO_ACCESS);
 //        }

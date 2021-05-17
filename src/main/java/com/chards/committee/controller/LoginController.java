@@ -44,12 +44,12 @@ public class LoginController {
 
 
 	/**
-	 * 学生登陆
+	 * 学生登陆 10.6.10起关停
 	 */
-	@PostMapping("/student")
-	public R studentLogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
-		return R.success(stuInfoService.getUserToken(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
-	}
+//	@PostMapping("/student")
+//	public R studentLogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
+//		return R.success(stuInfoService.getUserToken(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
+//	}
 	/**
 	 * 学生统一身份认证登录
 	 */
@@ -59,12 +59,12 @@ public class LoginController {
 	}
 
 	/**
-	 * 管理员登陆
+	 * 管理员登陆 10.6.10起关停
 	 */
-	@PostMapping("/admin")
-	public R adminlogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
-		return R.success(coreAdminService.getAdminToken(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
-	}
+//	@PostMapping("/admin")
+//	public R adminlogin(@RequestBody @Valid UserLoginVO userLoginVO, HttpServletRequest request) {
+//		return R.success(coreAdminService.getAdminToken(userLoginVO.getUsername(), userLoginVO.getPassword(),ipGetService.getIpAddr(request)));
+//	}
 
 
 	/**

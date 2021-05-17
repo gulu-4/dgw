@@ -45,7 +45,7 @@ public class CoreAdminAddVO implements Serializable {
 	private String occupation;
 
 	@TableField("work")
-	@NotBlank(message = "工作年级不能为空")
+//	@NotBlank(message = "工作年级不能为空")
 	private String work;
 
 	@TableField("tel")

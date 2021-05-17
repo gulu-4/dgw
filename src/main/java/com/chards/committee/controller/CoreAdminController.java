@@ -91,6 +91,8 @@ public class CoreAdminController {
 	public R addRoleByROOT(@Valid @RequestBody CoreAdminAddVO coreAdminAddVO){
 		CoreAdmin coreAdmin=new CoreAdmin();
 		BeanUtils.copyProperties(coreAdminAddVO,coreAdmin);
+//		新增的专职教师默认为激活状态
+		coreAdmin.setIsActive(1);
 		coreAdmin.setPassword(bCryptPasswordEncoder.encode(coreAdminAddVO.getId()));
     return  R.success(coreAdminService.save(coreAdmin));
 	}

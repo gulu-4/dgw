@@ -63,6 +63,10 @@ public class CoreAdmin extends Model<CoreAdmin> {
 	@ExcelProperty("手机号码")
 	private String phone;
 
+	@TableField("is_active")
+	@ExcelProperty("是否激活")
+	private Integer isActive;
+
 	/**
 	 * 获取主键值
 	 *
