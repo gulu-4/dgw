@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hongcha</groupId>
     <artifactId>newCommittee</artifactId>
-    <version>10.6.10</version>
+    <version>10.6.11</version>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -165,7 +165,7 @@
                     <to>
                         <image>registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw</image>
                         <tags>
-                            <tag>10.6.10</tag>
+                            <tag>10.6.11</tag>
                         </tags>
                         <auth>
                             <username>quietttt</username>

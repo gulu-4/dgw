@@ -52,6 +52,9 @@ public class FieldRent extends Model<FieldRent> {
     @ApiModelProperty(value = "功能")
     private String functions;
 
+    @ApiModelProperty(value = "教职工或者学生用")  // teacher 或者 student
+    private String fieldFor;
+
     @ApiModelProperty(value = "创建时间")
     private LocalDateTime createTime;
 
