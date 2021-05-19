@@ -83,6 +83,7 @@ public class FieldOrderController {
         }
     }
 
+    //    下个版本废弃，改用 getOrderById/{id} （10.6.12）
     @ApiOperation("查看所有的场地预约记录，学生看自己的")
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/getStudentList")
@@ -90,6 +91,16 @@ public class FieldOrderController {
         fieldOrderGetParamVO.setStuNumber(RequestUtil.getId());
         return R.success(fieldOrderService.getList(page,fieldOrderGetParamVO));
     }
+
+
+    @ApiOperation("查看所有的场地预约记录，教师和学生都可用")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
+    @PostMapping("/getRecordList")
+    public R getRecordList(@RequestBody FieldOrderGetParamVO fieldOrderGetParamVO,Page<FieldOrderGetVO> page) {
+        fieldOrderGetParamVO.setStuNumber(RequestUtil.getId());
+        return R.success(fieldOrderService.getList(page,fieldOrderGetParamVO));
+    }
+
 
     @ApiOperation("根据id查询某条场地预约记录")
     @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
