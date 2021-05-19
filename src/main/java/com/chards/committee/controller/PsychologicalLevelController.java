@@ -152,7 +152,8 @@ public class PsychologicalLevelController {
         if (psychologicalLevel == null) {
             return R.failure("定级记录不存在");
         }
-        if ((!RequestUtil.getRoles().contains(Constant.XUEGONG)) && (psychologicalLevel.getCheckStatus() == 1)){
+//        非学工处、以及副书记，在记录审核通过后，就不能再改了
+        if (((!RequestUtil.getRoles().contains(Constant.XUEGONG)) || (!RequestUtil.getRoles().contains(Constant.SHUJI))) && (psychologicalLevel.getCheckStatus() == 1)){
             return R.failure("当前记录已审核通过，不可以再更新");
         }
 
