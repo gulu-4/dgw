@@ -5,6 +5,10 @@ server:
 spring:
   mvc:
     date-format: yyyy-MM-dd
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 50MB
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
@@ -26,7 +30,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
-version: 10.6.11
+version: 10.6.14
 
 huawei:
   sms:
