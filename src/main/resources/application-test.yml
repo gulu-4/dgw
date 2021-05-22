@@ -9,3 +9,6 @@ spring:
 filepath: /photos
 tFilePath: /photos/admin/
 defaultPhoto: default.jpg
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

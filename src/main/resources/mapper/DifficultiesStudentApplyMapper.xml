@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.DifficultiesStudentApplyMapper">
+    <sql id="getList">
+        select apply.id,
+        apply.stage,apply.stu_num,
+        apply.stu_name,apply.phone,
+        apply.file_and_register,apply.minimum_living_security,
+        apply.extremely_poor,apply.orphan_and_disabled,
+        apply.martyr,apply.other,
+        apply.from_import,apply.level,
+        apply.first_check,apply.first_reviewer,
+        apply.second_reviewer,apply.second_check,
+        assessment.field21,assessment.score,assessment.fake_score,
+        stu_info.department,
+        stu_info.grade,
+        stu_info.education_background,
+        stu_info.major,
+        stu_info.classes
+        from difficulties_student_apply as apply
+        inner join stu_info on stu_info.id = apply.stu_num
+        inner join difficulties_student_assessment as assessment on apply.id = assessment.apply_id
+        <where>
+            <if test="param.department != null">
+                and apply.department = #{param.department}
+            </if>
+            <if test="param.stuNum != null">
+                and apply.stu_num = #{param.stuNum}
+            </if>
+            <if test="param.stage != null">
+                and apply.stage = #{param.stage}
+            </if>
+            <if test="param.level != null">
+                and apply.level = #{param.level}
+            </if>
+            <if test="param.firstCheck != null">
+                and apply.first_check = #{param.firstCheck}
+            </if>
+            <if test="param.secondCheck != null">
+                and apply.second_check = #{param.secondCheck}
+            </if>
+        </where>
+    </sql>
+    <sql id="getListWithParam">
+        select *
+        from difficulties_student_apply as dsa
+        <where>
+            <if test="param.stuNum != null">
+                and dsa.stu_num = #{param.stuNum}
+            </if>
+            <if test="param.stage != null">
+                and dsa.stage = #{param.stage}
+            </if>
+        </where>
+    </sql>
+    <update id="check">
+        update difficulties_student_apply
+        <set>
+            <if test="param.firstCheck != null">
+                first_check = #{param.firstCheck},
+            </if>
+            <if test="param.firstCheck != null">
+                second_check = #{param.secondCheck},
+            </if>
+            <if test="param.level != null">
+                level = #{param.level},
+            </if>
+            <if test="param.money != null">
+                money = #{param.money},
+            </if>
+            <if test="param.firstReviewTime != null">
+                first_review_time = #{param.firstReviewTime},
+            </if>
+            <if test="param.firstReviewer != null">
+                first_reviewer = #{param.firstReviewer},
+            </if>
+            <if test="param.secondReviewTime != null">
+                second_review_time = #{param.secondReviewTime},
+            </if>
+            <if test="param.secondReviewer != null">
+                second_reviewer = #{param.secondReviewer},
+            </if>
+        </set>
+        where id = #{param.id}
+    </update>
+
+    <select id="getListWithParam" resultType="com.chards.committee.domain.DifficultiesStudentApply">
+        <include refid="getListWithParam"></include>
+    </select>
+    <select id="getFirstList" resultType="com.chards.committee.vo.DifficultiesStudentGetVO">
+        <include refid="getList"></include>
+    </select>
+    <select id="getSecondList" resultType="com.chards.committee.vo.DifficultiesStudentGetVO">
+        <include refid="getList"></include>
+    </select>
+</mapper>
