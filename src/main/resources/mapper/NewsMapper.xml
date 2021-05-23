@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.NewsMapper">
+    <update id="updateByRoot">
+        update news
+        <set>
+            <if test="param.title!=null">
+                title =#{param.title},
+            </if>
+            <if test="param.author!=null">
+                author =#{param.author},
+            </if>
+            <if test="param.content!=null">
+                content =#{param.content},
+            </if>
+            <if test="param.showState!=null">
+                show_state =#{param.showState},
+            </if>
+            <if test="param.title!=null">
+                title =#{param.title},
+            </if>
+            <if test="param.updateTime!=null">
+                update_time =#{param.updateTime},
+            </if>
+        </set>
+        where id = #{param.id}
+    </update>
+
+
+    <select id="getList" resultType="com.chards.committee.domain.News">
+        select * from news
+        <where>
+            <if test="title != null and title != ''">
+                and title LIKE CONCAT('%',#{title},'%')
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+</mapper>
