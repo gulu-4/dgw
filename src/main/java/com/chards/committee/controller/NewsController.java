@@ -38,14 +38,14 @@ public class NewsController {
 
 
     @ApiOperation(value = "分页查找新闻公告列表")
-    @PreAuthorize("hasRole('ROOT')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @GetMapping("/getList")
     public R getList(String title, Page<News> page){
         return R.success(newsService.getList(title,page));
     }
 
     @ApiOperation(value = "根据id查找新闻公告")
-    @PreAuthorize("hasRole('ROOT')")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
     @GetMapping("/getById/{id}")
     public R getById(@PathVariable Serializable id){
         return R.success(newsService.getById(id));
