@@ -194,11 +194,12 @@
         - $ sudo docker push registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:[镜像版本号]
     - jib插件方式（本项目使用的方式）
         - 在pom.xml里配置好jib插件处的账号和密码以及版本号等，用mvn clean package后，在用mvn jib:build即可完成镜像的构建和上传
+            - 如果报没有权限的错，则登陆一下：`docker login registry.cn-hangzhou.aliyuncs.com`
         - 注意，若此处的版本号和云端的相同，则云端的会被覆盖掉，因此测试服务一定记得在版本号后加个`.test`
         - 另外，上传代码时，不要将密码给上传上去了，可将其替换为xxxxxx
     
 - 部署
     - 在目标服务器上先用docker login登录到公司的容器镜像服务（登陆过一次就不用再登录了）
     - 用docker ps 检查一下有没有还在运行的老服务，若有，先用docker stop关掉；
-    - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名。
+    - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名(2个地方)。
         - sudo docker run -d -p 9090:9090 --name committee_10_6_1 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.1
