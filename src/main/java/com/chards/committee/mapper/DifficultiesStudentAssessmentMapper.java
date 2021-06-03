@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 public interface DifficultiesStudentAssessmentMapper extends BaseMapper<DifficultiesStudentAssessment> {
 
-    @DataScope(studentState = "")
+    @DataScope()
     DifficultiesStudentAssessment getByApplyId(@Param("applyId") Serializable applyId);
 
     Integer deleteByApplyId(@Param("applyId") Serializable applyId);

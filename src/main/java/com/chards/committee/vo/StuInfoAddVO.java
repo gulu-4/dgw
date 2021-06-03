@@ -60,9 +60,10 @@ public class StuInfoAddVO implements Serializable {
 	@NotBlank(message = "政治背景不能为空")
 	private String politicalStatus;
 	private String originLocation;
-	@NotBlank(message = "学业状态不能为空")
 	private String state;
 	private String note;
+	@NotBlank(message = "学生就读状态不能为空")
+	private String statusOfCurrentStudents;
 
 
 }

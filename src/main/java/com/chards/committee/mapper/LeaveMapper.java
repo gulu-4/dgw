@@ -23,7 +23,7 @@ import java.util.List;
  * @since 2020-08-26 14:51:51
  */
 public interface LeaveMapper extends BaseMapper<Leave> {
-    @DataScope(studentState = "")
+    @DataScope()
     Page<LeaveInfoVO> adminSelectLeave(@Param("page") Page<LeaveInfoVO> page, @Param("param") LeaveSchoolQueryParamVO leaveSchoolQueryParamVO);
 
 
@@ -33,10 +33,10 @@ public interface LeaveMapper extends BaseMapper<Leave> {
      * @param leaveDateAreaDTO
      * @return
      */
-    @DataScope(studentState = "")
+    @DataScope()
     List<LeaveSchoolGetAllVO> getAdminManagementStudentLeaveSchoolByDateArea(@Param("param") LeaveDateAreaDTO leaveDateAreaDTO);
 
-    @DataScope(studentState = "")
+    @DataScope()
     List<LeaveInfoVO> getByIdOrName(@Param("param")LeaveByIdOrNameDTO leaveByIdOrNameDTO);
 
 

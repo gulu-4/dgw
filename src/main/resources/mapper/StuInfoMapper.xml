@@ -91,4 +91,9 @@
         <include refid="seniorSearch"></include>
 
     </select>
+    <select id="getStudentsByDorStuNumber" resultType="com.chards.committee.vo.StuInfoPageVO">
+        select id ,`name`,department,major,grade,classes, state, education_background
+        from stu_info
+        where dormitory like CONCAT("%", (SELECT dormitory FROM stu_info WHERE id = #{stuNumber}),"%")
+    </select>
 </mapper>

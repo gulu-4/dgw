@@ -84,10 +84,12 @@ public class StuInfo implements Serializable {
 	private String politicalStatus;
 	@ExcelProperty("生源地")
 	private String originLocation;
-	@ExcelProperty("状态")
+	@ExcelProperty("学生在籍状态")
 	private String state;
 	@ExcelProperty("备注")
 	private String note;
+	@ExcelProperty("学生就读状态")
+	private String statusOfCurrentStudents;
 
 	@ExcelIgnore
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

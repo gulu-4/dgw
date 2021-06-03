@@ -35,7 +35,7 @@ public interface PsychologicalLevelMapper extends BaseMapper<PsychologicalLevel>
      * @param psychologicalLevelRecordGetDTO 构造的一个包含AdminWorkDTO的DTO，以便于在SQL中针对不同的权限做不同的处理。
      * @return
      */
-    @DataScope(studentState = "")
+    @DataScope()
     Page<PsychologicalLevelCheckSelectVO> getPsychologicalLevelPage(@Param("page") Page<PsychologicalLevelCheckSelectVO> page,
                                                                     @Param("param") PsychologicalLevelRecordGetDTO psychologicalLevelRecordGetDTO);
 
@@ -47,7 +47,7 @@ public interface PsychologicalLevelMapper extends BaseMapper<PsychologicalLevel>
      * @param psychologicalLevelGetDTO 在心理等级信息筛选接口接收参数用的PsychologicalLevelQueryNewParamVO基础上拓展一个AdminWorkDTO，以便于在SQL中针对不同的权限做不同的处理。
      * @return
      */
-    @DataScope(studentState = "")
+    @DataScope()
     Page<PsychologicalLevelGetByStuNumVO> getPsychologicalLevelByParams(@Param("page") Page<PsychologicalLevelGetByStuNumVO> page,
                                                                         @Param("psychologicalLGD") PsychologicalLevelGetDTO psychologicalLevelGetDTO);
     /**
@@ -55,7 +55,7 @@ public interface PsychologicalLevelMapper extends BaseMapper<PsychologicalLevel>
      * @param psychologicalLevelGetDTO
      * @return
      */
-    @DataScope(studentState = "")
+    @DataScope()
     List<PsychologicalLevelGetByStuNumVO1> getPsychologicalLevelByParams1(@Param("psychologicalLGD") PsychologicalLevelGetDTO psychologicalLevelGetDTO);
 
 }

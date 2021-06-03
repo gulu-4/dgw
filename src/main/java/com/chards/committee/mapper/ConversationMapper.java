@@ -18,10 +18,10 @@ import org.apache.ibatis.annotations.Param;
 public interface ConversationMapper extends BaseMapper<Conversation> {
     Page<ConversationPageVO> getPageByStuid(@Param("page") Page<ConversationPageVO> page, @Param("stuId") String stuId);
 
-    @DataScope(studentState = "")
+    @DataScope()
     Page<ConversationPageVO> getPageAll(@Param("page") Page<ConversationPageVO> page);
 
-    @DataScope(studentState = "")
+    @DataScope()
     Page<ConversationPageVO> getPageAllWithParam(@Param("page") Page<ConversationPageVO> page,
                                                  @Param("param")ConversationParamVO conversationParamVO);
 

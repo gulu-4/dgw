@@ -1,6 +1,8 @@
 package com.chards.committee.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.config.BusinessException;
@@ -14,18 +16,27 @@ import com.chards.committee.service.ParentsInfoService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.RequestUtil;
+import com.chards.committee.util.UploadUtil;
 import com.chards.committee.vo.*;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.xmlbeans.impl.schema.BuiltinSchemaTypeSystem;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -39,6 +50,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/stu-info")
 @Api(tags = "学生信息管理")
+@Slf4j
 public class StuInfoController {
 	@Resource
 	private StuInfoService stuInfoService;
@@ -53,6 +65,9 @@ public class StuInfoController {
 
 	@Autowired
 	RedisTemplate redisTemplate;
+
+	@Value("${filepath}")
+	String path;
 
 	/**
 	 * 新增学生信息
@@ -72,7 +87,7 @@ public class StuInfoController {
 		CoreAdmin coreAdmin = coreAdminService.getById(stuInfoAddVO.getCounsellorNum());
 		Assert.notNull(coreAdmin,"该辅导员工号不存在");
 //		if (!stuInfoService.isWork(coreAdmin,stuInfo,true))BusinessException.error("辅导员没有该学院年级的权限");
-
+		stuInfo.setState("在籍");  //新增学生时在籍状态默认为 在籍
 		return R.success(stuInfoService.save(stuInfo));
 	}
 
@@ -276,6 +291,79 @@ public class StuInfoController {
 	@GetMapping("/senior")
 	public R seniorSearch(Page<StuInfoPageVO> page, StuInfoSeniorVO stuInfoSeniorVO) {
 		return R.success(stuInfoService.getSeniorSearch(page, stuInfoSeniorVO));
+	}
+
+	/**
+	 * 根据学生学号查询该学生的舍友信息
+	 */
+	@PreAuthorize("hasAuthority('student_select')")
+	@GetMapping("/getStudentsByDorStuNumber/{id}")
+	public R getStudentsByDorStuNumber(@PathVariable String id) {
+		return R.success(stuInfoService.getStudentsByDorStuNumber(id));
+	}
+
+	/**
+	 * 有管辖权限下的教职工可以修改
+	 */
+	@PreAuthorize("hasAuthority('student_update')")
+	@PostMapping("/updateStudentAvatar/{stuNumber}")
+	@ApiOperation(value = "修改学生头像")
+	public R updateStudentAvatar(@RequestParam(value = "file") MultipartFile file,
+								 @PathVariable(value = "stuNumber") String stuNumber,
+								 HttpServletRequest request) throws IOException {
+		if (stuInfoService.isWithinDataScope(stuNumber)) {
+			if (file.isEmpty()) {
+				log.error("文件不能为空");
+			}
+			String extension = getFileExtension(file); // 后缀名
+			// 对文件后缀名进行判断,如果不是png或者jpg则返回
+			if (!extension.equals(".jpg") && !extension.equals(".png")) {
+				return R.failure("图片后缀只能为jpg或者png");
+			}
+			// 对文件大小进行限定，如果超过某一大小则进行压缩
+			// https://blog.csdn.net/qq_42476834/article/details/108886493
+			// TODO
+			String fileName = "/" + stuNumber + ".jpg"; // 新文件名
+			File dest = new File(path + fileName);
+			if (!dest.getParentFile().exists()) {
+				dest.getParentFile().mkdirs();
+			}
+			try {
+				file.transferTo(dest);
+			} catch (IOException e) {
+				log.error(e.toString());
+				return R.failure(Code.ERROR);
+			}
+			return R.success(Code.SUCCESS);
+		}else{
+			return R.failure(Code.PERMISSION_NO_ACCESS);
+		}
+	}
+
+	/**
+	 * 修改学生在籍状态  通过id  修改state  为非在籍
+	 * @param id
+	 * @return
+	 */
+	@PreAuthorize("hasAuthority('student_update')")
+	@PutMapping("/graduateStudent/{id}")
+	public R graduateStudent(@PathVariable String id){
+		UpdateWrapper<StuInfo> updateWrapper = new UpdateWrapper<StuInfo>();
+		updateWrapper.set("state","非在籍");
+		updateWrapper.eq("id",id);
+		return R.success(stuInfoService.update(updateWrapper));
+	}
+
+	/**
+	 * 传递多个学生学号，一键让多个学生毕业
+	 * @param ids
+	 * @return
+	 */
+	// TODO
+
+	private String getFileExtension(MultipartFile File) {
+		String originalFileName = File.getOriginalFilename();
+		return originalFileName.substring(originalFileName.lastIndexOf("."));
 	}
 
 }

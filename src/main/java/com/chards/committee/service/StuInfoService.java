@@ -1,6 +1,7 @@
 package com.chards.committee.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,9 +15,9 @@ import com.chards.committee.dto.*;
 import com.chards.committee.mapper.StuInfoMapper;
 import com.chards.committee.util.Assert;
 import com.chards.committee.util.DataScope;
+import com.chards.committee.vo.StuInfoPageVO;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
-import com.chards.committee.vo.StuInfoPageVO;
 import com.chards.committee.vo.StuInfoSeniorVO;
 import com.chards.committee.vo.UserLoginRespVO;
 import lombok.NonNull;
@@ -432,6 +433,15 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
             }
         }
         return flag;
+    }
+
+    /**
+     * 根据学生学号查询舍友信息
+     * @param id
+     * @return
+     */
+    public List<StuInfoPageVO> getStudentsByDorStuNumber(String id) {
+        return baseMapper.getStudentsByDorStuNumber(id);
     }
 
 }

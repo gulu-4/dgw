@@ -120,7 +120,7 @@ public class DocumentController {
 				if (file.exists()) {
 					RequestUtil.setUserTokenDTO(userTokenDTO);
 					// 本人查看放在前面  后面是ROOT查看
-					if (RequestUtil.getId().equals(id) || RequestUtil.getRoles().get(0).equals("ROOT")) {
+					if (RequestUtil.getId().equals(id) || RequestUtil.getRoles().contains("ROOT")) {
 						return getFileByte(file);
 					}
 				}

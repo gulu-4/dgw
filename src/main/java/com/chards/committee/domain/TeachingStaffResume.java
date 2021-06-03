@@ -179,4 +179,12 @@ public class TeachingStaffResume extends Model<TeachingStaffResume> {
     @TableField("family_information")
     private String familyInformation;
 
+    @ExcelProperty("兴趣特长")
+    @TableField("hobbys")
+    private String hobbys;
+
+    @ExcelProperty("担任社会职务")
+    @TableField("socials_dutuies")
+    private String socialsDutuies;
+
 }

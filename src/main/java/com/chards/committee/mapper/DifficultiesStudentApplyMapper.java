@@ -23,10 +23,10 @@ public interface DifficultiesStudentApplyMapper extends BaseMapper<DifficultiesS
 
     List<DifficultiesStudentApply> getListWithParam(@Param("param")DifficultiesStudentGetParamVO difficultiesStudentGetParamVO);
 
-    @DataScope(studentState = "")
+    @DataScope()
     Page<DifficultiesStudentGetVO> getFirstList(@Param("param") DifficultiesStudentGetParamVO difficultiesStudentGetParamVO,
                                                  @Param("page") Page<DifficultiesStudentGetVO> page);
-    @DataScope(studentState = "")
+    @DataScope()
     Page<DifficultiesStudentGetVO> getSecondList(@Param("param") DifficultiesStudentGetParamVO difficultiesStudentGetParamVO,
                                                 @Param("page") Page<DifficultiesStudentGetVO> page);
 
