@@ -9,6 +9,7 @@ import com.chards.committee.dto.*;
 import com.chards.committee.service.*;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
+import com.chards.committee.vo.teachStaffExport.TeachStaffBasicExportVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +64,9 @@ public class DocumentController {
 
 	@Autowired
 	PsychologicalCounsellingCaseService psychologicalCounsellingCaseService;
+
+	@Autowired
+	TeachingStaffResumeService teachingStaffResumeService;
 
 	@Value("${filepath}")
 	String path;
@@ -444,6 +450,23 @@ public class DocumentController {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<PsychologicalCounselingCaseExportVO> psychologicalCounselingCaseExportVOS = psychologicalCounsellingCaseService.getAllCounselingCaseByParams(psychologicalCounsellingCaseSelectVO);
 			easyExeclService.writeToResponse(response, "psychologicalCounselingCase - " + System.currentTimeMillis(), psychologicalCounselingCaseExportVOS, PsychologicalCounselingCaseExportVO.class);
+			return;
+		}
+		response.getWriter().write("no permission");
+	}
+
+
+	/**
+	 * 教职工简历导出
+	 */
+	@GetMapping(value = "/execls/teachingStaffResumeExport")
+	public void test(String token,HttpServletResponse response, HttpServletRequest request) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token,UserTokenDTO.class);
+		// 这里尽可以ROOT导出
+		if (userTokenDTO != null && userTokenDTO.getRoles().contains("ROOT")) {
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<TeachStaffBasicExportVO> list = teachingStaffResumeService.getList();
+			easyExeclService.writeMoreToResponse(response,request,"教职工简历 - " + System.currentTimeMillis(), list, TeachStaffBasicExportVO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
