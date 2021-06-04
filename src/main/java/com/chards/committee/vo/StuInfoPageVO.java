@@ -23,5 +23,7 @@ public class StuInfoPageVO implements Serializable {
 
 	private String classes;
 
+	private String dormitory;
+
 
 }

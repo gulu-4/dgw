@@ -35,6 +35,10 @@
     - 在学生状态管理完善之前，相关业务模块不进行学生状态的控制；
     
 ## 更新日志（仅记录部分线上版本和历史线上版本）
+* 2021年6月3日 v10.6.19
+    * 【导出】教职工简历的基本信息导出
+    * 【新增】宿舍信息获取
+
 * 2021年6月2日 v10.6.18
     * 【新增】获取舍友信息，修改学生头像，新增学生在籍状态字段同时新增毕业接口，教职工简历新增字段
 
@@ -206,3 +210,7 @@
     - 用docker ps 检查一下有没有还在运行的老服务，若有，先用docker stop关掉；
     - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名(2个地方)。
         - sudo docker run -d -p 9090:9090 --name committee_10_6_1 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.1
+- 版本回退
+    - docker ps -a 查看所有历史版本
+    - docker stop 新版本  容器名和容器id都可以
+    - docker start 老版本
