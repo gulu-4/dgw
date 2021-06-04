@@ -470,6 +470,7 @@ public class DocumentController {
 			return;
 		}
 		response.getWriter().write("no permission");
+		return;
 	}
 
 	/**

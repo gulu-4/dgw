@@ -1,5 +1,6 @@
 package com.chards.committee.vo.teachStaffExport;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.HeadRowHeight;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -108,5 +109,12 @@ public class TeachStaffBasicExportVO {
     @ExcelProperty({"辅导员信息统计汇总表（基本信息）","担任社会职务"})
     private String socialsDutuies;
 
+    @ExcelIgnore
+    private String awards;
 
+    @ExcelIgnore
+    private String qualificationCertificate;
+
+    @ExcelIgnore
+    private String researches;
 }

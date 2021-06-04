@@ -3,6 +3,9 @@ package com.chards.committee.service;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
+import com.chards.committee.vo.teachStaffExport.TeachStaffBasicExportVO;
+import com.chards.committee.vo.teachStaffExport.TeachStaffExportConvert;
+import com.chards.committee.vo.teachStaffExport.TeachStaffExportHead;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +13,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +47,13 @@ public class EasyExeclService {
      */
     public <T> void writeMoreToResponse(HttpServletResponse response, HttpServletRequest request,String filename, List<T> data, Class<T> dataClass){
         String[] titles = {"基本信息","奖惩情况","培训经历","论文成果","课题研究","著作"};
+        List<List<List<String>>> exportHead = new ArrayList<List<List<String>>>();
+        exportHead.add(TeachStaffExportHead.ExcelHead0());
+        exportHead.add(TeachStaffExportHead.ExcelHead1());
+        exportHead.add(TeachStaffExportHead.ExcelHead2());
+        exportHead.add(TeachStaffExportHead.ExcelHead3());
+        exportHead.add(TeachStaffExportHead.ExcelHead4());
+        exportHead.add(TeachStaffExportHead.ExcelHead5());
         try {
             filename =  URLEncoder.encode(filename, "UTF-8").replaceAll("\\+", "%20");
             ServletOutputStream outputStream = response.getOutputStream();
@@ -51,11 +62,27 @@ public class EasyExeclService {
             response.setContentType("application/vnd.ms-excel");
             response.setCharacterEncoding("utf-8");
             // 开始写入
-            ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream(), dataClass).build();
+            ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
             for (int i = 0; i < 6; i++) {
-                // 下面可以指定head
-                WriteSheet writeSheet = EasyExcel.writerSheet(i, titles[i]).build();
-                excelWriter.write(data, writeSheet);
+                if (i == 0) {
+                    WriteSheet writeSheet = EasyExcel.writerSheet(i, titles[i]).head(exportHead.get(i)).build();
+                    excelWriter.write(data, writeSheet);
+                }else{
+                    // 建立表格
+                    WriteSheet writeSheet = EasyExcel.writerSheet(i, titles[i]).head(exportHead.get(i)).build();
+                    //解析数据
+                    switch (i){
+                        case 1:
+                            excelWriter.write(TeachStaffExportConvert.getAwardsList((List<TeachStaffBasicExportVO>) data), writeSheet);
+                            break;
+                        case 2:
+                            excelWriter.write(TeachStaffExportConvert.getQualificationCertificateList((List<TeachStaffBasicExportVO>) data), writeSheet);
+                            break;
+                        default:
+                            excelWriter.write(null, writeSheet);
+                            break;
+                    }
+                }
             }
             //不关闭会打不开excel
             excelWriter.finish();
