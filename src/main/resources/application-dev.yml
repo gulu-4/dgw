@@ -1,11 +1,15 @@
 spring:
   datasource:
-    url: jdbc:mysql://kddgw-test.wjy2000.cn:3306/new-committee?serverTimezone=Asia/Shanghai
-#    url: jdbc:mysql://localhost:3306/new-committee?serverTimezone=Asia/Shanghai
-#    username: root
-    username: nplus_remote
-    password: 2021@nplus
-#    password: 123456
+#    url: jdbc:mysql://kddgw-test.wjy2000.cn:3306/new-committee?serverTimezone=Asia/Shanghai
+
+#    演示数据
+#    url: jdbc:mysql://localhost:3306/kddgw_fake?serverTimezone=Asia/Shanghai
+
+    url: jdbc:mysql://localhost:3306/new-committee?serverTimezone=Asia/Shanghai
+    username: root
+#    username: nplus_remote
+#    password: 2021@nplus
+    password: mysql666
   redis:
 #    host: 49.233.32.252
     host: 127.0.0.1
