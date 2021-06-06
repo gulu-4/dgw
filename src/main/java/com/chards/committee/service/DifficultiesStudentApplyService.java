@@ -55,6 +55,24 @@ public class DifficultiesStudentApplyService extends ServiceImpl<DifficultiesStu
     }
 
     /**
+     * 学生当前是否进行过填写过申请表
+     * @return
+     */
+    public Long getHadApplied() {
+        LocalDateTime now = LocalDateTime.now();
+        Integer year = now.getYear();
+
+        // 判断当前期该学生是否有提交过申请，如果有则返回失败
+        DifficultiesStudentGetParamVO difficultiesStudentGetParamVO = new DifficultiesStudentGetParamVO();
+        difficultiesStudentGetParamVO.setStuNum(RequestUtil.getId());
+        difficultiesStudentGetParamVO.setStage(year);
+        if (getListWithParam(difficultiesStudentGetParamVO).size() > 0) {
+            return getListWithParam(difficultiesStudentGetParamVO).get(0).getId();
+        }
+        return Long.valueOf(0);
+    }
+
+    /**
      * 根据筛选条件获取申请信息
      */
     public List<DifficultiesStudentApply> getListWithParam(DifficultiesStudentGetParamVO difficultiesStudentGetParamVO){

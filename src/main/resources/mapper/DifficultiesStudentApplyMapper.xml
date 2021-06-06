@@ -16,7 +16,8 @@
         stu_info.grade,
         stu_info.education_background,
         stu_info.major,
-        stu_info.classes
+        stu_info.classes,
+        stu_info.state
         from difficulties_student_apply as apply
         inner join stu_info on stu_info.id = apply.stu_num
         inner join difficulties_student_assessment as assessment on apply.id = assessment.apply_id

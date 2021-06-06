@@ -52,6 +52,20 @@ public class DifficultiesStudentApplyController {
         return null;
     }
 
+    @ApiOperation("申请表当期是否进行过审核")
+    @PreAuthorize("hasRole('STUDENT')")
+    @GetMapping("/getHadApplied")
+    public R getHadApplied() {
+        return R.success(difficultiesStudentApplyService.getHadApplied());
+    }
+
+    @ApiOperation("根据id获取申请表详细信息")
+    @PreAuthorize("hasRole('STUDENT') or hasAuthority('student_select')")
+    @GetMapping("/getApplyById/{id}")
+    public R getApplyById(@PathVariable Serializable id) {
+        return R.success(difficultiesStudentApplyService.getById(id));
+    }
+
     @ApiOperation("删除")
     @PreAuthorize("hasRole('ROOT')")
     @DeleteMapping("/delete/{id}")

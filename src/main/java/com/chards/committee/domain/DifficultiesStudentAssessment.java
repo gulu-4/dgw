@@ -58,7 +58,7 @@ public class DifficultiesStudentAssessment extends Model<DifficultiesStudentAsse
 
     private String field03;
 
-    private String field04;
+    private String[] field04;
 
     private String field05;
 
@@ -82,7 +82,7 @@ public class DifficultiesStudentAssessment extends Model<DifficultiesStudentAsse
 
     private String field15;
 
-    private String field16;
+    private String[] field16;
 
     private String field17;
 
@@ -90,7 +90,7 @@ public class DifficultiesStudentAssessment extends Model<DifficultiesStudentAsse
 
     private String field19;
 
-    private String field20;
+    private String[] field20;
 
     private String field21;
 
