@@ -1,6 +1,5 @@
 package com.chards.committee.domain;
 
-import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -10,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -58,7 +56,7 @@ public class DifficultiesStudentAssessment extends Model<DifficultiesStudentAsse
 
     private String field03;
 
-    private String[] field04;
+    private String field04;
 
     private String field05;
 
@@ -82,7 +80,7 @@ public class DifficultiesStudentAssessment extends Model<DifficultiesStudentAsse
 
     private String field15;
 
-    private String[] field16;
+    private String field16;
 
     private String field17;
 
@@ -90,7 +88,7 @@ public class DifficultiesStudentAssessment extends Model<DifficultiesStudentAsse
 
     private String field19;
 
-    private String[] field20;
+    private String field20;
 
     private String field21;
 
