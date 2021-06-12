@@ -52,7 +52,7 @@ public class DifficultiesStudentApplyController {
         return null;
     }
 
-    @ApiOperation("申请表当期是否进行过审核")
+    @ApiOperation("学生档期是否填写过申请表和量化申请表")
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/getHadApplied")
     public R getHadApplied() {
@@ -77,15 +77,15 @@ public class DifficultiesStudentApplyController {
     @PreAuthorize("hasRole('FUDAOYUAN')")
     @GetMapping("/getFirstList")
     public R getFirstList(DifficultiesStudentGetParamVO difficultiesStudentGetParamVO,Page<DifficultiesStudentGetVO> page){
-        // 辅导员获取审核列表，默认为当前期数，审核状态默认为待审核
-        LocalDateTime now = LocalDateTime.now();
-        Integer year = now.getYear();
-        if (difficultiesStudentGetParamVO.getStage() == null){
-            difficultiesStudentGetParamVO.setStage(year);
-        }
-        if (difficultiesStudentGetParamVO.getFirstCheck() == null){
-            difficultiesStudentGetParamVO.setFirstCheck(0);
-        }
+        // 辅导员获取审核列表，默认为当前期数
+//        LocalDateTime now = LocalDateTime.now();
+//        Integer year = now.getYear();
+//        if (difficultiesStudentGetParamVO.getStage() == null){
+//            difficultiesStudentGetParamVO.setStage(year);
+//        }
+//        if (difficultiesStudentGetParamVO.getFirstCheck() == null){
+//            difficultiesStudentGetParamVO.setFirstCheck(0);
+//        }
         return R.success(difficultiesStudentApplyService.getFirstList(difficultiesStudentGetParamVO,page));
     }
 
@@ -104,15 +104,15 @@ public class DifficultiesStudentApplyController {
     @GetMapping("/getSecondList")
     public R getSecondList(DifficultiesStudentGetParamVO difficultiesStudentGetParamVO,Page<DifficultiesStudentGetVO> page){
         // 学工处获取审核列表，默认为当前期数，审核状态默认为待审核
-        LocalDateTime now = LocalDateTime.now();
-        Integer year = now.getYear();
-        if (difficultiesStudentGetParamVO.getStage() == null){
-            difficultiesStudentGetParamVO.setStage(year);
-        }
+//        LocalDateTime now = LocalDateTime.now();
+//        Integer year = now.getYear();
+//        if (difficultiesStudentGetParamVO.getStage() == null){
+//            difficultiesStudentGetParamVO.setStage(year);
+//        }
         difficultiesStudentGetParamVO.setFirstCheck(1);
-        if (difficultiesStudentGetParamVO.getSecondCheck() == null){
-            difficultiesStudentGetParamVO.setSecondCheck(0);
-        }
+//        if (difficultiesStudentGetParamVO.getSecondCheck() == null){
+//            difficultiesStudentGetParamVO.setSecondCheck(0);
+//        }
         return R.success(difficultiesStudentApplyService.getSecondList(difficultiesStudentGetParamVO,page));
     }
 

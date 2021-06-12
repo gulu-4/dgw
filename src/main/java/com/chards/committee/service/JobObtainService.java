@@ -8,6 +8,7 @@ import com.chards.committee.dto.AdminWorkDTO;
 import com.chards.committee.dto.UserInfo;
 import com.chards.committee.mapper.JobObtainMapper;
 import com.chards.committee.vo.JobObtainGetInfoVO;
+import com.chards.committee.vo.JobObtainGetParamVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,4 +45,19 @@ public class JobObtainService extends ServiceImpl<JobObtainMapper, JobObtain> {
         UserInfo userInfo = userService.getUserById(id);
         return userInfo.getName();
     }
+
+    /**
+     * 筛选
+     * @param page
+     * @param jobObtainGetParamVO
+     * @return
+     */
+    public Page<JobObtainGetInfoVO> getListWithParam(Page<JobObtainGetInfoVO> page, JobObtainGetParamVO jobObtainGetParamVO) {
+        return baseMapper.getListWithParam(page,jobObtainGetParamVO);
+    }
+
+    public List<JobObtainGetInfoVO> getList(JobObtainGetParamVO jobObtainGetParamVO) {
+        return baseMapper.getList(jobObtainGetParamVO);
+    }
+
 }

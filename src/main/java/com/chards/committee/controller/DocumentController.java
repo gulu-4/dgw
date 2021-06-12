@@ -68,6 +68,9 @@ public class DocumentController {
 	@Autowired
 	TeachingStaffResumeService teachingStaffResumeService;
 
+	@Autowired
+	JobObtainService jobObtainService;
+
 	@Value("${filepath}")
 	String path;
 
@@ -471,6 +474,17 @@ public class DocumentController {
 		}
 		response.getWriter().write("no permission");
 		return;
+	}
+
+	@GetMapping(value = "/execls/jobObtain/getList")
+	public void getJobObtainList(String token, JobObtainGetParamVO jobObtainGetParamVO, HttpServletResponse response) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
+			List<JobObtainGetInfoVO> jobObtainGetInfoVOList = jobObtainService.getList(jobObtainGetParamVO);
+			easyExeclService.writeToResponse(response, "jobObtain - " + System.currentTimeMillis(), jobObtainGetInfoVOList, JobObtainGetInfoVO.class);
+			return;
+		}
+		response.getWriter().write("no permission");
 	}
 
 	/**

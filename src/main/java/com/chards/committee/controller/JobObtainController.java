@@ -3,13 +3,12 @@ package com.chards.committee.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.JobObtain;
 import com.chards.committee.dto.AdminWorkDTO;
-import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.JobObtainService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.Code;
-import com.chards.committee.vo.JobObtainGetInfoVO;
-import com.chards.committee.vo.R;
+import com.chards.committee.vo.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,7 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("/jobObtain")
+@Api(tags = "就业信息",value = "就业信息接口")
 public class JobObtainController {
     @Autowired
     private JobObtainService jobObtainService;
@@ -39,6 +39,19 @@ public class JobObtainController {
     public R selectAll(Page<JobObtainGetInfoVO> page) {
 //        AdminWorkDTO adminWorkDTO = RequestUtil.getAdminWorkDTO();
         return R.success(jobObtainService.getAdminManagementStudentJobObtain(page));
+    }
+
+    /**
+     * 通过筛选条件分页获取就业信息
+     * @param jobObtainGetParamVO
+     * @param page
+     * @return
+     */
+    @ApiOperation("通过筛选条件分页获取就业信息")
+    @PreAuthorize("hasAuthority('student_select')")
+    @PostMapping("/getListWithParam")
+    public R getListWithParam(@RequestBody JobObtainGetParamVO jobObtainGetParamVO, Page<JobObtainGetInfoVO> page) {
+        return R.success(jobObtainService.getListWithParam(page,jobObtainGetParamVO));
     }
 
     /**

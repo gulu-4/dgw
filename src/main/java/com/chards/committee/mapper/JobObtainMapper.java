@@ -6,6 +6,7 @@ import com.chards.committee.domain.JobObtain;
 import com.chards.committee.dto.AdminWorkDTO;
 import com.chards.committee.util.DataScope;
 import com.chards.committee.vo.JobObtainGetInfoVO;
+import com.chards.committee.vo.JobObtainGetParamVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -19,4 +20,9 @@ public interface JobObtainMapper extends BaseMapper<JobObtain> {
 //    由于在就业模块中也出现了state字段，与拦截器的要求相冲突了，暂且放弃进行状态控制，2021.2.15 poplar
     @DataScope(studentState = "")
     Page<JobObtainGetInfoVO> getAdminManagementStudentJobObtain(@Param("page") Page<JobObtainGetInfoVO> page);
+
+    Page<JobObtainGetInfoVO> getListWithParam(@Param("page") Page<JobObtainGetInfoVO> page,
+                                              @Param("param") JobObtainGetParamVO jobObtainGetParamVO);
+
+    List<JobObtainGetInfoVO> getList(@Param("param") JobObtainGetParamVO jobObtainGetParamVO);
 }

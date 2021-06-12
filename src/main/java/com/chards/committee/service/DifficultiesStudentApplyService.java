@@ -3,6 +3,7 @@ package com.chards.committee.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chards.committee.domain.DifficultiesStudentApply;
+import com.chards.committee.domain.DifficultiesStudentAssessment;
 import com.chards.committee.mapper.DifficultiesStudentApplyMapper;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.DifficultiesPassVO;
@@ -58,18 +59,31 @@ public class DifficultiesStudentApplyService extends ServiceImpl<DifficultiesStu
      * 学生当前是否进行过填写过申请表
      * @return
      */
-    public Long getHadApplied() {
+    public Map<String,Long> getHadApplied() {
         LocalDateTime now = LocalDateTime.now();
         Integer year = now.getYear();
 
-        // 判断当前期该学生是否有提交过申请，如果有则返回失败
+        // 判断当前期该学生是否有提交过申请，如果有则返回具体的id
         DifficultiesStudentGetParamVO difficultiesStudentGetParamVO = new DifficultiesStudentGetParamVO();
         difficultiesStudentGetParamVO.setStuNum(RequestUtil.getId());
         difficultiesStudentGetParamVO.setStage(year);
-        if (getListWithParam(difficultiesStudentGetParamVO).size() > 0) {
-            return getListWithParam(difficultiesStudentGetParamVO).get(0).getId();
+        DifficultiesStudentApply difficultiesStudentApply = new DifficultiesStudentApply();
+        List<DifficultiesStudentApply> difficultiesStudentApplyList = getListWithParam(difficultiesStudentGetParamVO);
+        Map<String,Long> resultMap= new HashMap<String,Long>();
+        if (difficultiesStudentApplyList.size() > 0) {
+            difficultiesStudentApply = difficultiesStudentApplyList.get(0);
+            DifficultiesStudentAssessment difficultiesStudentAssessment = difficultiesStudentAssessmentService.getByApplyId(difficultiesStudentApply.getId());
+            resultMap.put("applyId",difficultiesStudentApply.getId());
+            if (difficultiesStudentAssessment != null) {
+                resultMap.put("assessmentId", difficultiesStudentAssessment.getId());
+            }else{
+                resultMap.put("assessmentId", Long.valueOf(0));
+            }
+        }else{
+            resultMap.put("applyId",Long.valueOf(0));
+            resultMap.put("assessmentId", Long.valueOf(0));
         }
-        return Long.valueOf(0);
+        return resultMap;
     }
 
     /**

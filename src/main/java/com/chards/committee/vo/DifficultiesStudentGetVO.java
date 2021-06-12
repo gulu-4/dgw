@@ -46,6 +46,7 @@ public class DifficultiesStudentGetVO {
     private String secondReviewer;
     private Integer secondCheck;  //学工处审核情况
 
+    private Long assessmentId;  //对应的量化申请表id
     private String field21; //每月生活支出
     private String score;  // 量化评估分
     private String fakeScore;  // 测谎分 可信度评判

@@ -50,8 +50,15 @@ public class DifficultiesStudentAssessmentController {
     @ApiOperation("根据applyId获取详细信息")
     @PreAuthorize("hasRole('FUDAOYUAN')")
     @GetMapping("/getByApplyId/{applyId}")
-    public R add(@PathVariable Serializable applyId){
+    public R getByApplyId(@PathVariable Serializable applyId){
         return R.success(difficultiesStudentAssessmentService.getByApplyId(applyId));
+    }
+
+    @ApiOperation("根据id获取详细信息")
+    @PreAuthorize("hasAuthority('student_select')")
+    @GetMapping("/getByAssessmentId/{id}")
+    public R getByAssessmentId(@PathVariable Serializable id){
+        return R.success(difficultiesStudentAssessmentService.getById(id));
     }
 
 }

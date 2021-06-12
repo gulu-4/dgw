@@ -25,6 +25,30 @@
         from job_obtain
         inner join stu_info on job_obtain.stu_num = stu_info.id
     </sql>
+    <sql id="getListWithParam">
+        select job_obtain.*,stu_info.name,stu_info.gender,stu_info.education_background,
+        stu_info.major,stu_info.classes,stu_info.department,stu_info.grade
+        from job_obtain
+        inner join stu_info on job_obtain.stu_num = stu_info.id
+        <where>
+            <if test="param.department != null">
+                and stu_info.department LIKE #{param.department}
+            </if>
+            <if test="param.grade != null">
+                and stu_info.grade = #{param.grade}
+            </if>
+            <if test="param.state != null">
+                and job_obtain.state = #{param.state}
+            </if>
+            <if test="param.startTime != null">
+                and unix_timestamp(job_obtain.recorded_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.startTime,jdbcType=VARCHAR})
+            </if>
+            <if test="param.endTime != null">
+                and unix_timestamp(job_obtain.recorded_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.endTime,jdbcType=VARCHAR})
+            </if>
+        </where>
+        order by job_obtain.recorded_time desc
+    </sql>
     <sql id="dateArea">
         and unix_timestamp(job_obtain.recorded_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.beginDate,jdbcType=VARCHAR})
         and unix_timestamp(job_obtain.recorded_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
@@ -37,5 +61,11 @@
 
     <select id="getAdminManagementStudentJobObtain" resultType="com.chards.committee.vo.JobObtainGetInfoVO">
         <include refid="getAll"></include>
+    </select>
+    <select id="getListWithParam" resultType="com.chards.committee.vo.JobObtainGetInfoVO">
+        <include refid="getListWithParam"></include>
+    </select>
+    <select id="getList" resultType="com.chards.committee.vo.JobObtainGetInfoVO">
+        <include refid="getListWithParam"></include>
     </select>
 </mapper>

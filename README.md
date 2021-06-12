@@ -35,6 +35,14 @@
     - 在学生状态管理完善之前，相关业务模块不进行学生状态的控制；
     
 ## 更新日志（仅记录部分线上版本和历史线上版本）
+* 2021年6月12日 v10.6.24
+    * 【新增】就业模块新增筛选和导出接口
+
+* 2021年6月12日 v10.6.23
+    * 【修复】修复获取贫困生和量化表根据获取接口的bug
+    * 【优化】在贫困生审核用列表里加上assessmentId，返回量化表对应id
+    * 【优化】在返回学生填写状态中加上是否填写量化表
+
 * 2021年6月11日 v10.6.22
     * 【修复】量化表格式修改
 
@@ -225,6 +233,7 @@
     - 用docker ps 检查一下有没有还在运行的老服务，若有，先用docker stop关掉；
     - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名(2个地方)。
         - sudo docker run -d -p 9090:9090 --name committee_10_6_1 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.1
+        docker run -d -p 9090:9090 --name committee_10_6_23 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.24
 - 版本回退
     - docker ps -a 查看所有历史版本
     - docker stop 新版本  容器名和容器id都可以

@@ -11,7 +11,7 @@
         apply.from_import,apply.level,
         apply.first_check,apply.first_reviewer,
         apply.second_reviewer,apply.second_check,
-        assessment.field21,assessment.score,assessment.fake_score,
+        assessment.id as assessmentId,assessment.field21,assessment.score,assessment.fake_score,
         stu_info.department,
         stu_info.grade,
         stu_info.education_background,
