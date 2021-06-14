@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -122,6 +123,15 @@ public class LeaveController {
 		leave.setStuNum(RequestUtil.getId());
 		leave.setStatus(0);
 		return R.success(leaveService.remove(new QueryWrapper<>(leave)));
+	}
+
+	@PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
+	@PutMapping("/ownUpdateStatus/{id}")
+	public R ownUpdateStatus(@PathVariable Serializable id){
+		Leave leave = leaveService.getById(id);
+		Assert.notNull(leave, Code.RESULT_DATA_NONE);
+		leave.setStatus(3);
+		return R.success(leaveService.updateById(leave));
 	}
 
 

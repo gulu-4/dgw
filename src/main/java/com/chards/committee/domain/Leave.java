@@ -40,7 +40,7 @@ public class Leave extends Model<Leave> {
 	//请假原因
 	@TableField("reason")
 	private String reason;
-	//状态判断 未审核：0 |同意：1 |拒绝：2
+	//状态判断 未审核：0 |同意：1 |拒绝：2 |销假：3
 	@TableField("status")
 	private Integer status;
 	//手机号
