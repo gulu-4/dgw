@@ -9,7 +9,7 @@
         apply.extremely_poor,apply.orphan_and_disabled,
         apply.martyr,apply.other,
         apply.from_import,apply.level,
-        apply.first_check,apply.first_reviewer,
+        apply.first_check,apply.first_reviewer,apply.money,
         apply.second_reviewer,apply.second_check,
         assessment.id as assessmentId,assessment.field21,assessment.score,assessment.fake_score,
         stu_info.department,

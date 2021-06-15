@@ -67,7 +67,7 @@ public class DifficultiesStudentApplyController {
     }
 
     @ApiOperation("删除")
-    @PreAuthorize("hasRole('ROOT')")
+    @PreAuthorize("hasAuthority('student_select')")
     @DeleteMapping("/delete/{id}")
     public R delete(@PathVariable Serializable id) {
         return R.success(difficultiesStudentApplyService.deleteById(id));

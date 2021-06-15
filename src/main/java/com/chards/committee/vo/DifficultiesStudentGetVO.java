@@ -35,6 +35,7 @@ public class DifficultiesStudentGetVO {
     private Boolean other;  // 特殊困难情况6
     private String fromImport;  // 国家扶贫库信息
     private String level;   // 级别选择
+    private String money; // 建档金额
 
     private String lastLevel;  //上期建档级别
     private Long lastId;  //上期建档id  用于查看详情获取详细信息用
