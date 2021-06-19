@@ -30,7 +30,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
-version: v10.6.26
+version: 10.6.27
 
 huawei:
   sms:

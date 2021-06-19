@@ -63,7 +63,15 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
     @Autowired
     UserService userService;
 
-    public UserLoginRespVO getAdminTokenLdap(String username, String password, String ip) {
+    public UserLoginRespVO getAdminTokenLdap(String username, String password, String captchaId, String captcha, String ip) {
+        // 获取验证码与redis中存储验证码进行比较
+        String redisCaptcha = (String) redisTemplate.opsForValue().get(captchaId);
+        if (redisCaptcha != null && redisCaptcha.equals(captcha)) {
+            System.out.println("验证码匹配成功");
+        } else {
+            System.out.println("验证码匹配失败");
+        }
+
         JSONObject jsonObject = JSONUtil.createObj();
         jsonObject.put("username", username);
         jsonObject.put("password", password);
