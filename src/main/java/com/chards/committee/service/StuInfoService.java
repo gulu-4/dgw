@@ -107,87 +107,89 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         // 获取验证码与redis中存储验证码进行比较
         String redisCaptcha = (String) redisTemplate.opsForValue().get(captchaId);
         if (redisCaptcha != null && redisCaptcha.equals(captcha)) {
-            System.out.println("验证码匹配成功");
-        } else {
-            System.out.println("验证码匹配失败");
-        }
+            // 验证码匹配成功
+            JSONObject jsonObject = JSONUtil.createObj();
+            jsonObject.put("username", username);
+            jsonObject.put("password", password);
+            String result = HttpRequest
+                    .post("https://xyt-wx.cumt.edu.cn/ldap/check")
+                    .body(String.valueOf(jsonObject))
+                    .execute()
+                    .body();
+            String code = JSONUtil.parseObj(result).get("code").toString();
+            if (code.equals("10000")){
+                StuInfo stuInfo = getById(username);
+                Assert.notNull(stuInfo, Code.USER_NOT_EXIST);
+                UserTokenDTO userTokenDTO = new UserTokenDTO();
+                UserInfo userInfo = new UserInfo();
+                BeanUtils.copyProperties(stuInfo, userInfo);
+                List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(userInfo.getId());
+                userTokenDTO.setUserDataScopeList(userDataScopeList);
 
-        JSONObject jsonObject = JSONUtil.createObj();
-        jsonObject.put("username", username);
-        jsonObject.put("password", password);
-        String result = HttpRequest
-                .post("https://xyt-wx.cumt.edu.cn/ldap/check")
-                .body(String.valueOf(jsonObject))
-                .execute()
-                .body();
-        String code = JSONUtil.parseObj(result).get("code").toString();
-        if (code.equals("10000")){
-            StuInfo stuInfo = getById(username);
-            Assert.notNull(stuInfo, Code.USER_NOT_EXIST);
-            UserTokenDTO userTokenDTO = new UserTokenDTO();
-            UserInfo userInfo = new UserInfo();
-            BeanUtils.copyProperties(stuInfo, userInfo);
-            List<UserDataScope> userDataScopeList = dataScopeService.getUserDataScope(userInfo.getId());
-            userTokenDTO.setUserDataScopeList(userDataScopeList);
-
-            /*为了适配旧的权限控制策略，此处给位于学生表中的管理员配上department（只能是1个） 和 work（可以是由逗号分割的多个，此处不考虑特殊情况，只设置一个）*/
-            if (userDataScopeList.size()>0){
-                String department = "";
-                String work = "";
-                for (UserDataScope userDataScope:userDataScopeList){
-                    department = userDataScope.getDepartment();
-                    work = userDataScope.getGrade();
+                /*为了适配旧的权限控制策略，此处给位于学生表中的管理员配上department（只能是1个） 和 work（可以是由逗号分割的多个，此处不考虑特殊情况，只设置一个）*/
+                if (userDataScopeList.size()>0){
+                    String department = "";
+                    String work = "";
+                    for (UserDataScope userDataScope:userDataScopeList){
+                        department = userDataScope.getDepartment();
+                        work = userDataScope.getGrade();
+                    }
+                    userInfo.setDepartment(department);
+                    userInfo.setWork(work);
                 }
-                userInfo.setDepartment(department);
-                userInfo.setWork(work);
-            }
-            userTokenDTO.setUserInfo(userInfo);
-            List<AdminRoleDTO> adminRole = tbRoleService.getAdminRole(username);
-            List<String> roles = adminRole.stream().map(AdminRoleDTO::getEnname).collect(Collectors.toList());
+                userTokenDTO.setUserInfo(userInfo);
+                List<AdminRoleDTO> adminRole = tbRoleService.getAdminRole(username);
+                List<String> roles = adminRole.stream().map(AdminRoleDTO::getEnname).collect(Collectors.toList());
 
-            roles.add(Constant.STUDENT);
-            if (roles.contains(Constant.XUEGONG)) {
-                userInfo.setDepartment("学工处");
-            }
-            userTokenDTO.setRoles(roles);
-            List<String> permisssions = new ArrayList<>();
+                roles.add(Constant.STUDENT);
+                if (roles.contains(Constant.XUEGONG)) {
+                    userInfo.setDepartment("学工处");
+                }
+                userTokenDTO.setRoles(roles);
+                List<String> permisssions = new ArrayList<>();
 
-            if (adminRole.toArray().length>0){
-                permisssions = tbRoleService.getAdminPermission(
-                        adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())
-                ).stream().map(AdminPermissionDTO::getPermission).collect(Collectors.toList());
-            }
+                if (adminRole.toArray().length>0){
+                    permisssions = tbRoleService.getAdminPermission(
+                            adminRole.stream().map(adminRoleDTO -> Long.valueOf(adminRoleDTO.getId())).collect(Collectors.toList())
+                    ).stream().map(AdminPermissionDTO::getPermission).collect(Collectors.toList());
+                }
 
-            permisssions.add("OWN_INFO_CRUD");
-            userTokenDTO.setPermissionsList(permisssions);
+                permisssions.add("OWN_INFO_CRUD");
+                userTokenDTO.setPermissionsList(permisssions);
 
 //        userTokenDTO.setRoles(Arrays.asList(Constant.STUDENT));
 //        userTokenDTO.setPermissionsList(Arrays.asList("OWN_INFO_CRUD"));
-            String token = UUID.randomUUID().toString();
-            redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
-            UserLoginRespVO resp = new UserLoginRespVO();
-            resp.setToken(token);
-            resp.setName(stuInfo.getName());
-            resp.setRoleList(roles);
-            resp.setUserDataScopeList(userDataScopeList);
-            LoginIp byLastIp = loginIpService.getByUserId(username);
-            resp.setOldIp(byLastIp != null ? byLastIp.getIp() : "空");
-            if (loginIpService.addLoginIp(username, ip)) {
-                resp.setNewIp(ip);
+                String token = UUID.randomUUID().toString();
+                redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
+                UserLoginRespVO resp = new UserLoginRespVO();
+                resp.setToken(token);
+                resp.setName(stuInfo.getName());
+                resp.setRoleList(roles);
+                resp.setUserDataScopeList(userDataScopeList);
+                LoginIp byLastIp = loginIpService.getByUserId(username);
+                resp.setOldIp(byLastIp != null ? byLastIp.getIp() : "空");
+                if (loginIpService.addLoginIp(username, ip)) {
+                    resp.setNewIp(ip);
+                }
+                return resp;
             }
+            else if (code.equals("10001")){
+                BusinessException.error(Code.USER_LOGIN_ERROR);
+            }
+            else if (code.equals("10002")){
+                BusinessException.error(Code.USER_LDAP_NOT_ACTIVATED);
+            }
+            else {
+                BusinessException.error(Code.ERROR);
+            }
+            UserLoginRespVO resp = null;
+            return resp;
+        } else {
+            // 验证码匹配失败
+            BusinessException.error(Code.USER_CAPTCHA_ERROR);
+            UserLoginRespVO resp = null;
             return resp;
         }
-        else if (code.equals("10001")){
-            BusinessException.error(Code.USER_LOGIN_ERROR);
-        }
-        else if (code.equals("10002")){
-            BusinessException.error(Code.USER_LDAP_NOT_ACTIVATED);
-        }
-        else {
-            BusinessException.error(Code.ERROR);
-        }
-        UserLoginRespVO resp = null;
-        return resp;
     }
     public UserLoginRespVO getUserToken(String username, String password, String ip) {
         StuInfo stuInfo = getById(username);

@@ -21,6 +21,8 @@ import java.util.List;
 @Data
 public class PsychologicalCounselingCaseDetailVO {
 
+    private Long id;
+
     private String stuNum;
 
     private Date counsellingTime;  //咨询记录  前端传递

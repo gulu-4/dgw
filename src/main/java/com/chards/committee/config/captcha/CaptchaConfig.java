@@ -36,7 +36,7 @@ public class CaptchaConfig {
 //        验证码文本字符内容范围 默认为abced2345678gfynmnpwx
          properties.setProperty("kaptcha.textproducer.char.string", "abcde0123456789fghijklmnopqrstuvwxyz");
         //字符长度，默认为5
-        properties.setProperty("kaptcha.textproducer.char.length", "6");
+        properties.setProperty("kaptcha.textproducer.char.length", "4");
         //字符间距 默认为2
         properties.setProperty("kaptcha.textproducer.char.space", "4");
         //验证码图片宽度 默认为200
