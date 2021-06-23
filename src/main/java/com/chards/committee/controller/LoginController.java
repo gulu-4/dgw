@@ -3,6 +3,7 @@ package com.chards.committee.controller;
 import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.LoginIpService;
 import com.chards.committee.service.StuInfoService;
+import com.chards.committee.service.UserService;
 import com.chards.committee.util.IpGetServiceImpl;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.Code;
@@ -57,6 +58,9 @@ public class LoginController {
 
 	@Autowired
 	private DefaultKaptcha defaultKaptcha;
+
+	@Autowired
+	private UserService userService;
 
 
 	/**
@@ -119,9 +123,22 @@ public class LoginController {
 	 */
 	@PreAuthorize("hasRole('STUDENT') or hasAuthority('teacher_own')")
 	@GetMapping("/ip")
-   public R getLoginIps(){
+   	public R getLoginIps(){
 		return R.success(loginIpService.getByUserIdLimitTen(RequestUtil.getId()));
 	}
+
+
+	/**
+	 * 小程序端保持用户登录状态用，判断用户登录token是否过期，
+	 * @param token
+	 * @return
+	 */
+	@GetMapping("/tokenIsExpired")
+	@ApiOperation(value = "判断token是否过期，过期则返回重新登录，未过期则延长过期时间并且返回登录时相同对象")
+	public R tokenIsExpired(@RequestHeader(value = "Authorization") String token, HttpServletRequest request){
+		return R.success(userService.tokenIsExpired(token,ipGetService.getIpAddr(request)));
+	}
+
 
 
 	/**

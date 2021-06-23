@@ -106,7 +106,13 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
     public UserLoginRespVO getUserTokenLdap(String username, String password,String captchaId, String captcha,String ip) {
         // 获取验证码与redis中存储验证码进行比较
         String redisCaptcha = (String) redisTemplate.opsForValue().get(captchaId);
-        if (redisCaptcha != null && redisCaptcha.equals(captcha)) {
+        if (redisCaptcha == null) {
+            // 验证码失效
+            BusinessException.error(Code.USER_CAPTCHA_EXPIRE);
+            UserLoginRespVO resp = null;
+            return resp;
+        }
+        if (redisCaptcha.equals(captcha)) {
             // 验证码匹配成功
             JSONObject jsonObject = JSONUtil.createObj();
             jsonObject.put("username", username);

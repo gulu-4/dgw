@@ -57,9 +57,17 @@ public enum Code {
      */
     USER_NOT_LOGGED_IN(20001, "用户未登录"),
     /**
+     * 用户登录过期，需重新登录
+     */
+    USER_LOGGED_IN_EXPIRED(20001, "登录过期，请重新登录"),
+    /**
      *
      */
     USER_CAPTCHA_ERROR(20008, "验证码错误"),
+    /**
+     *
+     */
+    USER_CAPTCHA_EXPIRE(20009, "验证码失效，请重新获取验证码"),
     /**
      * 账号不存在或密码错误
      */
