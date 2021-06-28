@@ -110,11 +110,11 @@ public class TeachStaffBasicExportVO {
     private String socialsDutuies;
 
     @ExcelIgnore
-    private String awards;
+    private String awards;   //奖惩情况
 
     @ExcelIgnore
-    private String qualificationCertificate;
+    private String qualificationCertificate; //
 
     @ExcelIgnore
-    private String researches;
+    private String researches;  // 科研情况 这里需要分成三个
 }

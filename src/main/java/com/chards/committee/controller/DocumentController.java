@@ -465,7 +465,7 @@ public class DocumentController {
 	@GetMapping(value = "/execls/teachingStaffResumeExport")
 	public void test(String token,HttpServletResponse response, HttpServletRequest request) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token,UserTokenDTO.class);
-		// 这里尽可以ROOT导出
+		// 这里仅仅可以ROOT导出
 		if (userTokenDTO != null && userTokenDTO.getRoles().contains("ROOT")) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<TeachStaffBasicExportVO> list = teachingStaffResumeService.getList();

@@ -35,6 +35,9 @@
     - 在学生状态管理完善之前，相关业务模块不进行学生状态的控制；
     
 ## 更新日志（仅记录部分线上版本和历史线上版本）
+* 2021年6月28日 v10.6.30
+    * 【完善】完善教职工Excel表格的导出
+
 * 2021年6月23日 v10.6.29
     * 【新增】新增token刷新接口，24小时内可刷新，为适配小程序端
 
@@ -249,7 +252,7 @@
     - 用docker ps 检查一下有没有还在运行的老服务，若有，先用docker stop关掉；
     - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名(2个地方)。
         - sudo docker run -d -p 9090:9090 --name committee_10_6_1 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.1
-        docker run -d -p 9090:9090 --name committee_10_6_26 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.29
+        docker run -d -p 9090:9090 --name committee_10_6_26 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.30
 - 版本回退
     - docker ps -a 查看所有历史版本
     - docker stop 新版本  容器名和容器id都可以

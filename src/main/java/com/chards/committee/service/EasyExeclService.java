@@ -52,8 +52,8 @@ public class EasyExeclService {
         exportHead.add(TeachStaffExportHead.ExcelHead1());
         exportHead.add(TeachStaffExportHead.ExcelHead2());
         exportHead.add(TeachStaffExportHead.ExcelHead3());
-        exportHead.add(TeachStaffExportHead.ExcelHead4());
-        exportHead.add(TeachStaffExportHead.ExcelHead5());
+//        exportHead.add(TeachStaffExportHead.ExcelHead4());
+//        exportHead.add(TeachStaffExportHead.ExcelHead5());
         try {
             filename =  URLEncoder.encode(filename, "UTF-8").replaceAll("\\+", "%20");
             ServletOutputStream outputStream = response.getOutputStream();
@@ -63,13 +63,12 @@ public class EasyExeclService {
             response.setCharacterEncoding("utf-8");
             // 开始写入
             ExcelWriter excelWriter = EasyExcel.write(response.getOutputStream()).build();
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 4; i++) {
+                // 建立表格
+                WriteSheet writeSheet = EasyExcel.writerSheet(i, titles[i]).head(exportHead.get(i)).build();
                 if (i == 0) {
-                    WriteSheet writeSheet = EasyExcel.writerSheet(i, titles[i]).head(exportHead.get(i)).build();
                     excelWriter.write(data, writeSheet);
                 }else{
-                    // 建立表格
-                    WriteSheet writeSheet = EasyExcel.writerSheet(i, titles[i]).head(exportHead.get(i)).build();
                     //解析数据
                     switch (i){
                         case 1:
@@ -78,8 +77,8 @@ public class EasyExeclService {
                         case 2:
                             excelWriter.write(TeachStaffExportConvert.getQualificationCertificateList((List<TeachStaffBasicExportVO>) data), writeSheet);
                             break;
-                        default:
-                            excelWriter.write(null, writeSheet);
+                        case 3:
+                            excelWriter.write(TeachStaffExportConvert.getResearchesList((List<TeachStaffBasicExportVO>) data), writeSheet);
                             break;
                     }
                 }

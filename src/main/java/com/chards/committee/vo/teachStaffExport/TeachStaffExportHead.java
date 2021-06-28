@@ -267,127 +267,64 @@ public class TeachStaffExportHead {
         List<List<String>> headList = new ArrayList();
 
         headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（论文成果）");
+            add("辅导员信息统计汇总表（科研情况）");
             add("序号");
             add("序号");
         }});
         headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（论文成果）");
+            add("辅导员信息统计汇总表（科研情况）");
             add("学院");
             add("学院");
         }});
         headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（论文成果）");
+            add("辅导员信息统计汇总表（科研情况）");
             add("姓名");
             add("姓名");
         }});
-        for (int i = 1;i<31; i++) {
-            for (int j = 0; j < 5; j++){
+        for (int i = 1;i<21; i++) {
+            for (int j = 0; j < 6; j++){
                 int finalI = i;
                 switch (j) {
                     case 0:
                         headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（论文成果）");
-                            add("论文成果" + finalI);
+                            add("辅导员信息统计汇总表（科研情况）");
+                            add("科研情况" + finalI);
                             add("时间");
                         }});
                         break;
                     case 1:
                         headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（论文成果）");
-                            add("论文成果" + finalI);
-                            add("论文名称");
+                            add("辅导员信息统计汇总表（科研情况）");
+                            add("科研情况" + finalI);
+                            add("成果类型");
                         }});
                         break;
                     case 2:
                         headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（论文成果）");
-                            add("论文成果" + finalI);
-                            add("作者位次");
+                            add("辅导员信息统计汇总表（科研情况）");
+                            add("科研情况" + finalI);
+                            add("成果名称");
                         }});
                         break;
                     case 3:
                         headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（论文成果）");
-                            add("论文成果" + finalI);
-                            add("期刊名称");
+                            add("辅导员信息统计汇总表（科研情况）");
+                            add("科研情况" + finalI);
+                            add("成果级别");
                         }});
                         break;
                     case 4:
                         headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（论文成果）");
-                            add("论文成果" + finalI);
-                            add("期刊级别");
-                        }});
-                        break;
-                }
-            }
-        }
-        return headList;
-    }
-
-    public static List<List<String>> ExcelHead4() {
-        List<List<String>> headList = new ArrayList();
-
-        headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（课题研究）");
-            add("序号");
-            add("序号");
-        }});
-        headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（课题研究）");
-            add("学院");
-            add("学院");
-        }});
-        headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（课题研究）");
-            add("姓名");
-            add("姓名");
-        }});
-        for (int i = 1;i<31; i++) {
-            for (int j = 0; j < 6; j++){
-                int finalI = i;
-                switch (j) {
-                    case 0:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（课题研究）");
-                            add("课题研究" + finalI);
-                            add("立项时间");
-                        }});
-                        break;
-                    case 1:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（课题研究）");
-                            add("课题研究" + finalI);
-                            add("项目名称");
-                        }});
-                        break;
-                    case 2:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（课题研究）");
-                            add("课题研究" + finalI);
+                            add("辅导员信息统计汇总表（科研情况）");
+                            add("科研情况" + finalI);
                             add("作者位次");
-                        }});
-                        break;
-                    case 3:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（课题研究）");
-                            add("课题研究" + finalI);
-                            add("立项单位");
-                        }});
-                        break;
-                    case 4:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（课题研究）");
-                            add("课题研究" + finalI);
-                            add("项目编号");
                         }});
                         break;
                     case 5:
                         headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（课题研究）");
-                            add("课题研究" + finalI);
-                            add("项目级别");
+                            add("辅导员信息统计汇总表（科研情况）");
+                            add("科研情况" + finalI);
+                            add("出版物名称/项目编号");
                         }});
                         break;
                 }
@@ -396,73 +333,143 @@ public class TeachStaffExportHead {
         return headList;
     }
 
-    public static List<List<String>> ExcelHead5() {
-        List<List<String>> headList = new ArrayList();
-
-        headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（著作）");
-            add("序号");
-            add("序号");
-        }});
-        headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（著作）");
-            add("学院");
-            add("学院");
-        }});
-        headList.add(new ArrayList() {{
-            add("辅导员信息统计汇总表（著作）");
-            add("姓名");
-            add("姓名");
-        }});
-        for (int i = 1;i < 11; i++) {
-            for (int j = 0; j < 6; j++){
-                int finalI = i;
-                switch (j) {
-                    case 0:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（著作）");
-                            add("著作" + finalI);
-                            add("出版时间");
-                        }});
-                        break;
-                    case 1:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（著作）");
-                            add("著作" + finalI);
-                            add("著作名称");
-                        }});
-                        break;
-                    case 2:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（著作）");
-                            add("著作" + finalI);
-                            add("作者位次");
-                        }});
-                        break;
-                    case 3:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（著作）");
-                            add("著作" + finalI);
-                            add("出版社名称");
-                        }});
-                        break;
-                    case 4:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（著作）");
-                            add("著作" + finalI);
-                            add("字数");
-                        }});
-                        break;
-                    case 5:
-                        headList.add(new ArrayList() {{
-                            add("辅导员信息统计汇总表（著作）");
-                            add("著作" + finalI);
-                            add("著作获奖情况");
-                        }});
-                        break;
-                }
-            }
-        }
-        return headList;
-    }
+//    public static List<List<String>> ExcelHead4() {
+//        List<List<String>> headList = new ArrayList();
+//
+//        headList.add(new ArrayList() {{
+//            add("辅导员信息统计汇总表（课题研究）");
+//            add("序号");
+//            add("序号");
+//        }});
+//        headList.add(new ArrayList() {{
+//            add("辅导员信息统计汇总表（课题研究）");
+//            add("学院");
+//            add("学院");
+//        }});
+//        headList.add(new ArrayList() {{
+//            add("辅导员信息统计汇总表（课题研究）");
+//            add("姓名");
+//            add("姓名");
+//        }});
+//        for (int i = 1;i<31; i++) {
+//            for (int j = 0; j < 6; j++){
+//                int finalI = i;
+//                switch (j) {
+//                    case 0:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（课题研究）");
+//                            add("课题研究" + finalI);
+//                            add("立项时间");
+//                        }});
+//                        break;
+//                    case 1:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（课题研究）");
+//                            add("课题研究" + finalI);
+//                            add("项目名称");
+//                        }});
+//                        break;
+//                    case 2:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（课题研究）");
+//                            add("课题研究" + finalI);
+//                            add("作者位次");
+//                        }});
+//                        break;
+//                    case 3:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（课题研究）");
+//                            add("课题研究" + finalI);
+//                            add("立项单位");
+//                        }});
+//                        break;
+//                    case 4:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（课题研究）");
+//                            add("课题研究" + finalI);
+//                            add("项目编号");
+//                        }});
+//                        break;
+//                    case 5:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（课题研究）");
+//                            add("课题研究" + finalI);
+//                            add("项目级别");
+//                        }});
+//                        break;
+//                }
+//            }
+//        }
+//        return headList;
+//    }
+//
+//    public static List<List<String>> ExcelHead5() {
+//        List<List<String>> headList = new ArrayList();
+//
+//        headList.add(new ArrayList() {{
+//            add("辅导员信息统计汇总表（著作）");
+//            add("序号");
+//            add("序号");
+//        }});
+//        headList.add(new ArrayList() {{
+//            add("辅导员信息统计汇总表（著作）");
+//            add("学院");
+//            add("学院");
+//        }});
+//        headList.add(new ArrayList() {{
+//            add("辅导员信息统计汇总表（著作）");
+//            add("姓名");
+//            add("姓名");
+//        }});
+//        for (int i = 1;i < 11; i++) {
+//            for (int j = 0; j < 6; j++){
+//                int finalI = i;
+//                switch (j) {
+//                    case 0:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（著作）");
+//                            add("著作" + finalI);
+//                            add("出版时间");
+//                        }});
+//                        break;
+//                    case 1:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（著作）");
+//                            add("著作" + finalI);
+//                            add("著作名称");
+//                        }});
+//                        break;
+//                    case 2:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（著作）");
+//                            add("著作" + finalI);
+//                            add("作者位次");
+//                        }});
+//                        break;
+//                    case 3:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（著作）");
+//                            add("著作" + finalI);
+//                            add("出版社名称");
+//                        }});
+//                        break;
+//                    case 4:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（著作）");
+//                            add("著作" + finalI);
+//                            add("字数");
+//                        }});
+//                        break;
+//                    case 5:
+//                        headList.add(new ArrayList() {{
+//                            add("辅导员信息统计汇总表（著作）");
+//                            add("著作" + finalI);
+//                            add("著作获奖情况");
+//                        }});
+//                        break;
+//                }
+//            }
+//        }
+//        return headList;
+//    }
 }

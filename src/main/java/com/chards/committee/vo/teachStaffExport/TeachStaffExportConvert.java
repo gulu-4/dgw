@@ -39,7 +39,7 @@ public class TeachStaffExportConvert {
             data.add(i+1);
             data.add(teachStaffBasicExportVO.getDepartment());
             data.add(teachStaffBasicExportVO.getName());
-            List<String> qualificationCertificate= Arrays.asList(teachStaffBasicExportVO.getAwards().split("#"));
+            List<String> qualificationCertificate= Arrays.asList(teachStaffBasicExportVO.getQualificationCertificate().split("#"));
             for(String v : qualificationCertificate){
                 String[] strings = v.split("%");
                 if (strings.length > 1){
@@ -62,6 +62,29 @@ public class TeachStaffExportConvert {
                     }
                 }
 
+            }
+            list.add(data);
+        }
+        return list;
+    }
+
+    public static List<List<Object>> getResearchesList(List<TeachStaffBasicExportVO> teachStaffBasicExportVOList) {
+        List<List<Object>> list = new ArrayList<List<Object>>();
+        for (int i = 0; i < teachStaffBasicExportVOList.size(); i++) {
+            TeachStaffBasicExportVO teachStaffBasicExportVO = teachStaffBasicExportVOList.get(i);
+            List<Object> data = new ArrayList<Object>();
+            data.add(i + 1);
+            data.add(teachStaffBasicExportVO.getDepartment());
+            data.add(teachStaffBasicExportVO.getName());
+            List<String> researchesList = Arrays.asList(teachStaffBasicExportVO.getResearches().split("#"));
+            for (String v : researchesList) {
+                String[] strings = v.split("%");
+                for(String s: strings) {
+                    if (s.equals("")){
+                        s = "无";
+                    }
+                    data.add(s);
+                }
             }
             list.add(data);
         }
