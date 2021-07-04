@@ -11,7 +11,7 @@ import java.util.List;
  */
 @Data
 public class BackSchoolAdminGetAndUpdateDTO {
-    private AdminWorkDTO adminWorkDTO;
+//    private AdminWorkDTO adminWorkDTO;
     private List<UserDataScope> userDataScopeList;
     private Integer pass;
 

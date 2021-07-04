@@ -401,7 +401,8 @@ public class DocumentController {
 	}
 
 	/**
-	 * 2020年秋季离校申请导出（尚未适配最新的权限管理机制，10.4，poplar）
+	 * 2020年秋季离校申请导出
+	 * 2021年夏季学期离校申请复用
 	 * @param token
 	 * @param backSchoolDateAreaDTO
 	 * @param response
@@ -412,14 +413,14 @@ public class DocumentController {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+
 			List<LeaveSchoolTztzAutumnGetALLVO> dataList = leaveSchoolTztzAutumnService.getAdminManagementStudentLeaveSchoolByDateArea(backSchoolDateAreaDTO);
 			List<LeaveSchoolTztzAutumnGetALLVO1> leaveSchoolTztzAutumnGetALLVO1List = new ArrayList<>();
 			dataList.forEach(data -> {
 				LeaveSchoolTztzAutumnGetALLVO1 leaveSchoolTztzAutumnGetALLVO1 = setVO1ByVO(data);
 				leaveSchoolTztzAutumnGetALLVO1List.add(leaveSchoolTztzAutumnGetALLVO1);
 			});
-			easyExeclService.writeToResponse(response, "leaveSchoolTztzAutumn - " + System.currentTimeMillis(), leaveSchoolTztzAutumnGetALLVO1List, LeaveSchoolTztzAutumnGetALLVO1.class);
+			easyExeclService.writeToResponse(response, "leaveSchool - " + System.currentTimeMillis(), leaveSchoolTztzAutumnGetALLVO1List, LeaveSchoolTztzAutumnGetALLVO1.class);
 			return;
 		}
 		response.getWriter().write("no permission");

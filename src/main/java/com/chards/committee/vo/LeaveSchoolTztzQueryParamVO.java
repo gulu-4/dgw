@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class LeaveSchoolTztzQueryParamVO {
-    private AdminWorkDTO adminWorkDTO;
+//    private AdminWorkDTO adminWorkDTO;
     private Integer pass; // 审核状态，0未审，1拒绝，2批准
 
     private String stuNum; //学号

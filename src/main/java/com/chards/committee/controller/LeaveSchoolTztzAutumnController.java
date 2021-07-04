@@ -48,16 +48,11 @@ public class LeaveSchoolTztzAutumnController {
     /**
      * 分页查询所有数据
      *
-     * @param pass 状态
      * @return 所有数据
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping
     public R selectAll(Page<LeaveSchoolTztzAutumnGetALLVO> page, LeaveSchoolTztzQueryParamVO leaveSchoolTztzQueryParamVO) {
-//        LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO = new LeaveSchoolTztzAutumnAdminGetAndUpdateDTO();
-//        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
-//        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setPass(pass);
-        leaveSchoolTztzQueryParamVO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         return R.success(leaveSchoolTztzAutumnService.getAdminManagementStudentLeaveSchoolTztzAutumn(page,leaveSchoolTztzQueryParamVO));
     }
 
@@ -114,7 +109,7 @@ public class LeaveSchoolTztzAutumnController {
     @PreAuthorize("hasAuthority('student_update')")
     @PostMapping("/update")
     public R update(@Valid @RequestBody BackSchoolPassVO leaveSchoolPassVO) {
-        if (stuInfoService.isContainsReturnIsWork(leaveSchoolPassVO.getStuNum())) {
+        if (stuInfoService.isWithinDataScope(leaveSchoolPassVO.getStuNum())) {
             LeaveSchoolTztzAutumn leaveSchoolTztzAutumn = new LeaveSchoolTztzAutumn();
             leaveSchoolTztzAutumn.setStuNum(leaveSchoolPassVO.getStuNum());
             leaveSchoolTztzAutumn.setPass(leaveSchoolPassVO.getPass());
@@ -134,7 +129,8 @@ public class LeaveSchoolTztzAutumnController {
     @PostMapping("/all")
     public R updateAll(Integer pass) {
         LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO = new LeaveSchoolTztzAutumnAdminGetAndUpdateDTO();
-        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+//        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setUserDataScopeList(RequestUtil.getUserDataScopeListForFuzzyQuery());
         leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setPass(pass == null ? 2 : pass == 2 ? 2 : 1);
         leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setReviewedTime(LocalDateTime.now());
         leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setReviewedBy(RequestUtil.getId());
@@ -162,10 +158,13 @@ public class LeaveSchoolTztzAutumnController {
 	@PreAuthorize("hasRole('STUDENT')")
 	@PostMapping("/deleteStu/{id}")
 	public R deleteStuLeaveInfo(@PathVariable String id) {
-      if (leaveSchoolTztzAutumnService.getById(id)==null){
+        if (leaveSchoolTztzAutumnService.getById(id)==null){
           BusinessException.error(Code.RESULT_DATA_NONE);
-      }
-      return R.success(leaveSchoolTztzAutumnService.removeById(id));
+        }
+        if (stuInfoService.isWithinDataScope(id)) {
+            return R.success(leaveSchoolTztzAutumnService.removeById(id));
+        }
+        return R.failure(Code.PERMISSION_NO_ACCESS);
 	}
 
     /**

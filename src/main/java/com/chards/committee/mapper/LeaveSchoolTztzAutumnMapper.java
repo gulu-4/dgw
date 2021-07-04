@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.domain.LeaveSchoolTztzAutumn;
 import com.chards.committee.dto.BackSchoolDateAreaDTO;
 import com.chards.committee.dto.LeaveSchoolTztzAutumnAdminGetAndUpdateDTO;
+import com.chards.committee.util.DataScope;
 import com.chards.committee.vo.LeaveSchoolTztzAutumnGetALLVO;
 import com.chards.committee.vo.LeaveSchoolTztzQueryParamVO;
 import org.apache.ibatis.annotations.Param;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public interface LeaveSchoolTztzAutumnMapper extends BaseMapper<LeaveSchoolTztzAutumn> {
     //获取管理员管理的学生的离校审核
+    @DataScope()
     Page<LeaveSchoolTztzAutumnGetALLVO> getAdminManagementStudentLeaveSchoolTztzAutumn(@Param("page") Page<LeaveSchoolTztzAutumnGetALLVO> page, @Param("param") LeaveSchoolTztzQueryParamVO leaveSchoolTztzQueryParamVO);
 
     boolean updateAdminManagementStudentLeaveSchoolPass(@Param("param") LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO);
@@ -27,5 +29,6 @@ public interface LeaveSchoolTztzAutumnMapper extends BaseMapper<LeaveSchoolTztzA
      * @param backSchoolDateAreaDTO
      * @return
      */
+    @DataScope()
     List<LeaveSchoolTztzAutumnGetALLVO> getAdminManagementStudentLeaveSchoolByDateArea(@Param("param") BackSchoolDateAreaDTO backSchoolDateAreaDTO);
 }

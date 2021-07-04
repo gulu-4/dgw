@@ -3,6 +3,7 @@ package com.chards.committee.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author LiuSu
@@ -10,7 +11,8 @@ import java.time.LocalDateTime;
  */
 @Data
 public class LeaveSchoolTztzAutumnAdminGetAndUpdateDTO {
-    private AdminWorkDTO adminWorkDTO;
+//    记录用户权限范围，以提供给Mapper层做查询
+    private List<UserDataScope> userDataScopeList;
     private Integer pass;
 
 //    增加审核时间
