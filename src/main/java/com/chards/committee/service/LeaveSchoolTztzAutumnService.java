@@ -7,6 +7,7 @@ import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.LeaveSchoolTztzAutumn;
 import com.chards.committee.dto.BackSchoolDateAreaDTO;
 import com.chards.committee.dto.LeaveSchoolTztzAutumnAdminGetAndUpdateDTO;
+import com.chards.committee.dto.UserInfo;
 import com.chards.committee.mapper.LeaveSchoolTztzAutumnMapper;
 import com.chards.committee.vo.CoreAdminBasicVO;
 import com.chards.committee.vo.LeaveSchoolTztzAutumnGetALLVO;
@@ -27,6 +28,9 @@ import java.util.List;
 public class LeaveSchoolTztzAutumnService extends ServiceImpl<LeaveSchoolTztzAutumnMapper, LeaveSchoolTztzAutumn> {
     @Autowired
     private CoreAdminService coreAdminService;
+
+    @Autowired
+    UserService userService;
 
     public Page<LeaveSchoolTztzAutumnGetALLVO> getAdminManagementStudentLeaveSchoolTztzAutumn(Page<LeaveSchoolTztzAutumnGetALLVO> page, LeaveSchoolTztzQueryParamVO leaveSchoolTztzQueryParamVO) {
         Page<LeaveSchoolTztzAutumnGetALLVO> leaveSchoolTztzAutumnGetALLVOPage = baseMapper.getAdminManagementStudentLeaveSchoolTztzAutumn(page,leaveSchoolTztzQueryParamVO);
@@ -51,9 +55,7 @@ public class LeaveSchoolTztzAutumnService extends ServiceImpl<LeaveSchoolTztzAut
      * 根据admin工号返回姓名
      */
     public String getCoreAdminName(String id){
-        CoreAdmin coreAdmin = coreAdminService.getById(id);
-        CoreAdminBasicVO coreAdminBasicVO = new CoreAdminBasicVO();
-        BeanUtils.copyProperties(coreAdmin,coreAdminBasicVO);
-        return coreAdminBasicVO.getName();
+        UserInfo userInfo = userService.getUserById(id);
+        return userInfo.getName();
     }
 }
