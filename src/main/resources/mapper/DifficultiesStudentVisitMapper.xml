@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.DifficultiesStudentVisitMapper">
+    <resultMap id="DetailMap" type="com.chards.committee.vo.DifficultiesStudentVisitGetVO">
+        <result column="stu_number" property="stuNumber"></result>
+        <result column="name" property="name"></result>
+        <result column="gender" property="gender"></result>
+        <result column="department" property="department"></result>
+        <collection property="difficultiesStudentVisitList" ofType="com.chards.committee.domain.DifficultiesStudentVisit">
+            <result column="id" property="id"></result>
+            <result column="stu_num" property="stuNum"></result>
+            <result column="visit_time" property="visitTime"></result>
+            <result column="summary" property="summary"></result>
+            <result column="materials" property="materials"></result>
+            <result column="remark" property="remark"></result>
+            <result column="visitors" property="visitors"></result>
+            <result column="create_time" property="createTime"></result>
+            <result column="update_time" property="updateTime"></result>
+        </collection>
+    </resultMap>
+    <select id="getStudentsVisits" resultMap="DetailMap">
+        select s.id as stu_number,s.name,s.gender,s.department,s.classes,
+        s.major,s.state,s.grade,s.education_background,
+        dst.*
+        from stu_info as s inner join difficulties_student_visit as dst on s.id = dst.stu_num
+        <where>
+            <if test="param.department != null">
+                and s.department LIKE CONCAT("%",#{param.department},"%")
+            </if>
+            <if test="param.stuName != null">
+                and s.name LIKE CONCAT("%",#{param.stuName},"%")
+            </if>
+            <if test="param.stuNum != null">
+                and s.id = #{param.stuNum}
+            </if>
+
+            <if test="param.startTime != null">
+                and unix_timestamp(dst.visit_time)  <![CDATA[ >= ]]> unix_timestamp(#{param.startTime,jdbcType=VARCHAR})
+            </if>
+            <if test="param.endTime != null">
+                and unix_timestamp(dst.visit_time)  <![CDATA[ <= ]]> unix_timestamp(#{param.endTime,jdbcType=VARCHAR})
+            </if>
+        </where>
+    </select>
+</mapper>

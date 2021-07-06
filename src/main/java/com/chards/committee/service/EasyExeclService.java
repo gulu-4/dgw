@@ -46,7 +46,7 @@ public class EasyExeclService {
      * 在同一个工作簿中写入多张表格
      */
     public <T> void writeMoreToResponse(HttpServletResponse response, HttpServletRequest request,String filename, List<T> data, Class<T> dataClass){
-        String[] titles = {"基本信息","奖惩情况","培训经历","论文成果","课题研究","著作"};
+        String[] titles = {"基本信息","奖惩情况","培训经历","科研情况"};
         List<List<List<String>>> exportHead = new ArrayList<List<List<String>>>();
         exportHead.add(TeachStaffExportHead.ExcelHead0());
         exportHead.add(TeachStaffExportHead.ExcelHead1());

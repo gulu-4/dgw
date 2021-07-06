@@ -26,11 +26,11 @@ spring:
       connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
       connection-test-query: SELECT 1
   profiles:
-    active: test
+    active: prod
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*.xml
-version: 10.6.30
+version: 10.6.33
 
 huawei:
   sms:
@@ -42,4 +42,4 @@ huawei:
     signature: 微学工  # 签名名称
 
 swagger:
-  enabled: true
+  enabled: false
