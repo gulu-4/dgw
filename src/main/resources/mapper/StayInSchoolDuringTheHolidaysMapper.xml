@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.StayInSchoolDuringTheHolidaysMapper">
+    <select id="adminSelectStayInSchoolDuringTheHolidays" resultType="com.chards.committee.vo.stayInSchoolDuringTheHolidays.StayInSchoolDuringTheHolidaysInfoVO">
+        select stay_in_school_during_the_holidays.*,
+        stu_info.name,
+        stu_info.department,
+        stu_info.major,
+        stu_info.classes,
+        stu_info.education_background,
+        stu_info.state,
+        stu_info.grade
+        from stay_in_school_during_the_holidays
+        inner join
+        stu_info
+        on stay_in_school_during_the_holidays.stu_num = stu_info.id
+        <if test="param.pass != null ">
+            and stay_in_school_during_the_holidays. = #{param.status,jdbcType=INTEGER}
+        </if>
+        <if test="param.stuNum != null">
+            and stu_info.id = #{param.stuNum,jdbcType = VARCHAR}
+        </if>
+        <if test="param.department != null">
+            and stu_info.department = #{param.department,jdbcType = VARCHAR}
+        </if>
+        <if test="param.grade != null">
+            and stu_info.grade = #{param.grade,jdbcType = VARCHAR}
+        </if>
+        <if test="param.beginDate != null">
+            and unix_timestamp(stay_in_school_during_the_holidays.start_date)  <![CDATA[ >= ]]> unix_timestamp(#{param.startDate,jdbcType=VARCHAR})
+        </if>
+        <if test="param.endDate != null">
+            and unix_timestamp(stay_in_school_during_the_holidays.end_date)  <![CDATA[ <= ]]> unix_timestamp(#{param.endDate,jdbcType=VARCHAR})
+        </if>
+    </select>
+
+</mapper>

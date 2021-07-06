@@ -271,7 +271,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         parentsInfo.setStuNum(stuInfo.getId());
         CoreAdmin coreAdmin = coreAdminService.getById(stuInfo.getCounsellorNum());
         Assert.notNull(coreAdmin,"该辅导员工号不存在");
-        if (!isWork(coreAdmin,stuInfo,true))BusinessException.error("辅导员没有该学院年级的权限");
+//        if (!isWork(coreAdmin,stuInfo,true))BusinessException.error("辅导员没有该学院年级的权限");
         stuInfo.setCounsellorName(coreAdmin.getName());
         stuInfo.setCounsellorPhone(coreAdmin.getPhone());
         return updateById(stuInfo) && parentsInfoService.updateById(parentsInfo);

@@ -16,6 +16,12 @@ public class LeaveSchoolTztzAutumnGetALLVO {
     @ExcelProperty("学号")
     private String stuNum;
 
+    @ExcelProperty("是否全程留校")
+    private boolean stay_in_school;
+
+    @ExcelProperty("留校理由")
+    private String stayInSchoolReason;
+
     @ExcelProperty("姓名")
     private String name;
 

@@ -62,8 +62,8 @@ public class StuInfoAddVO implements Serializable {
 	private String originLocation;
 	private String state;
 	private String note;
-	@NotBlank(message = "学生就读状态不能为空")
-	private String statusOfCurrentStudents;
 
+//	@NotBlank(message = "学生就读状态不能为空")
+	private String statusOfCurrentStudents;
 
 }

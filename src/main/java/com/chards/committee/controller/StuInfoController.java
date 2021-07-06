@@ -83,6 +83,10 @@ public class StuInfoController {
 			BusinessException.error(Code.DATA_ALREADY_EXISTED);
 		}
 		StuInfo stuInfo=new StuInfo();
+//		由于前端还没适配，此处先对StatusOfCurrentStudents单独做做处理
+		if (stuInfoAddVO.getStatusOfCurrentStudents() == null){
+			stuInfoAddVO.setStatusOfCurrentStudents("在读");
+		}
 		BeanUtils.copyProperties(stuInfoAddVO,stuInfo);
 		CoreAdmin coreAdmin = coreAdminService.getById(stuInfoAddVO.getCounsellorNum());
 		Assert.notNull(coreAdmin,"该辅导员工号不存在");
@@ -97,7 +101,7 @@ public class StuInfoController {
 	 * @param stuInfoId {@code Long}
 	 * @return {@link R}
 	 */
-	@PreAuthorize("hasAuthority('student_update')")
+	@PreAuthorize("hasRole('ROOT')")
 	@PostMapping("remove/{stuInfoId}")
 	public R remove(@PathVariable String stuInfoId) {
 		return R.success(stuInfoService.removeById(stuInfoId));
@@ -356,7 +360,6 @@ public class StuInfoController {
 
 	/**
 	 * 传递多个学生学号，一键让多个学生毕业
-	 * @param ids
 	 * @return
 	 */
 	// TODO

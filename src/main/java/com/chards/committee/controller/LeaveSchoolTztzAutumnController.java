@@ -6,6 +6,7 @@ package com.chards.committee.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.config.BusinessException;
+import com.chards.committee.domain.BackSchool;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.LeaveSchoolTztzAutumn;
 import com.chards.committee.domain.StuInfo;
@@ -15,8 +16,11 @@ import com.chards.committee.dto.UserInfo;
 import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.LeaveSchoolTztzAutumnService;
 import com.chards.committee.service.StuInfoService;
+import com.chards.committee.service.UserService;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +36,7 @@ import java.time.LocalDateTime;
  */
 @RestController
 @RequestMapping("/leaveSchoolTztzAutumn")
+@Api(tags = "离校系统模块")
 public class LeaveSchoolTztzAutumnController {
     /**
      * 服务对象
@@ -45,6 +50,9 @@ public class LeaveSchoolTztzAutumnController {
     @Autowired
     private CoreAdminService coreAdminService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 分页查询所有数据
      *
@@ -52,6 +60,7 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('student_select')")
     @GetMapping
+    @ApiOperation(value = "分页、筛选查询所有数据")
     public R selectAll(Page<LeaveSchoolTztzAutumnGetALLVO> page, LeaveSchoolTztzQueryParamVO leaveSchoolTztzQueryParamVO) {
         return R.success(leaveSchoolTztzAutumnService.getAdminManagementStudentLeaveSchoolTztzAutumn(page,leaveSchoolTztzQueryParamVO));
     }
@@ -63,6 +72,7 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
     @GetMapping("/info")
+    @ApiOperation("学生查询自己的数据")
     public R getLeaveInfoById() {
         UserInfo userInfo = RequestUtil.getLoginUser();
         return R.success(leaveSchoolTztzAutumnService.getById(userInfo.getId()));
@@ -76,6 +86,7 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
     @PostMapping
+    @ApiOperation("填写申请")
     public R insert(@RequestBody LeaveSchoolTztzAutumn leaveSchoolTztzAutumn) {
         UserInfo userInfo = RequestUtil.getLoginUser();
         leaveSchoolTztzAutumn.setStuNum(userInfo.getId());
@@ -92,6 +103,7 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/resubmitPass")
+    @ApiOperation("重新填写申请")
     public R updatePassInfo(@RequestBody LeaveSchoolTztzAutumn leaveSchoolTztzAutumn) {
         UserInfo userInfo = RequestUtil.getLoginUser();
         leaveSchoolTztzAutumn.setStuNum(userInfo.getId());
@@ -108,6 +120,7 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('student_update')")
     @PostMapping("/update")
+    @ApiOperation("老师进行审批")
     public R update(@Valid @RequestBody BackSchoolPassVO leaveSchoolPassVO) {
         if (stuInfoService.isWithinDataScope(leaveSchoolPassVO.getStuNum())) {
             LeaveSchoolTztzAutumn leaveSchoolTztzAutumn = new LeaveSchoolTztzAutumn();
@@ -127,6 +140,7 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('student_update')")
     @PostMapping("/all")
+    @ApiOperation("一键审批")
     public R updateAll(Integer pass) {
         LeaveSchoolTztzAutumnAdminGetAndUpdateDTO leaveSchoolTztzAutumnAdminGetAndUpdateDTO = new LeaveSchoolTztzAutumnAdminGetAndUpdateDTO();
 //        leaveSchoolTztzAutumnAdminGetAndUpdateDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
@@ -139,24 +153,34 @@ public class LeaveSchoolTztzAutumnController {
 
 
     /**
-     * 学生删除自己已填写返校数据
+     * 学生删除自己已填写离校数据
      *
      * @return 删除结果
      */
     @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
     @PostMapping("/delete")
+    @ApiOperation("学生删除自己未通过审核的申请")
     public R deleteStu() {
         UserInfo userInfo = RequestUtil.getLoginUser();
-        return R.success(leaveSchoolTztzAutumnService.removeById(userInfo.getId()));
+        LeaveSchoolTztzAutumn leaveSchoolTztzAutumn = leaveSchoolTztzAutumnService.getById(userInfo.getId());
+        if (leaveSchoolTztzAutumn != null)
+        {
+            if (leaveSchoolTztzAutumn.getPass() != 2){
+                return R.success(leaveSchoolTztzAutumnService.removeById(userInfo.getId()));
+            }
+            return R.failure("当前状态不能删除申请！");
+        }
+        return R.failure(Code.RESULT_DATA_NONE);
     }
 
     /**
-     * 辅导员删除自己管理学生返校数据
+     * 辅导员删除自己管理学生申请
      *
      * @return 删除结果
      */
 	@PreAuthorize("hasRole('STUDENT')")
 	@PostMapping("/deleteStu/{id}")
+    @ApiOperation("辅导员删除自己管理的学生的申请")
 	public R deleteStuLeaveInfo(@PathVariable String id) {
         if (leaveSchoolTztzAutumnService.getById(id)==null){
           BusinessException.error(Code.RESULT_DATA_NONE);
@@ -174,6 +198,7 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
     @GetMapping("/passInfo")
+    @ApiOperation("学生获取审核步骤")
     public R getPassInfo() {
         UserInfo userInfo = RequestUtil.getLoginUser();
         LeaveSchoolTztzAutumn lSTA = leaveSchoolTztzAutumnService.getById(userInfo.getId());
@@ -187,12 +212,15 @@ public class LeaveSchoolTztzAutumnController {
      */
     @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
     @GetMapping("/passInfoPdf")
+    @ApiOperation("学生获取信息以生成pdf")
     public R getPassInfoPdf() {
         UserInfo userInfo = RequestUtil.getLoginUser();
         LeaveSchoolTztzAutumn lSTA = leaveSchoolTztzAutumnService.getById(userInfo.getId());
+        if (lSTA == null || lSTA.getPass() != 2)
+            return R.failure("当前无法生成通知单！");
         StuInfo stuInfo = stuInfoService.getById(userInfo.getId());
-        CoreAdmin coreAdmin = coreAdminService.getById(lSTA.getReviewedBy());
-        return  R.success(getPassInfoDTO(lSTA,stuInfo,coreAdmin));
+        UserInfo teacher = userService.getUserById(lSTA.getReviewedBy());
+        return  R.success(getPassInfoDTO(lSTA,stuInfo,teacher));
     }
 
 //    /**
@@ -227,16 +255,16 @@ public class LeaveSchoolTztzAutumnController {
      * 这里先使用原返校相关内容，之后再确定需要信息进行更新
      * @param lSTA
      * @param stuInfo
-     * @param coreAdmin
+     * @param userInfo
      * @return
      */
-    private PassInfoDTO getPassInfoDTO(LeaveSchoolTztzAutumn lSTA , StuInfo stuInfo, CoreAdmin coreAdmin){
+    private PassInfoDTO getPassInfoDTO(LeaveSchoolTztzAutumn lSTA , StuInfo stuInfo, UserInfo userInfo){
         PassInfoDTO passInfoDTO=new PassInfoDTO();
         passInfoDTO.setStuId(stuInfo.getId());
         passInfoDTO.setName(stuInfo.getName());
         passInfoDTO.setDate(lSTA.getDate());
         passInfoDTO.setLoc(lSTA.getLoc());
-        passInfoDTO.setReviewedBy(coreAdmin.getName());
+        passInfoDTO.setReviewedBy(userInfo.getName());
         passInfoDTO.setReviewedTime(lSTA.getReviewedTime());
         passInfoDTO.setEmergencyCallee(lSTA.getEmergencyCallee());
         passInfoDTO.setDepartment(stuInfo.getDepartment());

@@ -27,6 +27,15 @@ public class LeaveSchoolTztzAutumn extends Model<LeaveSchoolTztzAutumn> {
     @TableId(value = "stu_num")
     @ExcelProperty("学号")
     private String stuNum;
+
+    @TableField("stay_in_school")
+    @ExcelProperty("是否全程留校")
+    private boolean stayInSchool;
+
+    @TableField("stay_in_school_reason")
+    @ExcelProperty("留校理由")
+    private String stayInSchoolReason;
+
     // 申请事项：寒假离校
     @TableField("remark")
     @ExcelProperty("其他说明")
@@ -49,22 +58,22 @@ public class LeaveSchoolTztzAutumn extends Model<LeaveSchoolTztzAutumn> {
     @TableField("pass")
     @ExcelProperty("是否批准")
     private Integer pass;
-    //呼吸道感染（未使用）
-    @TableField("q1")
-    @ExcelProperty("呼吸道感染")
-    private Integer q1;
-    //境外旅居史（未使用）
-    @TableField("q2")
-    @ExcelProperty("境外旅居史")
-    private Integer q2;
-    //接触境外归国人员（未使用）
-    @TableField("q3")
-    @ExcelProperty("接触境外归国人员")
-    private Integer q3;
-    //发热、干咳、乏力等症状（未使用）
-    @TableField("q4")
-    @ExcelProperty("发热、干咳、乏力等症状")
-    private Integer q4;
+//    //呼吸道感染（未使用）
+//    @TableField("q1")
+//    @ExcelProperty("呼吸道感染")
+//    private Integer q1;
+//    //境外旅居史（未使用）
+//    @TableField("q2")
+//    @ExcelProperty("境外旅居史")
+//    private Integer q2;
+//    //接触境外归国人员（未使用）
+//    @TableField("q3")
+//    @ExcelProperty("接触境外归国人员")
+//    private Integer q3;
+//    //发热、干咳、乏力等症状（未使用）
+//    @TableField("q4")
+//    @ExcelProperty("发热、干咳、乏力等症状")
+//    private Integer q4;
 
 
     //审核人
