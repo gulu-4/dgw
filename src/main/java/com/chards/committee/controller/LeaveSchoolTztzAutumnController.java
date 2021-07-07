@@ -178,10 +178,11 @@ public class LeaveSchoolTztzAutumnController {
      *
      * @return 删除结果
      */
-	@PreAuthorize("hasRole('STUDENT')")
+	@PreAuthorize("hasAuthority('student_update')")
 	@PostMapping("/deleteStu/{id}")
     @ApiOperation("辅导员删除自己管理的学生的申请")
 	public R deleteStuLeaveInfo(@PathVariable String id) {
+        System.out.println(stuInfoService.isWithinDataScope(id));
         if (leaveSchoolTztzAutumnService.getById(id)==null){
           BusinessException.error(Code.RESULT_DATA_NONE);
         }
@@ -268,6 +269,8 @@ public class LeaveSchoolTztzAutumnController {
         passInfoDTO.setReviewedTime(lSTA.getReviewedTime());
         passInfoDTO.setEmergencyCallee(lSTA.getEmergencyCallee());
         passInfoDTO.setDepartment(stuInfo.getDepartment());
+        passInfoDTO.setStayInSchool(lSTA.getStayInSchool());
+        passInfoDTO.setStayInSchoolReason(lSTA.getStayInSchoolReason());
        return passInfoDTO;
     }
 

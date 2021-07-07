@@ -166,7 +166,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
 //        userTokenDTO.setRoles(Arrays.asList(Constant.STUDENT));
 //        userTokenDTO.setPermissionsList(Arrays.asList("OWN_INFO_CRUD"));
                 String token = UUID.randomUUID().toString();
-                redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
+                redisTemplate.opsForValue().set(token, userTokenDTO, 120, TimeUnit.HOURS);
                 UserLoginRespVO resp = new UserLoginRespVO();
                 resp.setToken(token);
                 resp.setName(stuInfo.getName());

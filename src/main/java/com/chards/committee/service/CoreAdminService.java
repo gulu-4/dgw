@@ -160,7 +160,7 @@ public class CoreAdminService extends ServiceImpl<CoreAdminMapper, CoreAdmin> {
         System.out.println(userDataScopeList);
         userTokenDTO.setUserDataScopeList(userDataScopeList);
         String token = UUID.randomUUID().toString();
-        redisTemplate.opsForValue().set(token, userTokenDTO, 24, TimeUnit.HOURS);
+        redisTemplate.opsForValue().set(token, userTokenDTO, 72, TimeUnit.HOURS);
         UserLoginRespVO resp = new UserLoginRespVO();
         resp.setToken(token);
         resp.setName(coreAdmin.getName());

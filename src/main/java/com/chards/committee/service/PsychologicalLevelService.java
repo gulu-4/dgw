@@ -2,10 +2,7 @@ package com.chards.committee.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chards.committee.domain.CoreAdmin;
-import com.chards.committee.domain.PsychologicalInvention;
-import com.chards.committee.domain.PsychologicalLevel;
-import com.chards.committee.domain.StuInfo;
+import com.chards.committee.domain.*;
 import com.chards.committee.dto.PsychologicalLevelGetDTO;
 import com.chards.committee.dto.PsychologicalLevelRecordGetDTO;
 import com.chards.committee.dto.UserInfo;
@@ -186,8 +183,12 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
         List<PsychologicalLevelGetByStuNumVO1> psychologicalLevelGetByStuNumVO1List = baseMapper.getPsychologicalLevelByParams1(psychologicalLevelGetDTO);
         for (PsychologicalLevelGetByStuNumVO1 psychologicalLevelGetByStuNumVO1 : psychologicalLevelGetByStuNumVO1List){
             // 通过当前recorder 和 reviewer 获取老师信息
-            psychologicalLevelGetByStuNumVO1.setRecorder(getCoreAdminBasic(psychologicalLevelGetByStuNumVO1.getRecorder()).getName());
-            psychologicalLevelGetByStuNumVO1.setReviewer(getCoreAdminBasic(psychologicalLevelGetByStuNumVO1.getReviewer()).getName());
+            CoreAdminBasicVO coreAdminBasicVO1 = getCoreAdminBasic(psychologicalLevelGetByStuNumVO1.getRecorder());
+            if (coreAdminBasicVO1 != null)
+                psychologicalLevelGetByStuNumVO1.setRecorder(coreAdminBasicVO1.getName());
+            CoreAdminBasicVO coreAdminBasicVO2 = getCoreAdminBasic(psychologicalLevelGetByStuNumVO1.getReviewer());
+            if (coreAdminBasicVO2 != null)
+                psychologicalLevelGetByStuNumVO1.setReviewer(coreAdminBasicVO2.getName());
         }
         return psychologicalLevelGetByStuNumVO1List;
     }
@@ -227,6 +228,8 @@ public class PsychologicalLevelService extends ServiceImpl<PsychologicalLevelMap
     public CoreAdminBasicVO getCoreAdminBasic(String id){
 //        CoreAdmin coreAdmin = coreAdminService.getById(id);
         UserInfo userInfo = userService.getUserById(id);
+        if (userInfo == null)
+            return null;
         CoreAdminBasicVO coreAdminBasicVO = new CoreAdminBasicVO();
         BeanUtils.copyProperties(userInfo,coreAdminBasicVO);
         return coreAdminBasicVO;

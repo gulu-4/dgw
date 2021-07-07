@@ -30,7 +30,8 @@ public class LeaveSchoolTztzAutumn extends Model<LeaveSchoolTztzAutumn> {
 
     @TableField("stay_in_school")
     @ExcelProperty("是否全程留校")
-    private boolean stayInSchool;
+//    用Boolean，默认值为null，如果用boolean的话，默认值为false，用在updateById时会容易出错。
+    private Boolean stayInSchool;
 
     @TableField("stay_in_school_reason")
     @ExcelProperty("留校理由")

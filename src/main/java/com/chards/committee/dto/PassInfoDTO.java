@@ -1,5 +1,7 @@
 package com.chards.committee.dto;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -37,5 +39,9 @@ public class PassInfoDTO implements Serializable {
 
 	//学院信息
 	private String department;
+//	是否全程留校
+	private boolean stayInSchool;
+//	全程留校理由
+	private String stayInSchoolReason;
 
 }

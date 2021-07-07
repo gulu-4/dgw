@@ -36,6 +36,14 @@
     
 ## 更新日志（仅记录部分线上版本和历史线上版本）
 
+* 2021年7月7日 v10.7.2
+    * 修复离校审批接口审批完stayInSchool会变成False的问题（从默认值为false的boolean改成了默认值为null的Boolean）
+    
+* 2021年7月7日 v10.7.1
+    * 完善离校通知书信息接口
+    * 修复关爱对象导出异常(空指针问题，有曾经的兼职辅导员的信息被删除了)
+    * 增加全局异常处理（还有点问题，先注释掉了）
+    * 延长了token过期时间（教师3天，学生5天）
 
 * 2021年7月6日 v10.7.0
     * 仅允许超级管理员删除学生
@@ -270,7 +278,7 @@
     - 用docker ps 检查一下有没有还在运行的老服务，若有，先用docker stop关掉；
     - 再用下边的docker run命令可自动完成拉取和运行（后续可能会改成更方便的docker-compose方式），记得改要运行的镜像的版本号和容器名(2个地方)。
         - sudo docker run -d -p 9090:9090 --name committee_10_6_1 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.1
-        docker run -d -p 9090:9090 --name committee_10_6_26 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.6.30
+        docker run -d -p 9090:9090 --name committee_10_7_1 --network=newCommittee --volume=/home/newcommittee/java/log:/log  --volume=/home/eval/photos:/photos registry.cn-hangzhou.aliyuncs.com/xzszkj/kddgw:10.7.1
 - 版本回退
     - docker ps -a 查看所有历史版本
     - docker stop 新版本  容器名和容器id都可以
