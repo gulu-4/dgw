@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chards.committee.constant.Constant;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.StuInfo;
+import com.chards.committee.domain.User;
 import com.chards.committee.dto.*;
 import com.chards.committee.service.*;
 import com.chards.committee.util.RequestUtil;
@@ -583,8 +584,8 @@ public class DocumentController {
 			backSchoolGetAllVO1.setPass("未通过");
 		}
 		if (!StringUtils.isBlank(backSchoolGetAllVO.getReviewedBy())){
-			CoreAdmin coreAdmin = coreAdminService.getById(backSchoolGetAllVO.getReviewedBy());
-			backSchoolGetAllVO1.setReviewedBy(coreAdmin.getName());
+			UserInfo userInfo = userService.getUserById(backSchoolGetAllVO.getReviewedBy());
+			backSchoolGetAllVO.setReviewedBy(userInfo.getName());
 		}
     return backSchoolGetAllVO1;
 	}
@@ -608,8 +609,9 @@ public class DocumentController {
 			leaveSchoolTztzAutumnGetALLVO1.setPass("未通过");
 		}
 		if (!StringUtils.isBlank(leaveSchoolTztzAutumnGetALLVO.getReviewedBy())){
-			CoreAdmin coreAdmin = coreAdminService.getById(leaveSchoolTztzAutumnGetALLVO.getReviewedBy());
-			leaveSchoolTztzAutumnGetALLVO1.setReviewedBy(coreAdmin.getName());
+			UserInfo userInfo = userService.getUserById(leaveSchoolTztzAutumnGetALLVO.getReviewedBy());
+			leaveSchoolTztzAutumnGetALLVO1.setReviewedBy(userInfo.getName());
+
 		}
 		return leaveSchoolTztzAutumnGetALLVO1;
 	}

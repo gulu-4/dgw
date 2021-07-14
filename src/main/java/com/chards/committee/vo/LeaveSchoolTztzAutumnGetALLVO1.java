@@ -17,7 +17,7 @@ public class LeaveSchoolTztzAutumnGetALLVO1 {
     private String stuNum;
 
     @ExcelProperty("是否全程留校")
-    private boolean stay_in_school;
+    private boolean stayInSchool;
 
     @ExcelProperty("留校理由")
     private String stayInSchoolReason;
