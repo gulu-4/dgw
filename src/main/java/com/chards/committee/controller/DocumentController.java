@@ -166,6 +166,30 @@ public class DocumentController {
 	}
 
 	/**
+	 * 获取返校陪同人员健康证明接口
+	 * @param id
+	 * @param token
+	 * @return
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/company/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+	public byte[] getCompanyDocuments(@PathVariable String id, String token) throws IOException {
+		try {
+			UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+			if (userTokenDTO != null) {
+				File file = new File(path + "/back/company/", id);
+				if (file.exists()) {
+					RequestUtil.setUserTokenDTO(userTokenDTO);
+					return getFileByte(file);
+				}
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return getFileByte(new File(path, DEFAULE_IMG));
+	}
+
+	/**
 	 * 获取教师培训经历附件照片图片接口
 	 * @param id
 	 * @param token
@@ -509,6 +533,9 @@ public class DocumentController {
 		if (backSchoolGetAllVO.getQ4() == 1) {
 			backSchoolGetAllVO1.setQ4("是");
 		} else backSchoolGetAllVO1.setQ4("否");
+		if (backSchoolGetAllVO.getQ5() == 1) {
+			backSchoolGetAllVO1.setQ5("是");
+		} else backSchoolGetAllVO1.setQ5("否");
 
 		if (backSchoolGetAllVO.getPass() == 3||backSchoolGetAllVO.getPass() == 2){
 			backSchoolGetAllVO1.setPass("已批准");

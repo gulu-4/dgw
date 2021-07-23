@@ -145,6 +145,10 @@ public class BackSchoolGetAllVO1 {
 	@TableField("q4")
 	@ExcelProperty("发热、干咳、乏力等症状")
 	private String q4;
+	//完成新冠疫苗接种
+	@TableField("q5")
+	@ExcelProperty("完成新冠疫苗接种")
+	private String q5;
 
 
 

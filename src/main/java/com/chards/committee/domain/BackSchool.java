@@ -70,6 +70,10 @@ public class  BackSchool extends Model<BackSchool> {
 	@TableField("q4")
 	@ExcelProperty("发热、干咳、乏力等症状")
 	private Integer q4;
+	//完成新冠疫苗接种
+	@TableField("q5")
+	@ExcelProperty("完成新冠疫苗接种")
+	private Integer q5;
 	//审核人
 	@TableField("reviewed_by")
 	@ExcelProperty("审核人")

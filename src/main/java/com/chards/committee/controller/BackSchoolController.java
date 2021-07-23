@@ -13,6 +13,7 @@ import com.chards.committee.service.CoreAdminService;
 import com.chards.committee.service.StuInfoService;
 import com.chards.committee.service.UserService;
 import com.chards.committee.util.RequestUtil;
+import com.chards.committee.util.UploadUtil;
 import com.chards.committee.vo.BackSchoolGetAllVO;
 import com.chards.committee.vo.BackSchoolPassVO;
 import com.chards.committee.vo.Code;
@@ -21,11 +22,19 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * (BackSchool)表控制层
@@ -36,6 +45,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/backSchools")
 @Api(tags = "返校相关接口", value = "返校接口")
+@Slf4j
 public class BackSchoolController {
     /**
      * 服务对象
@@ -51,6 +61,11 @@ public class BackSchoolController {
 
     @Autowired
     private UserService userService;
+
+    @Value("${filepath}")
+    private String filePath;
+
+    private static final String PATH = "/back/company/";
 
     /**
      * 分页查询所有数据
@@ -247,6 +262,29 @@ public class BackSchoolController {
 
     }
 
+    @PreAuthorize("hasAuthority('OWN_INFO_CRUD')")
+    @PostMapping("/uploadPicture")
+    @ApiOperation(value = "上传陪同人员健康证明")
+    public R uploadPic(@RequestParam(value = "file") MultipartFile file, HttpServletRequest request) throws IOException {
+        if (file == null) {
+            log.error("文件不能为空");
+            return R.failure(Code.PARAM_IS_BLANK);
+        }
+        String filepath = filePath + PATH;
+        File dir = new File(filepath);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String filename = null;
+        try {
+            filename = UUID.randomUUID().toString().replaceAll("-", "") + ".png";
+            file.transferTo(new File(filepath + filename));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            return R.success(filename);  // 如果是空则上传失败
+        }
+    }
 
 
     private String passInfo(int pass) {
