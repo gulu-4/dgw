@@ -60,7 +60,7 @@
             <if test="param.firstCheck != null">
                 first_check = #{param.firstCheck},
             </if>
-            <if test="param.firstCheck != null">
+            <if test="param.secondCheck != null">
                 second_check = #{param.secondCheck},
             </if>
             <if test="param.level != null">

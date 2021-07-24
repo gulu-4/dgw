@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chards.committee.mapper.ProvideMoneyMapper">
+    <sql id="getListWithParam">
+        select *
+        from provide_money as pm
+        <where>
+            <if test="param.stuNum != null">
+                and pm.stu_num = #{param.stuNum}
+            </if>
+            <if test="param.stage != null">
+                and pm.stage = #{param.stage}
+            </if>
+            <if test="param.type != null">
+                and pm.type = #{param.type}
+            </if>
+        </where>
+    </sql>
+    <sql id="getList">
+        select pm.*,s.id as sId,s.name,s.gender,s.id_card,s.grade,s.department,s.major,s.classes,
+            s.phone,s.political_status,s.national,s.education_background,s.state
+        from provide_money as pm
+        inner join stu_info as s on s.id = pm.stu_num
+        <where>
+            <if test="param.department != null">
+                and s.department = #{param.department}
+            </if>
+            <if test="param.stuNum != null">
+                and pm.stu_num = #{param.stuNum}
+            </if>
+            <if test="param.stage != null">
+                and pm.stage = #{param.stage}
+            </if>
+            <if test="param.type != null">
+                and pm.type = #{param.type}
+            </if>
+            <if test="param.firstCheck != null">
+                and pm.first_check = #{param.firstCheck}
+            </if>
+            <if test="param.secondCheck != null">
+                and pm.second_check = #{param.secondCheck}
+            </if>
+        </where>
+    </sql>
+    <update id="check">
+        update provide_money
+        <set>
+            <if test="param.firstCheck != null">
+                first_check = #{param.firstCheck},
+            </if>
+            <if test="param.secondCheck != null">
+                second_check = #{param.secondCheck},
+            </if>
+            <if test="param.firstCheckTime != null">
+                first_check_time = #{param.firstCheckTime},
+            </if>
+            <if test="param.firstReviewer != null">
+                first_reviewer = #{param.firstReviewer},
+            </if>
+            <if test="param.secondReviewTime != null">
+                second_review_time = #{param.secondReviewTime},
+            </if>
+            <if test="param.secondReviewer != null">
+                second_reviewer = #{param.secondReviewer},
+            </if>
+        </set>
+        where id = #{param.id}
+    </update>
+    <select id="getListWithParam" resultType="com.chards.committee.domain.ProvideMoney">
+        <include refid="getListWithParam"></include>
+    </select>
+    <select id="getFirstList" resultType="com.chards.committee.vo.ProvideMoneyGetDetailVO">
+        <include refid="getList"></include>
+    </select>
+    <select id="getSecondList" resultType="com.chards.committee.vo.ProvideMoneyGetDetailVO">
+        <include refid="getList"></include>
+    </select>
+</mapper>
