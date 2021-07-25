@@ -310,6 +310,8 @@ public class BackSchoolController {
         passInfoDTO.setReviewedTime(bs.getReviewedTime());
         passInfoDTO.setEmergencyCallee(bs.getEmergencyCallee());
         passInfoDTO.setDepartment(stuInfo.getDepartment());
+        passInfoDTO.setCompany(bs.getCompany());
+        passInfoDTO.setNote(bs.getNote());
        return passInfoDTO;
     }
 

@@ -43,5 +43,9 @@ public class PassInfoDTO implements Serializable {
 	private boolean stayInSchool;
 //	全程留校理由
 	private String stayInSchoolReason;
+	// 陪同人员信息
+	private String company;
+	// 行程信息
+	private String note;
 
 }
