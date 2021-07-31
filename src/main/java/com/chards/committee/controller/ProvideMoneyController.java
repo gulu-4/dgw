@@ -1,7 +1,9 @@
 package com.chards.committee.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chards.committee.domain.ComprehensiveAssessment;
 import com.chards.committee.domain.ProvideMoney;
+import com.chards.committee.service.ComprehensiveAssessmentService;
 import com.chards.committee.service.ProvideMoneyService;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
@@ -26,10 +28,13 @@ public class ProvideMoneyController {
     @Autowired
     private ProvideMoneyService provideMoneyService;
 
+    @Autowired
+    private ComprehensiveAssessmentService comprehensiveAssessmentService;
+
     @ApiOperation(value = "学生提交奖助学金申请表")
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/add")
-    public R add(@RequestBody @Valid ProvideMoney provideMoney){
+    public R add(ProvideMoney provideMoney){
         // 先判断 该期该学生该类型的申请表是否填过
         Long result = provideMoneyService.applyAdd(provideMoney);
         if (result == -1){
@@ -56,7 +61,7 @@ public class ProvideMoneyController {
     @ApiOperation(value = "该学生该期该类型申请表是否申请过")
     @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/getHadApplied")
-    public R getHadApplied(@RequestParam("type") String type,@RequestParam("stage") String stage){
+    public R getHadApplied(@RequestParam("type") String type, @RequestParam("stage") String stage){
         return R.success(provideMoneyService.getHadApplied(type,stage));
     }
 
@@ -114,5 +119,13 @@ public class ProvideMoneyController {
         return R.success(provideMoneyService.check(provideMoneyPassVO));
     }
 
+
+    @ApiOperation("素质测评信息查询")
+    @PreAuthorize("hasRole('ROOT')")
+    @GetMapping("/getAssess")
+    public R getComprehensiveAssessmentList(ComprehensiveAssessmentSeniorVO comprehensiveAssessmentSeniorVO,
+                                            Page<ComprehensiveAssessment> page){
+        return R.success(comprehensiveAssessmentService.getComprehensiveAssessmentInfo(page,comprehensiveAssessmentSeniorVO));
+    }
 
 }

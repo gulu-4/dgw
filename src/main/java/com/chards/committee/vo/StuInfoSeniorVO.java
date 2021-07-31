@@ -2,12 +2,14 @@ package com.chards.committee.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @Author: chards
  * @Date: 0:56 2020/8/20
  */
 @Data
-public class StuInfoSeniorVO {
+public class StuInfoSeniorVO implements Serializable {
     // 学院
     private String department = "";
     // 年级

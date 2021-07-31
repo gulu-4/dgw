@@ -1,14 +1,17 @@
 package com.chards.committee;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.logging.Logger;
+
+@Slf4j
 @SpringBootApplication
 @MapperScan("com.chards.committee.mapper")
 public class SecurityApplication {
@@ -39,5 +42,6 @@ public class SecurityApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SecurityApplication.class, args);
+        Logger.getLogger("日志");
     }
 }

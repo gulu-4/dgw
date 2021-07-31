@@ -76,6 +76,61 @@
     </sql>
 
 
+    <sql id="seniorSearchBasic">
+        SELECT
+        `id`,
+        `name`,
+        `gender`,
+        `pinyin`,
+        `grade`,
+        `department`,
+        `major`,
+        `classes`,
+        `national`,
+        `education_background`,
+        `graduated_school`,
+        `address`,
+        `dormitory`,
+        `awards`,
+        `emergency_contact`,
+        `emergency_phone`,
+        `aid`,
+        `counsellor_name`,
+        `counsellor_num`,
+        `political_status`,
+        `origin_location`,
+        `state`,
+        `note`,
+        `status_of_current_students`
+        FROM
+        stu_info
+        where 1 = 1
+        <if test="param.department != ''">
+            and department = #{param.department,jdbcType=VARCHAR}
+        </if>
+        <if test="param.grade != ''">
+            and grade = #{param.grade,jdbcType=VARCHAR}
+        </if>
+        <if test="param.counsellorNum != ''">
+            and counsellor_num = #{param.counsellorNum,jdbcType=VARCHAR}
+        </if>
+        <if test="param.educationBackground != '研究生' and param.educationBackground != ''">
+            <if test="param.classes !=''">
+                and classes like #{param.classes}
+            </if>
+            <if test="param.dormitory != ''">
+                and dormitory like #{param.dormitory,jdbcType=VARCHAR}
+            </if>
+        </if>
+        <if test="param.national !=''">
+            and national = #{param.national,jdbcType=VARCHAR}
+        </if>
+        <if test="param.educationBackground != ''">
+            and education_background = #{param.educationBackground,jdbcType=VARCHAR}
+        </if>
+    </sql>
+
+
     <select id="getSeniorSearch" resultType="com.chards.committee.vo.StuInfoPageVO">
         <include refid="seniorSearch"></include>
     </select>
@@ -91,9 +146,28 @@
         <include refid="seniorSearch"></include>
 
     </select>
+
+
+
     <select id="getStudentsByDorStuNumber" resultType="com.chards.committee.vo.StuInfoPageVO">
         select id ,`name`,department,major,grade,classes, state, education_background, dormitory
         from stu_info
         where dormitory like CONCAT("%", (SELECT dormitory FROM stu_info WHERE id = #{stuNumber}),"%")
     </select>
+
+    <select id="getSeniorSearchListByCounsellor" resultType="com.chards.committee.vo.StuInfoPageVO">
+        <include refid="seniorSearch"></include>
+        <if test="name != ''">
+            and `counsellor_name` = #{name,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="getBasicStuInfoList" resultType="com.chards.committee.vo.StuInfoBasicVO">
+        <include refid="seniorSearchBasic"></include>
+        <if test="name != ''">
+            and `counsellor_name` = #{name,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+
 </mapper>

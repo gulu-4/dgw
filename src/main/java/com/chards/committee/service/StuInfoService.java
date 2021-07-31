@@ -1,7 +1,9 @@
 package com.chards.committee.service;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,12 +16,8 @@ import com.chards.committee.domain.StuInfo;
 import com.chards.committee.dto.*;
 import com.chards.committee.mapper.StuInfoMapper;
 import com.chards.committee.util.Assert;
-import com.chards.committee.util.DataScope;
-import com.chards.committee.vo.StuInfoPageVO;
 import com.chards.committee.util.RequestUtil;
-import com.chards.committee.vo.Code;
-import com.chards.committee.vo.StuInfoSeniorVO;
-import com.chards.committee.vo.UserLoginRespVO;
+import com.chards.committee.vo.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -27,12 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionUsageException;
 import org.springframework.transaction.annotation.Transactional;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -103,7 +96,7 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
     }
 
 
-    public UserLoginRespVO getUserTokenLdap(String username, String password,String captchaId, String captcha,String ip) {
+    public UserLoginRespVO getUserTokenLdap(String username, String password, String captchaId, String captcha, String ip) {
         // 获取验证码与redis中存储验证码进行比较
         String redisCaptcha = (String) redisTemplate.opsForValue().get(captchaId);
         if (redisCaptcha == null) {
@@ -321,6 +314,34 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
 //        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         stuInfoSeniorDTO.setDormitory(stuInfoSeniorDTO.getDormitory() + "%");
         return baseMapper.getSeniorSearchList(stuInfoSeniorDTO);
+    }
+
+    /**
+     * 专职辅导员获取全部字段
+     * @param stuInfoSeniorVO
+     * @param name
+     * @return
+     */
+    public List<StuInfoPageVO> getSeniorSearchListByCounsellor(StuInfoSeniorVO stuInfoSeniorVO,String name) {
+        StuInfoSeniorDTO stuInfoSeniorDTO = new StuInfoSeniorDTO();
+        BeanUtils.copyProperties(stuInfoSeniorVO, stuInfoSeniorDTO);
+//        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+        stuInfoSeniorDTO.setDormitory(stuInfoSeniorDTO.getDormitory() + "%");
+        return baseMapper.getSeniorSearchListByCounsellor(stuInfoSeniorDTO, name);
+    }
+
+    /**
+     * 获取基础信息（部分字段）
+     * @param stuInfoSeniorVO
+     * @param name
+     * @return
+     */
+    public List<StuInfoBasicVO> getBasicSeniorSearchList(StuInfoSeniorVO stuInfoSeniorVO,String name){
+        StuInfoSeniorDTO stuInfoSeniorDTO = new StuInfoSeniorDTO();
+        BeanUtils.copyProperties(stuInfoSeniorVO, stuInfoSeniorDTO);
+//        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
+        stuInfoSeniorDTO.setDormitory(stuInfoSeniorDTO.getDormitory() + "%");
+        return baseMapper.getBasicStuInfoList(stuInfoSeniorDTO, name);
     }
 
 

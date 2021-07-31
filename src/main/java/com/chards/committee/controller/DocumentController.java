@@ -1,26 +1,24 @@
 package com.chards.committee.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chards.committee.config.ExcelDataListener;
 import com.chards.committee.constant.Constant;
+import com.chards.committee.domain.ComprehensiveAssessment;
 import com.chards.committee.domain.CoreAdmin;
 import com.chards.committee.domain.StuInfo;
-import com.chards.committee.domain.User;
 import com.chards.committee.dto.*;
 import com.chards.committee.service.*;
 import com.chards.committee.util.RequestUtil;
 import com.chards.committee.vo.*;
 import com.chards.committee.vo.teachStaffExport.TeachStaffBasicExportVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.parameters.P;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,9 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author 远 chards_
@@ -44,33 +40,33 @@ public class DocumentController {
 	@Autowired
 	private StuInfoService stuInfoService;
 	@Autowired
-	RedisService redisService;
+    RedisService redisService;
 	@Autowired
-	CoreAdminService coreAdminService;
+    CoreAdminService coreAdminService;
 	@Autowired
-	BackSchoolService backSchoolService;
+    BackSchoolService backSchoolService;
 	@Autowired
-	StuPortraitService stuPortraitService;
+    StuPortraitService stuPortraitService;
 
 	@Autowired
-	LeaveService leaveService;
+    LeaveService leaveService;
 	@Autowired
-	LeaveBackService leaveBackService;
+    LeaveBackService leaveBackService;
 
 	@Autowired
-	LeaveSchoolTztzAutumnService leaveSchoolTztzAutumnService;
+    LeaveSchoolTztzAutumnService leaveSchoolTztzAutumnService;
 
 	@Autowired
-	PsychologicalLevelService psychologicalLevelService;
+    PsychologicalLevelService psychologicalLevelService;
 
 	@Autowired
-	PsychologicalCounsellingCaseService psychologicalCounsellingCaseService;
+    PsychologicalCounsellingCaseService psychologicalCounsellingCaseService;
 
 	@Autowired
-	TeachingStaffResumeService teachingStaffResumeService;
+    TeachingStaffResumeService teachingStaffResumeService;
 
 	@Autowired
-	JobObtainService jobObtainService;
+    JobObtainService jobObtainService;
 
 	@Value("${filepath}")
 	String path;
@@ -81,10 +77,13 @@ public class DocumentController {
 	String DEFAULE_IMG;
 
 	@Autowired
-	EasyExeclService easyExeclService;
+	EasyExcelService easyExcelService;
 
 	@Autowired
-	UserService userService;
+    UserService userService;
+
+	@Autowired
+	private ComprehensiveAssessmentService comprehensiveAssessmentService;
 
 	/**
 	 * 我觉得和权限判断有关的 都是走那一套
@@ -239,12 +238,14 @@ public class DocumentController {
 	public void getAdminByParamExecl(String token, String param, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_TEACHER_SELECT)) {
-			List<CoreAdminDTO> likeList = coreAdminService.getLikeList(param);
-			easyExeclService.writeToResponse(response, "admininfo-" + System.currentTimeMillis(), likeList, CoreAdminDTO.class);
+			List<CoreAdminDTO> likeList = coreAdminService.getLikeList(param);//获得excel数据列表
+			easyExcelService.writeToResponse(response, "admininfo-" + System.currentTimeMillis(), likeList, CoreAdminDTO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
 	}
+
+
 
 	/**
 	 * 通过学院筛选导出教职工
@@ -258,7 +259,7 @@ public class DocumentController {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_TEACHER_SELECT)) {
 			List<CoreAdminDTO> depList = coreAdminService.getDepList(department);
-			easyExeclService.writeToResponse(response, "admininfo - " + System.currentTimeMillis(), depList, CoreAdminDTO.class);
+			easyExcelService.writeToResponse(response, "admininfo - " + System.currentTimeMillis(), depList, CoreAdminDTO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -287,7 +288,7 @@ public class DocumentController {
 				  res.add(portraitVO);
 				}
 			}
-			easyExeclService.writeToResponse(response, "portrait - " + System.currentTimeMillis(), res, PortraitVO.class);
+			easyExcelService.writeToResponse(response, "portrait - " + System.currentTimeMillis(), res, PortraitVO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -312,13 +313,17 @@ public class DocumentController {
 				StuInfo stuinfo = stuInfoService.getById(s.getId());
 				stuInfoList.add(stuinfo);
 			});
-			easyExeclService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
+			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
 			return;
 		}
 		response.getWriter().write("no permission");
 	}
 
-	@GetMapping(value = "/execls/stuinfo/Advancekeywords")
+
+
+
+
+	/*@GetMapping(value = "/execls/stuinfo/Advancekeywords")
 	public void getStuInfoAdvanceKeywordsExecl(String token, StuInfoSeniorVO stuInfoSeniorVO, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
@@ -329,11 +334,83 @@ public class DocumentController {
 				StuInfo stuinfo = stuInfoService.getById(s.getId());
 				stuInfoList.add(stuinfo);
 			});
-			easyExeclService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
+			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
 			return;
 		}
 		response.getWriter().write("no permission");
+	}*/
+
+	/**
+	 * 根据权限不同，导出不同的信息
+	 * @param token
+	 * @param stuInfoSeniorVO
+	 * @param response
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/execls/stuinfo/Advancekeywords")
+	public void getStuInfoAdvanceKeywordExcel(String token, StuInfoSeniorVO stuInfoSeniorVO, HttpServletResponse response) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		//String name = userTokenDTO.getUserInfo().getName();
+		if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.ADMIN)) {
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<StuInfoPageVO> likeLists = stuInfoService.getSeniorSearchList(stuInfoSeniorVO);
+			/*List<StuInfo> stuInfoList = new ArrayList<>();
+			likeLists.forEach(s -> {
+				StuInfo stuinfo = stuInfoService.getById(s.getId());
+				stuInfoList.add(stuinfo);
+			});*/
+			List<StuInfo> stuInfoList = getAllInfo(likeLists);
+			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
+			return;
+		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.XUEGONG)) {//全校基础信息（学工）
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO,"");
+			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), likeLists, StuInfoBasicVO.class);
+			return;
+		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.SHUJI)) {//本学院基础信息（书记）
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			stuInfoSeniorVO.setDepartment(userTokenDTO.getUserInfo().getDepartment());
+			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO,"");
+			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), likeLists, StuInfoBasicVO.class);
+			return;
+		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains("FUDAOYUAN")) {
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<StuInfoPageVO> likeLists = stuInfoService.getSeniorSearchListByCounsellor(stuInfoSeniorVO,userTokenDTO.getUserInfo().getName());
+			/*List<StuInfo> stuInfoList = new ArrayList<>();
+			likeLists.forEach(s -> {
+				StuInfo stuinfo = stuInfoService.getById(s.getId());
+				stuInfoList.add(stuinfo);
+			});*/
+			List<StuInfo> stuInfoList = getAllInfo(likeLists);
+			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
+			return;
+		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains("JIANZHI")){//被管理学生的信息
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO,userTokenDTO.getUserInfo().getName());
+			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), likeLists, StuInfoBasicVO.class);
+			return;
+		}
+		response.getWriter().write("no permission");
+		//辅导员等人账户登录时是教职工号还是，教师的姓名
 	}
+
+	/**
+	 * 导出学生信息的工具类
+	 * @param likeLists
+	 * @return
+	 */
+	public List<StuInfo> getAllInfo(List<StuInfoPageVO> likeLists){
+		List<StuInfo> stuInfoList = new ArrayList<>();
+		likeLists.forEach(s -> {
+			StuInfo stuinfo = stuInfoService.getById(s.getId());
+			stuInfoList.add(stuinfo);
+		});
+		return stuInfoList;
+	}
+
+
+
+
 
 	/**
 	 * 导出返校申请信息，可以根据筛选条件进行导出，不传条件则导出所有申请信息
@@ -356,7 +433,7 @@ public class DocumentController {
 				BackSchoolGetAllVO1 backSchoolGetAllVO1 = setVO1ByVO(data);
 				backSchoolGetAllVO1List.add(backSchoolGetAllVO1);
 			});
-			easyExeclService.writeToResponse(response, "backSchool - " + System.currentTimeMillis(), backSchoolGetAllVO1List, BackSchoolGetAllVO1.class);
+			easyExcelService.writeToResponse(response, "backSchool - " + System.currentTimeMillis(), backSchoolGetAllVO1List, BackSchoolGetAllVO1.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -374,7 +451,7 @@ public class DocumentController {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 //			backSchoolDateAreaDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
 			List<StuInfo> dataList = backSchoolService.getDoNotApplyForBackSchoolByParams(backSchoolDateAreaDTO);
-			easyExeclService.writeToResponse(response, "backSchoolNotApply - " + System.currentTimeMillis(), dataList, StuInfo.class);
+			easyExcelService.writeToResponse(response, "backSchoolNotApply - " + System.currentTimeMillis(), dataList, StuInfo.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -419,7 +496,7 @@ public class DocumentController {
 				LeaveSchoolGetAllVO1 leaveSchoolGetAllVO1 = setVO1ByVO(leaveSchool);
 				leaveSchoolGetAllVO1List.add(leaveSchoolGetAllVO1);
 			});
-			easyExeclService.writeToResponse(response, "leaveSchool - " + System.currentTimeMillis(), leaveSchoolGetAllVO1List, LeaveSchoolGetAllVO1.class);
+			easyExcelService.writeToResponse(response, "leaveSchool - " + System.currentTimeMillis(), leaveSchoolGetAllVO1List, LeaveSchoolGetAllVO1.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -445,7 +522,7 @@ public class DocumentController {
 				LeaveSchoolTztzAutumnGetALLVO1 leaveSchoolTztzAutumnGetALLVO1 = setVO1ByVO(data);
 				leaveSchoolTztzAutumnGetALLVO1List.add(leaveSchoolTztzAutumnGetALLVO1);
 			});
-			easyExeclService.writeToResponse(response, "leaveSchool - " + System.currentTimeMillis(), leaveSchoolTztzAutumnGetALLVO1List, LeaveSchoolTztzAutumnGetALLVO1.class);
+			easyExcelService.writeToResponse(response, "leaveSchool - " + System.currentTimeMillis(), leaveSchoolTztzAutumnGetALLVO1List, LeaveSchoolTztzAutumnGetALLVO1.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -456,12 +533,12 @@ public class DocumentController {
 	 * @throws IOException
 	 */
 	@GetMapping(value = "/execls/psychological_level")
-	public void getPsychologicalLevelByParams(String token, PsychologicalLevelQueryNewParamVO psychologicalLQNPVO,HttpServletResponse response) throws IOException {
+	public void getPsychologicalLevelByParams(String token, PsychologicalLevelQueryNewParamVO psychologicalLQNPVO, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<PsychologicalLevelGetByStuNumVO1> psychologicalLevelGetByStuNumVO1List = psychologicalLevelService.getPsychologicalLevelByParams1(psychologicalLQNPVO);
-			easyExeclService.writeToResponse(response, "psychologicalLevel - " + System.currentTimeMillis(), psychologicalLevelGetByStuNumVO1List, PsychologicalLevelGetByStuNumVO1.class);
+			easyExcelService.writeToResponse(response, "psychologicalLevel - " + System.currentTimeMillis(), psychologicalLevelGetByStuNumVO1List, PsychologicalLevelGetByStuNumVO1.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -472,13 +549,13 @@ public class DocumentController {
 	 * @throws IOException
 	 */
 	@GetMapping(value = "/execls/psychological_counseling_case")
-	public void getPsychologicalLevelByParams(String token,PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO,HttpServletResponse response) throws IOException {
+	public void getPsychologicalLevelByParams(String token, PsychologicalCounsellingCaseSelectVO psychologicalCounsellingCaseSelectVO, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 //		这个仅学工处及以上和咨询师可导
 		if (userTokenDTO != null && (userTokenDTO.getRoles().contains(Constant.PCOUNSELOR) ||  userTokenDTO.getRoles().contains(Constant.XUEGONG))) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<PsychologicalCounselingCaseExportVO> psychologicalCounselingCaseExportVOS = psychologicalCounsellingCaseService.getAllCounselingCaseByParams(psychologicalCounsellingCaseSelectVO);
-			easyExeclService.writeToResponse(response, "psychologicalCounselingCase - " + System.currentTimeMillis(), psychologicalCounselingCaseExportVOS, PsychologicalCounselingCaseExportVO.class);
+			easyExcelService.writeToResponse(response, "psychologicalCounselingCase - " + System.currentTimeMillis(), psychologicalCounselingCaseExportVOS, PsychologicalCounselingCaseExportVO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -490,12 +567,12 @@ public class DocumentController {
 	 */
 	@GetMapping(value = "/execls/teachingStaffResumeExport")
 	public void test(String token,HttpServletResponse response, HttpServletRequest request) throws IOException {
-		UserTokenDTO userTokenDTO = redisService.getStringValue(token,UserTokenDTO.class);
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		// 这里仅仅可以ROOT导出
 		if (userTokenDTO != null && userTokenDTO.getRoles().contains("ROOT")) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<TeachStaffBasicExportVO> list = teachingStaffResumeService.getList();
-			easyExeclService.writeMoreToResponse(response,request,"教职工简历 - " + System.currentTimeMillis(), list, TeachStaffBasicExportVO.class);
+			easyExcelService.writeMoreToResponse(response,request,"教职工简历 - " + System.currentTimeMillis(), list, TeachStaffBasicExportVO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -507,7 +584,7 @@ public class DocumentController {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
 			List<JobObtainGetInfoVO> jobObtainGetInfoVOList = jobObtainService.getList(jobObtainGetParamVO);
-			easyExeclService.writeToResponse(response, "jobObtain - " + System.currentTimeMillis(), jobObtainGetInfoVOList, JobObtainGetInfoVO.class);
+			easyExcelService.writeToResponse(response, "jobObtain - " + System.currentTimeMillis(), jobObtainGetInfoVOList, JobObtainGetInfoVO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
@@ -644,5 +721,42 @@ public class DocumentController {
 	}
 
 
+	/**
+	 * 学生综合素质发展测评导入表
+	 * @param token
+	 * @param year  导入年份（本次心理测评的年份）
+	 * @param file	文件
+	 * @param response
+	 * @throws IOException
+	 */
+	@PostMapping(value = "/excels/admin/import")
+	public void saveComprehensiveAssessment(String token, String year, MultipartFile file, HttpServletResponse response) throws IOException {
 
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.ADMIN)){
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			easyExcelService.readToReponse(file,new ExcelDataListener(comprehensiveAssessmentService,year), ComprehensiveAssessment.class);
+			return ;
+		}
+		response.getWriter().write("no permission");
+	}
+
+	/**
+	 * 学社工综合素质发展测评导入表
+	 * @param token
+	 * @param year
+	 * @param response
+	 * @throws IOException
+	 */
+	@GetMapping(value = "/excels/admin/export")
+	public void getComprehensiveAssessment(String token,String year,HttpServletResponse response) throws IOException {
+		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
+		if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.ADMIN)){
+			RequestUtil.setUserTokenDTO(userTokenDTO);
+			List<ComprehensiveAssessment> likeList = comprehensiveAssessmentService.exportComprehensiveAssessmentInfo(year);//这里时根据年份导出
+			easyExcelService.writeToResponse(response,"admininfo-" + System.currentTimeMillis(),likeList, ComprehensiveAssessment.class);
+			return ;
+		}
+		response.getWriter().write("no permission");
+	}
 }
