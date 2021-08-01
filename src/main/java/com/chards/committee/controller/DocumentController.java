@@ -320,37 +320,16 @@ public class DocumentController {
 	}
 
 
-
-
-
-	/*@GetMapping(value = "/execls/stuinfo/Advancekeywords")
-	public void getStuInfoAdvanceKeywordsExecl(String token, StuInfoSeniorVO stuInfoSeniorVO, HttpServletResponse response) throws IOException {
-		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
-		if (userTokenDTO != null && userTokenDTO.getPermissionsList().contains(Constant.PERMISSION_STUDENT_SELECT)) {
-			RequestUtil.setUserTokenDTO(userTokenDTO);
-			List<StuInfoPageVO> likeLists = stuInfoService.getSeniorSearchList(stuInfoSeniorVO);
-			List<StuInfo> stuInfoList = new ArrayList<>();
-			likeLists.forEach(s -> {
-				StuInfo stuinfo = stuInfoService.getById(s.getId());
-				stuInfoList.add(stuinfo);
-			});
-			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
-			return;
-		}
-		response.getWriter().write("no permission");
-	}*/
-
 	/**
-	 * 根据权限不同，导出不同的信息
+	 * 书记拥有了辅导员的角色，所以不需要对书记单独进行配置
 	 * @param token
 	 * @param stuInfoSeniorVO
 	 * @param response
 	 * @throws IOException
 	 */
 	@GetMapping(value = "/execls/stuinfo/Advancekeywords")
-	public void getStuInfoAdvanceKeywordExcel(String token, StuInfoSeniorVO stuInfoSeniorVO, HttpServletResponse response) throws IOException {
+	public void getStuInfoAdvanceKeywordsExecl(String token, StuInfoSeniorVO stuInfoSeniorVO, HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
-		//String name = userTokenDTO.getUserInfo().getName();
 		if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.ADMIN)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
 			List<StuInfoPageVO> likeLists = stuInfoService.getSeniorSearchList(stuInfoSeniorVO);
@@ -362,20 +341,14 @@ public class DocumentController {
 			List<StuInfo> stuInfoList = getAllInfo(likeLists);
 			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
 			return;
-		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.XUEGONG)) {//全校基础信息（学工）
+		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.SHUJI)) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO,"");
-			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), likeLists, StuInfoBasicVO.class);
-			return;
-		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.SHUJI)) {//本学院基础信息（书记）
-			RequestUtil.setUserTokenDTO(userTokenDTO);
-			stuInfoSeniorVO.setDepartment(userTokenDTO.getUserInfo().getDepartment());
-			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO,"");
+			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO);
 			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), likeLists, StuInfoBasicVO.class);
 			return;
 		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains("FUDAOYUAN")) {
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			List<StuInfoPageVO> likeLists = stuInfoService.getSeniorSearchListByCounsellor(stuInfoSeniorVO,userTokenDTO.getUserInfo().getName());
+			List<StuInfoPageVO> likeLists = stuInfoService.getSeniorSearchList(stuInfoSeniorVO);
 			/*List<StuInfo> stuInfoList = new ArrayList<>();
 			likeLists.forEach(s -> {
 				StuInfo stuinfo = stuInfoService.getById(s.getId());
@@ -384,14 +357,13 @@ public class DocumentController {
 			List<StuInfo> stuInfoList = getAllInfo(likeLists);
 			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), stuInfoList, StuInfo.class);
 			return;
-		}else if (userTokenDTO != null && userTokenDTO.getRoles().contains("JIANZHI")){//被管理学生的信息
+		}else if(userTokenDTO != null && userTokenDTO.getRoles().contains("JIANZHI")){
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO,userTokenDTO.getUserInfo().getName());
+			List<StuInfoBasicVO> likeLists = stuInfoService.getBasicSeniorSearchList(stuInfoSeniorVO);
 			easyExcelService.writeToResponse(response, "stuinfo - " + System.currentTimeMillis(), likeLists, StuInfoBasicVO.class);
 			return;
 		}
 		response.getWriter().write("no permission");
-		//辅导员等人账户登录时是教职工号还是，教师的姓名
 	}
 
 	/**
@@ -407,9 +379,6 @@ public class DocumentController {
 		});
 		return stuInfoList;
 	}
-
-
-
 
 
 	/**
@@ -742,18 +711,17 @@ public class DocumentController {
 	}
 
 	/**
-	 * 学社工综合素质发展测评导入表
+	 * 学社工综合素质发展测评导出表
 	 * @param token
-	 * @param year
 	 * @param response
 	 * @throws IOException
 	 */
 	@GetMapping(value = "/excels/admin/export")
-	public void getComprehensiveAssessment(String token,String year,HttpServletResponse response) throws IOException {
+	public void getComprehensiveAssessment(String token,ComprehensiveAssessmentSeniorVO comprehensiveAssessmentSeniorVO,HttpServletResponse response) throws IOException {
 		UserTokenDTO userTokenDTO = redisService.getStringValue(token, UserTokenDTO.class);
 		if (userTokenDTO != null && userTokenDTO.getRoles().contains(Constant.ADMIN)){
 			RequestUtil.setUserTokenDTO(userTokenDTO);
-			List<ComprehensiveAssessment> likeList = comprehensiveAssessmentService.exportComprehensiveAssessmentInfo(year);//这里时根据年份导出
+			List<ComprehensiveAssessment> likeList = comprehensiveAssessmentService.exportComprehensiveAssessmentInfo(comprehensiveAssessmentSeniorVO);//这里时根据年份导出
 			easyExcelService.writeToResponse(response,"admininfo-" + System.currentTimeMillis(),likeList, ComprehensiveAssessment.class);
 			return ;
 		}

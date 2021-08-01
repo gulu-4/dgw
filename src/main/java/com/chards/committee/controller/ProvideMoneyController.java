@@ -120,6 +120,7 @@ public class ProvideMoneyController {
     }
 
 
+    //9b94bb24-2341-4f48-a95e-06411fdad1cb
     @ApiOperation("素质测评信息查询")
     @PreAuthorize("hasRole('ROOT')")
     @GetMapping("/getAssess")

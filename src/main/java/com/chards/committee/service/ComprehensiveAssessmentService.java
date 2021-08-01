@@ -45,8 +45,8 @@ public class ComprehensiveAssessmentService extends ServiceImpl<ComprehensiveAss
     }
 
 
-    public List<ComprehensiveAssessment> exportComprehensiveAssessmentInfo(String year){
-        return baseMapper.exportAllInfo(year);
+    public List<ComprehensiveAssessment> exportComprehensiveAssessmentInfo(ComprehensiveAssessmentSeniorVO comprehensiveAssessmentSeniorVO){
+        return baseMapper.exportAllInfo(comprehensiveAssessmentSeniorVO.getDepartment(),comprehensiveAssessmentSeniorVO.getCreate_time());
     }
 
 }

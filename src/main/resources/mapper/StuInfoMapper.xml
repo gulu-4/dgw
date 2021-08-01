@@ -148,25 +148,14 @@
     </select>
 
 
-
     <select id="getStudentsByDorStuNumber" resultType="com.chards.committee.vo.StuInfoPageVO">
         select id ,`name`,department,major,grade,classes, state, education_background, dormitory
         from stu_info
         where dormitory like CONCAT("%", (SELECT dormitory FROM stu_info WHERE id = #{stuNumber}),"%")
     </select>
 
-    <select id="getSeniorSearchListByCounsellor" resultType="com.chards.committee.vo.StuInfoPageVO">
-        <include refid="seniorSearch"></include>
-        <if test="name != ''">
-            and `counsellor_name` = #{name,jdbcType=VARCHAR}
-        </if>
-    </select>
-
     <select id="getBasicStuInfoList" resultType="com.chards.committee.vo.StuInfoBasicVO">
         <include refid="seniorSearchBasic"></include>
-        <if test="name != ''">
-            and `counsellor_name` = #{name,jdbcType=VARCHAR}
-        </if>
     </select>
 
 

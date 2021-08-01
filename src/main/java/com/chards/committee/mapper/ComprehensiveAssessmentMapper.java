@@ -23,7 +23,7 @@ public interface ComprehensiveAssessmentMapper extends BaseMapper<ComprehensiveA
 
 
     //@DataScope
-    List<ComprehensiveAssessment> exportAllInfo(String year);
+    List<ComprehensiveAssessment> exportAllInfo( String department, String create_time);
 
     /*@DataScope
     public int deleteById(@Param("id")Long id); */

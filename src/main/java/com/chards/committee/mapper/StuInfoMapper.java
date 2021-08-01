@@ -36,12 +36,10 @@ public interface StuInfoMapper extends BaseMapper<StuInfo> {
     @DataScope()
     List<StuInfoPageVO> getSeniorSearchList(@Param("param") StuInfoSeniorDTO stuInfoSeniorDTO);
 
-    @DataScope
-    List<StuInfoPageVO> getSeniorSearchListByCounsellor(@Param("param") StuInfoSeniorDTO stuInfoSeniorDTO,@Param("name") String name);
 
     @DataScope()
     List<StuInfoPageVO> getStudentsByDorStuNumber(@Param("stuNumber") String id);
 
     @DataScope()
-    List<StuInfoBasicVO> getBasicStuInfoList(@Param("param") StuInfoSeniorDTO stuInfoSeniorDTO,@Param("name") String name);
+    List<StuInfoBasicVO> getBasicStuInfoList(@Param("param") StuInfoSeniorDTO stuInfoSeniorDTO);
 }

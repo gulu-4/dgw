@@ -316,32 +316,19 @@ public class StuInfoService extends ServiceImpl<StuInfoMapper, StuInfo> {
         return baseMapper.getSeniorSearchList(stuInfoSeniorDTO);
     }
 
-    /**
-     * 专职辅导员获取全部字段
-     * @param stuInfoSeniorVO
-     * @param name
-     * @return
-     */
-    public List<StuInfoPageVO> getSeniorSearchListByCounsellor(StuInfoSeniorVO stuInfoSeniorVO,String name) {
-        StuInfoSeniorDTO stuInfoSeniorDTO = new StuInfoSeniorDTO();
-        BeanUtils.copyProperties(stuInfoSeniorVO, stuInfoSeniorDTO);
-//        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
-        stuInfoSeniorDTO.setDormitory(stuInfoSeniorDTO.getDormitory() + "%");
-        return baseMapper.getSeniorSearchListByCounsellor(stuInfoSeniorDTO, name);
-    }
+
 
     /**
      * 获取基础信息（部分字段）
      * @param stuInfoSeniorVO
-     * @param name
      * @return
      */
-    public List<StuInfoBasicVO> getBasicSeniorSearchList(StuInfoSeniorVO stuInfoSeniorVO,String name){
+    public List<StuInfoBasicVO> getBasicSeniorSearchList(StuInfoSeniorVO stuInfoSeniorVO){
         StuInfoSeniorDTO stuInfoSeniorDTO = new StuInfoSeniorDTO();
         BeanUtils.copyProperties(stuInfoSeniorVO, stuInfoSeniorDTO);
 //        stuInfoSeniorDTO.setAdminWorkDTO(RequestUtil.getAdminWorkDTO());
         stuInfoSeniorDTO.setDormitory(stuInfoSeniorDTO.getDormitory() + "%");
-        return baseMapper.getBasicStuInfoList(stuInfoSeniorDTO, name);
+        return baseMapper.getBasicStuInfoList(stuInfoSeniorDTO);
     }
 
 
